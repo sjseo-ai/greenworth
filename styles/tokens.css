@@ -1,0 +1,57 @@
+:root {
+  --surface-page: #f4f7f5;
+  --surface-primary: #ffffff;
+  --surface-secondary: #eef3f0;
+  --surface-strong: #102b27;
+  --surface-muted: #e5ece8;
+  --text-primary: #10231f;
+  --text-secondary: #526760;
+  --text-tertiary: #71837c;
+  --text-inverse: #f7fbf9;
+  --border-default: #cdd9d3;
+  --border-strong: #9eb1a8;
+  --accent-primary: #087a5b;
+  --accent-hover: #065e47;
+  --accent-soft: #dff3eb;
+  --status-success: #176b4f;
+  --status-warning: #9a5b0b;
+  --status-error: #b42318;
+  --status-error-soft: #fce8e6;
+  --status-info: #285f8f;
+  --shadow-tint: rgba(16, 69, 56, 0.16);
+  --shadow-near: rgba(9, 32, 27, 0.08);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+  --workspace-reserve: 1120px;
+  --section-nav-reserve: 236px;
+  --technology-row-reserve: 52px;
+  --technology-stack-reserve: 112px;
+  --model-panel-reserve: 860px;
+  --results-panel-reserve: 880px;
+  --font-sans: Pretendard, SUIT, "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  --transition-micro: 120ms ease-out;
+  --transition-standard: 220ms ease-in-out;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--surface-page); color: var(--text-primary); font-family: var(--font-sans); font-size: 15px; line-height: 1.55; }
+button, input, select { font: inherit; }
+button { color: inherit; }
+a { color: inherit; }
+::selection { background: var(--accent-soft); color: var(--text-primary); }
+:focus-visible { outline: 3px solid var(--accent-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

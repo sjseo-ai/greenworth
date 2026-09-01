@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="육상풍력, 해상풍력, 태양광, ESS의 개발·건설부터 운영까지 분석하는 달력연도 프로젝트금융 사전 타당성 모델">
+    <meta name="theme-color" content="#102b27">
+    <title>GreenWorth | 신재생에너지 사업성 분석</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles/tokens.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#model-content">입력 모델로 건너뛰기</a>
+    <header class="app-header">
+      <div class="header-inner">
+        <a class="brand" href="#top" aria-label="GreenWorth 홈">
+          <span class="brand-mark" aria-hidden="true">GW</span>
+          <span><strong>GreenWorth</strong><small>Renewable Feasibility</small></span>
+        </a>
+        <div class="header-actions">
+          <span class="draft-badge">사전 검토용 모델</span>
+          <button class="button button-secondary" id="export-button" type="button">가정 내보내기</button>
+          <button class="button button-primary" id="reset-button" type="button">기본값으로 초기화</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="overline">Renewable investment model</p>
+          <h1 id="page-title">입력한 가정이 수익성과 금융 건전성에 미치는 영향을 바로 확인하세요.</h1>
+        </div>
+        <p class="intro-copy">기준연도 이후 개발·건설부터 운영까지를 달력연도로 연결해 발전·매출, CAPEX, OPEX, 금융·세무 조건을 검토하는 프로젝트금융 사전 타당성 모델입니다.</p>
+      </section>
+
+      <section class="technology-bar" aria-labelledby="technology-title">
+        <div class="technology-heading">
+          <span id="technology-title">분석 사업</span>
+          <small>사업유형을 바꾸면 해당 유형의 권장 기본값이 적용됩니다.</small>
+        </div>
+        <div class="technology-switch" id="technology-switch" role="group" aria-label="분석 사업 선택"></div>
+      </section>
+
+      <div class="workspace">
+        <nav class="section-rail" aria-label="입력 단계">
+          <p class="rail-title">입력 항목</p>
+          <div id="section-navigation"></div>
+          <div class="rail-note">
+            <strong>단위 안내</strong>
+            <span>사업비는 억원, 단가는 원 단위로 입력합니다.</span>
+          </div>
+        </nav>
+
+        <section class="model-panel" id="model-content" aria-labelledby="section-title">
+          <header class="section-header">
+            <div>
+              <p class="section-index" id="section-index"></p>
+              <h2 id="section-title"></h2>
+              <p id="section-description"></p>
+            </div>
+            <div class="capacity-summary">
+              <span>설비규모</span>
+              <strong id="capacity-summary">0 MW</strong>
+            </div>
+          </header>
+          <div class="error-summary" id="error-summary" role="alert" hidden></div>
+          <form id="model-form" novalidate></form>
+        </section>
+
+        <aside class="results-panel" aria-labelledby="results-title">
+          <div class="results-heading">
+            <div>
+              <p class="section-index">Live calculation</p>
+              <h2 id="results-title">분석 결과</h2>
+            </div>
+            <span class="status-dot" id="model-status">계산 중</span>
+          </div>
+          <div id="results-content" aria-live="polite" aria-atomic="true"></div>
+        </aside>
+      </div>
+
+      <section class="detail-panel" aria-labelledby="cashflow-title">
+        <div class="detail-heading">
+          <div>
+            <p class="section-index">Project calendar</p>
+            <h2 id="cashflow-title">전체 사업기간 현금흐름</h2>
+          </div>
+          <p>개발·건설부터 운영까지 달력연도별 CAPEX, 매출, OPEX, 세금, 부채상환과 투자자 현금흐름을 잇는 프로젝트금융 사전 타당성 표입니다.</p>
+        </div>
+        <div id="cashflow-content"></div>
+      </section>
+
+      <section class="methodology" aria-labelledby="methodology-title">
+        <div>
+          <p class="section-index">Model boundary</p>
+          <h2 id="methodology-title">계산 방법과 모델 경계</h2>
+        </div>
+        <div class="methodology-grid">
+          <article><strong>발전량과 달력</strong><p>P75 순 이용률에는 손실이 이미 반영되므로 다시 차감하지 않습니다. 판매가격은 고정하고 건설비와 OPEX만 상승시키며, COD 월의 실제 운영일수와 윤년을 반영합니다. COD가 1월이 아니면 첫·마지막 운영연도를 부분연도로 일할 계산합니다.</p></article>
+          <article><strong>금융과 세무</strong><p>총투자비는 건설이자와 회수 가능한 DSRA까지 반복 계산합니다. 대출상환, 이자·감가상각·이월결손금, <span data-methodology-term="annual-cumulative-dscr" aria-label="연간·누적 DSCR">연간&NoBreak;·&NoBreak;누적&nbsp;DSCR</span>, 법정준비금과 배당을 구분하며 세율은 역사적 예시입니다.</p></article>
+          <article><strong>지표와 제외 범위</strong><p>P-IRR, 두 E-IRR, NPV와 P-PBP는 세금과 현금흐름 기준을 구분합니다. P50/P90 선택, 월·분기 곡선, VAT, 자산군별 감가상각, 대출 sculpting과 리파이낸싱은 포함하지 않습니다.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <strong>중요 안내</strong>
+      <p>본 결과는 투자 의사결정 전 사전 검토를 위한 간이 추정치입니다. 실제 사업에는 기술·세무·법률·금융 실사와 독립된 재무모델 검증이 필요합니다.</p>
+    </footer>
+    <script src="js/app.bundle.js"></script>
+  </body>
+</html>

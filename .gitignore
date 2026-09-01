@@ -1,0 +1,11 @@
+.claude/
+.codegraph/
+.omo/
+node_modules/
+
+# 거래처 견적/입찰 등 민감 내부 자료 (Public 저장소 제외)
+샘플/
+과제정의서/ESS_단가산정모델.xlsx
+과제정의서/ESS_비가격점수_가격환산_계산기_1.xlsx
+ESS 베타테스트용.xlsm
+ESS_베타테스트용.json
