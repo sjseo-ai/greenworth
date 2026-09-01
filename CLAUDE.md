@@ -55,7 +55,10 @@ matches the sources — that's on you to keep true by hand.
 - **`js/results-view.js`** — renders KPIs, the 11-line capital breakdown + funding reconciliation, sensitivity
   matrix, augmentation schedule, and the full cash-flow table from an `analyzeCase` result.
 - **`js/app.js`** — wires DOM events, owns per-technology state (`cases: Map`), debounces recalculation (120ms),
-  handles native input validity, and drives the reset/export actions. No calculation logic lives here.
+  handles native input validity, and drives the reset/export/import actions. "가정 불러오기" reads a local JSON
+  file in the same `{ technology, model }` shape `export` writes (via `#import-file-input`, a hidden
+  `<input type="file">`) and replaces the current case wholesale — useful for loading a real project's
+  assumptions without ever committing them to source. No calculation logic lives here.
 
 ### Design contract
 

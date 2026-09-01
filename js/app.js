@@ -404,6 +404,51 @@ document.querySelector("#reset-button").addEventListener("click", () => {
   calculate();
 });
 
+const REQUIRED_MODEL_SECTIONS = Object.freeze(["project", "revenue", "capex", "opex", "finance", "assumptions"]);
+
+function importModel(payload) {
+  const technology = payload?.technology;
+  const model = payload?.model;
+  if (!technology || !TECHNOLOGIES[technology]) {
+    throw new Error(`지원하지 않는 사업유형입니다: ${technology}`);
+  }
+  const hasAllSections = model && typeof model === "object"
+    && REQUIRED_MODEL_SECTIONS.every((key) => model[key] && typeof model[key] === "object");
+  if (!hasAllSections) {
+    throw new Error("가정 파일에 project/revenue/capex/opex/finance/assumptions 항목이 모두 필요합니다.");
+  }
+  window.clearTimeout(calculationTimer);
+  calculationTimer = 0;
+  currentTechnology = technology;
+  currentErrors = [];
+  nativeInvalidFields.delete(currentTechnology);
+  cases.set(currentTechnology, model);
+  buildTechnologySwitch();
+  renderSection();
+  calculate();
+}
+
+document.querySelector("#import-button").addEventListener("click", () => {
+  document.querySelector("#import-file-input").click();
+});
+
+document.querySelector("#import-file-input").addEventListener("change", (event) => {
+  const [file] = event.target.files ?? [];
+  event.target.value = "";
+  if (!file) return;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      importModel(JSON.parse(String(reader.result)));
+    } catch (error) {
+      status.textContent = "입력 확인";
+      errorSummary.hidden = false;
+      errorSummary.textContent = `가정 불러오기 실패: ${error instanceof Error ? error.message : "알 수 없는 오류"}`;
+    }
+  });
+  reader.readAsText(file);
+});
+
 document.querySelector("#export-button").addEventListener("click", () => {
   const payload = { exportedAt: new Date().toISOString(), technology: currentTechnology, model: currentModel() };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });

@@ -194,8 +194,10 @@ function createAppHarness() {
     "model-content",
     "reset-button",
     "export-button",
+    "import-button",
+    "import-file-input",
   ].forEach((id) => {
-    const tag = id.endsWith("button") ? "button" : id === "model-form" ? "form" : "div";
+    const tag = id.endsWith("button") ? "button" : id === "model-form" ? "form" : id === "import-file-input" ? "input" : "div";
     const element = new TestElement(tag);
     element.id = id;
     ids.set(id, element);
@@ -679,6 +681,9 @@ test("app source preserves v3 category, calendar synchronization, reset, export,
   assert.match(source, /revenue\.revenueMode[\s\S]*\.focus\(\)/);
   assert.match(source, /addedIndex[\s\S]*data-cost-field='label'[\s\S]*\.focus\(\)/);
   assert.match(source, /focusIndex[\s\S]*data-add-cost[\s\S]*\.focus\(\)/);
+  assert.match(source, /REQUIRED_MODEL_SECTIONS[\s\S]*every\(\(key\) => model\[key\]/);
+  assert.match(source, /import-file-input[\s\S]*\.click\(\)/);
+  assert.match(source, /cases\.set\(currentTechnology, model\)/);
 });
 
 test("form source removes every legacy v2 input path", async () => {
