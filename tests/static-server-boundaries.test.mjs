@@ -86,6 +86,11 @@ async function terminate(child) {
 
 async function openIncompleteRequest(port) {
   const socket = net.createConnection({ host: "127.0.0.1", port });
+  // 이 소켓은 "헤더가 덜 온 연결"을 만들어 두려고만 쓰고, 검증 대상은 서버 프로세스의 종료 여부다.
+  // 서버를 종료시키면 이 연결은 어차피 끊기는데, POSIX에서는 SIGTERM이 정상 종료 핸들러를 태워
+  // 연결이 얌전히 닫히는 반면 Windows에서는 child.kill()이 강제 종료라 ECONNRESET이 올라온다.
+  // 'error' 리스너가 없으면 그 시점에 스트림이 예외를 던져 테스트가 실패하므로 여기서 흡수한다.
+  socket.on("error", () => {});
   await once(socket, "connect");
   socket.write("GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n");
   return socket;
