@@ -88,22 +88,25 @@ A dependency-free Node HTTP server used only for local dev (`npm run serve`). It
 with brotli/gzip negotiation and byte-range support. Adding a new static asset requires adding it to
 `PRELOAD_PATHS`/`PUBLIC_FILES` here or it will 404.
 
-## Workflow: 기획문서 sync + GitHub push after edits
+## Workflow: work locally by default, push only on request
 
-This repo is connected to `origin` → https://github.com/sjseo-ai/greenworth (public). Whenever you make a
-substantive edit to any app file (`js/*.js` + regenerated `js/app.bundle.js`, `index.html`, `styles/*.css`,
-`scripts/serve.mjs`, `tests/*.test.mjs`, etc.):
+This repo is connected to `origin` → https://github.com/sjseo-ai/greenworth (public), but **do not commit or push
+automatically after every edit** — that used to happen on each substantive change and the user found it slow and
+token-heavy for work that's still local-iteration in nature. Default to leaving verified work sitting uncommitted
+locally; only run `git add`/`commit`/`push` when the user explicitly asks to publish/push/sync to GitHub (or
+asks for a review flow that inherently needs it, e.g. opening a PR).
 
-1. **Update 기획문서** — the planning docs under `과제정의서/` (`PRD_사업성분석_프로토타입.md`,
+When the user does ask to push:
+
+1. **Update 기획문서 first** — the planning docs under `과제정의서/` (`PRD_사업성분석_프로토타입.md`,
    `과제정의서_3팀_서신준.md`, `변수정의서_초안_이터레이션1.md`) and any related diagram — so they still describe
    the current behavior/assumptions, not a stale version. If a change doesn't affect anything those docs describe,
    say so and skip the edit rather than padding it.
-2. **Commit and push to GitHub** once the change (code + bundle + updated 기획문서, tests passing) is verified —
-   don't leave verified work sitting uncommitted locally.
-3. **Never commit** `샘플/`, `과제정의서/ESS_단가산정모델.xlsx`, or
-   `과제정의서/ESS_비가격점수_가격환산_계산기_1.xlsx` — vendor-confidential (real counterparty names/pricing),
-   already excluded via `.gitignore`, and this repo is public. Extend the `.gitignore` rather than un-ignoring
-   these if new similar files show up.
+2. Regenerate `js/app.bundle.js` (see the classic-bundle contract above) and confirm tests pass before committing.
+3. **Never commit** `샘플/`, `과제정의서/ESS_단가산정모델.xlsx`, `과제정의서/ESS_비가격점수_가격환산_계산기_1.xlsx`,
+   `ESS 베타테스트용.xlsm`, `ESS_베타테스트용.json`, or `안좌ESS_가정.json` — vendor-confidential/real-project
+   financial data (real counterparty names/bid figures), already excluded via `.gitignore`, and this repo is
+   public. Extend the `.gitignore` rather than un-ignoring these if new similar files show up.
 
 ## Known model boundaries (stated in `README.md`)
 

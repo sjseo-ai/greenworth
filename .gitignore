@@ -10,3 +10,8 @@ node_modules/
 ESS 베타테스트용.xlsm
 ESS_베타테스트용.json
 안좌ESS_가정.json
+
+# ESS 적정 입찰단가 프로토타입(별도 Artifact) 로컬 검증용 — GreenWorth 앱과 무관, 커밋 대상 아님
+ess-bidprice-xlsx.mjs
+ESS_적정입찰단가_모델*.xlsx
+ESS_적정입찰단가_모델*_LOG.txt
