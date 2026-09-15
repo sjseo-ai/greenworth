@@ -2,6 +2,23 @@
 
 육상풍력, 해상풍력, 태양광, ESS의 개발·건설부터 운영까지를 달력연도로 연결해 비교하는 프로젝트금융 사전 타당성 웹 애플리케이션입니다. 예시 엑셀에서는 입력 범주, 기간 구조와 검증용 결과만 참고했고 화면과 계산 코드는 새로 작성했습니다.
 
+## 온라인에서 보기 · 공유
+
+GitHub Pages로 배포되어 링크만 있으면 누구나 로그인 없이 열 수 있습니다(`master`에 반영될 때마다 자동 갱신, 보통 2~3분).
+
+| 페이지 | 링크 |
+| --- | --- |
+| GreenWorth 사업성 분석 앱 | https://sjseo-ai.github.io/greenworth/ |
+| 입찰단가 프로토타입 목록 | https://sjseo-ai.github.io/greenworth/prototypes/ |
+| 태양광 적정 입찰가격 | https://sjseo-ai.github.io/greenworth/prototypes/solar/ |
+| 해상풍력 적정 입찰가격 | https://sjseo-ai.github.io/greenworth/prototypes/offshore-wind/ |
+| BESS(ESS) 적정 입찰단가 | https://sjseo-ai.github.io/greenworth/prototypes/bess/ |
+
+- 압축 파일(오프라인용): 목록 페이지의 "압축 파일 받기" 또는 `https://sjseo-ai.github.io/greenworth/prototypes/downloads/greenworth-{solar,offshore-wind,bess}-bid-price.zip`
+- 받는 사람이 입력한 값·시나리오·추가한 모듈/터빈은 그 사람의 브라우저에만 저장되고 서로 공유되지 않습니다. 결과를 주고받을 때는 시나리오 JSON·CSV 내보내기 파일을 전달하고, 받는 쪽은 "불러오기"로 엽니다.
+- 내용 수정 흐름: 브랜치에서 수정(프로토타입은 `prototypes/src/*.html` 수정 후 `npm run build:prototypes`) → PR → `master` 병합 → GitHub Actions "Deploy site"가 테스트 후 자동 배포(저장소 Actions 탭에서 진행 확인).
+- 저장소가 공개이므로 사이트도 공개입니다. 민감 원본 파일은 `.gitignore`로 제외되어 사이트에 올라가지 않습니다.
+
 ## 실행
 
 가장 간단한 방법은 `index.html`을 더블클릭해 바로 여는 것입니다. 별도 서버 없이도 모든 계산 기능이 동작합니다.

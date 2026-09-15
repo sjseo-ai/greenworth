@@ -488,6 +488,10 @@ JSON을 읽어 우리 프로토타입과 대조한 핵심 발견:
 - **설계 문서 커밋**: `web-app-blueprint.md`, `result-tabs-design-spec.md`, `excel-export-spec.md`.
 - **계속 제외**: `샘플/`, `과제정의서/ESS_단가산정모델.xlsx` · `ESS_비가격점수_가격환산_계산기_1.xlsx`, `ESS 베타테스트용.xlsm` · `ESS_베타테스트용.json`, `안좌ESS_가정.json`(민감 원본), 엑셀 · PDF 산출물, 스크린샷 · 테스트 로그, 내려받은 원문(EIASS 상세 HTML · 사이트 스크립트 · 공단 PDF), 별도 프로젝트 `재태크 앱/`.
 
+**타인 공유용 GitHub Pages 배포 (2026-09-15)**: "깃허브를 통해서 타인과 페이지 연결을 할 수 있도록 준비해줘"
+- PR #1(사이트 통합 + 제작 자료)을 master에 병합해 GitHub Actions "Deploy site"로 GitHub Pages 배포. 저장소 홈페이지 주소를 사이트로 지정해 저장소 첫 화면에서 바로 열 수 있게 함.
+- 공유 링크: 앱 https://sjseo-ai.github.io/greenworth/ · 프로토타입 목록 /prototypes/ · 태양광 /prototypes/solar/ · 해상풍력 /prototypes/offshore-wind/ · BESS /prototypes/bess/ · 압축 파일 /prototypes/downloads/*.zip. README에 "온라인에서 보기 · 공유" 절 추가(링크표, 브라우저별 저장·JSON 주고받기, 수정 → PR → 병합 → 자동 배포 흐름, 공개 범위).
+
 ---
 
 ## 10. 리스크 및 열린 질문
