@@ -20,6 +20,21 @@ npm run serve
 npm test
 ```
 
+## 입찰단가 프로토타입 (태양광 · 해상풍력 · BESS)
+
+발전원별 경쟁입찰 조건으로 목표 수익(당사 이익 또는 목표 IRR)을 만족하는 적정 입찰가격을 역산하는 독립 페이지 3종입니다. 앱 상단의 "입찰단가 프로토타입" 링크 또는 `prototypes/index.html`에서 엽니다.
+
+| 발전원 | 페이지 | 주요 기능 |
+| --- | --- | --- |
+| 태양광 | `prototypes/solar/index.html` | 국산·중국산 모듈 7종 비교와 탄소검증 등급 우대가격, 고정가격계약/기업PPA 조합, 상한가 진입 조건, 경쟁입찰 회차·대형 사업 사례 |
+| 해상풍력 | `prototypes/offshore-wind/index.html` | 터빈 6종 비교, 공공주도형/일반 트랙·REC 가중치, 상한가 진입 조건, 선정 단지 18건 사례(보도·EIASS) |
+| BESS(ESS) | `prototypes/bess/index.html` | ESS 중앙계약시장 적정 입찰단가 역산, 공급량·패널티, 선정평가 가격 환산, KCH 개발수수료 |
+
+- 원본은 Claude Artifact에 게시한 HTML 조각인 `prototypes/src/{solar,offshore-wind,bess}.html`입니다. 원본을 고친 뒤 `npm run build:prototypes`로 사이트용 페이지(`prototypes/*/index.html`, 커밋 대상)와 발전원별 압축 파일(`prototypes/downloads/*.zip`, 커밋 제외)을 다시 만듭니다. 생성 페이지가 원본과 어긋나면 `npm test`가 실패합니다.
+- 압축 파일에는 독립 페이지(`index.html`), 원본 조각(`artifact-source.html`), 안내문(`README.md`)이 들어 있으며, 압축을 풀고 `index.html`을 더블클릭하면 설치·인터넷 연결 없이 동작합니다.
+- 사이트에서 열면 내보내기(CSV·JSON)는 브라우저 다운로드로 저장되고, 입력값·시나리오는 각자의 브라우저에만 저장됩니다.
+- `master`에 반영되면 GitHub Actions(`.github/workflows/pages.yml`)가 테스트 후 앱과 프로토타입, 압축 파일을 GitHub Pages로 배포합니다(저장소 설정 Pages의 Source = GitHub Actions).
+
 ## 모델 구조
 
 ### 발전량, 가격과 달력

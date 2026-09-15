@@ -20,6 +20,7 @@ npm test        # node --test — runs every tests/*.test.mjs file
 - Run a single test by name: `node --test --test-name-pattern="ESS augmentation" tests/finance.test.mjs`
 - No separate lint/build/typecheck script exists.
 - The app also runs by double-clicking `index.html` directly (`file://`) — no server required.
+- Rebuild the bid-price prototype pages and zips after editing `prototypes/src/*.html`: `npm run build:prototypes`
 
 ## Architecture
 
@@ -38,6 +39,21 @@ user's perspective, since `index.html` never executes the source modules directl
 enforces the shape of this contract (bundle has no bare `import`/`export` statements and contains the expected
 tail call `buildTechnologySwitch(); renderSection(); calculate();`), but it cannot verify the bundle's *logic*
 matches the sources — that's on you to keep true by hand.
+
+### Bid-price prototypes (`prototypes/`) — generated pages, keep in sync
+
+Three standalone bid-price prototype pages (solar, offshore wind, BESS) live next to the app and are linked from the
+app header. They are **not** built from `js/*.js`; each one comes from a Claude Artifact HTML fragment:
+
+- `prototypes/src/{solar,offshore-wind,bess}.html` — the source of truth (the exact fragment published as an Artifact).
+- `scripts/build-prototypes.mjs` (`npm run build:prototypes`) wraps each fragment into a full document
+  (`prototypes/{id}/index.html`, committed), adds a "← 프로토타입 목록" link, swaps the Artifact-only `downloads`
+  capability for a browser-download fallback, writes the hub `prototypes/index.html` (committed), and writes one zip per
+  technology to `prototypes/downloads/` (ignored; built again in CI).
+- **Whenever you edit a fragment, rerun the build.** `tests/prototypes-build.test.mjs` fails when a committed page or
+  the hub no longer matches its build.
+- `.github/workflows/pages.yml` runs `npm test`, the build, and deploys `index.html`, `styles/`, `js/app.bundle.js`,
+  the prototype pages and zips to GitHub Pages on every push to `master`. Nothing else is copied to the site.
 
 ### Module responsibilities
 
@@ -86,7 +102,9 @@ targets), not just notes — several of its exact values are asserted directly b
 A dependency-free Node HTTP server used only for local dev (`npm run serve`). It serves an explicit allowlist
 (`PRELOAD_PATHS`) of files — `index.html`, the four `styles/*.css` files, and `js/app.bundle.js` — nothing else,
 with brotli/gzip negotiation and byte-range support. Adding a new static asset requires adding it to
-`PRELOAD_PATHS`/`PUBLIC_FILES` here or it will 404.
+`PRELOAD_PATHS`/`PUBLIC_FILES` here or it will 404. The generated prototype pages are listed in `ON_DEMAND_PATHS`
+instead: they are compressed on first request, because preloading ~1MB of HTML with Brotli q11 pushes server startup past
+the spawned-server tests' startup timeout.
 
 ## Workflow: work locally by default, push only on request
 

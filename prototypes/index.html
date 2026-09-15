@@ -1,0 +1,88 @@
+<!doctype html>
+<!-- 생성 파일 — scripts/build-prototypes.mjs가 만든다. 목록 문구는 스크립트의 PROTOTYPES를 고친다. -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GreenWorth 입찰단가 프로토타입</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg: #f4f6f8; --panel: #ffffff; --line: #e3e7ec; --ink: #1a1f28; --ink-2: #4a5462; --muted: #7b8794; --accent: #0f6b4a; --accent-strong: #0f6b4a; --accent-soft: #e7f2ed; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0f1417; --panel: #161d21; --line: #26313a; --ink: #e6ecef; --ink-2: #b3c0c8; --muted: #83929c; --accent: #3fbf8c; --accent-strong: #1f7a58; --accent-soft: #16302a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 "Pretendard", "Malgun Gothic", "맑은 고딕", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 48px; }
+  .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+  h1 { margin: 0; font-size: 24px; letter-spacing: -0.01em; word-break: keep-all; }
+  .lead { margin: 8px 0 24px; color: var(--ink-2); word-break: keep-all; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .card { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+  .card h2 { margin: 0; font-size: 18px; }
+  .tag { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--accent); }
+  .card ul { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13.5px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .btn:hover, .btn:focus-visible { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent-strong); border-color: var(--accent-strong); color: #ffffff; }
+  .btn.primary:hover, .btn.primary:focus-visible { color: #ffffff; filter: brightness(1.08); }
+  .note { margin-top: 24px; padding: 12px 14px; border-left: 3px solid var(--line); background: var(--panel); border-radius: 0 8px 8px 0; font-size: 13px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="top">
+      <h1>GreenWorth 입찰단가 프로토타입</h1>
+      <a class="btn" href="../index.html">GreenWorth 사업성 분석 앱 →</a>
+    </div>
+    <p class="lead">발전원별 경쟁입찰 조건으로 목표 수익을 만족하는 적정 입찰가격을 역산하는 사전 검토용 모델입니다. 각 페이지는 인터넷 연결 없이도 동작하며, 압축 파일을 받아 index.html을 더블클릭해 열 수 있습니다.</p>
+    <section class="grid" aria-label="프로토타입 목록">
+      <article class="card">
+        <p class="tag">고정가격계약 경쟁입찰 · 기업PPA</p>
+        <h2>태양광 적정 입찰가격</h2>
+        <ul>
+          <li>국산 4사 · 중국산 3사 모듈 비교, 사별 탄소검증 제품 → 등급 · 배점 · 우대가격</li>
+          <li>① 국산 모듈 + 고정가격계약 / ② 중국산 모듈 + 기업PPA 조합, 계약기간 20~30년</li>
+          <li>상한가 진입 조건 — 상한가에 맞추려면 EPC · 이용률 · O&amp;M · 탄소 등급을 얼마나 바꿔야 하는지</li>
+          <li>입찰 사례 — 2022~2026 경쟁입찰 회차별 결과, 대형 사업 10건(보도 · 환경영향평가정보지원시스템)</li>
+          <li>새 모듈 등록 · 목록 내보내기/불러오기(JSON)</li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="solar/index.html">열기</a>
+          <a class="btn" href="downloads/greenworth-solar-bid-price.zip" download>압축 파일 받기</a>
+        </div>
+      </article>
+      <article class="card">
+        <p class="tag">고정가격계약 경쟁입찰 · 공공주도형/일반</p>
+        <h2>해상풍력 적정 입찰가격</h2>
+        <ul>
+          <li>국산 · 외산 터빈 6종 비교(비출력 → 순이용률 · 터빈 단가), 새 터빈 등록 · 공유</li>
+          <li>공공주도형 · 일반 트랙, 이안거리 · 수심 구간 REC 가중치, 우대가격(R&amp;D 실증 포함)</li>
+          <li>상한가 진입 조건 — 상한가에 맞추려면 EPC · 이용률 · O&amp;M · 가중치를 얼마나 바꿔야 하는지</li>
+          <li>입찰 사례 — 2023~2026 선정 단지 18건(사업자 · 터빈 · EPC · 사업비 · EIASS 협의 제원)</li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="offshore-wind/index.html">열기</a>
+          <a class="btn" href="downloads/greenworth-offshore-wind-bid-price.zip" download>압축 파일 받기</a>
+        </div>
+      </article>
+      <article class="card">
+        <p class="tag">ESS 중앙계약시장 경쟁입찰</p>
+        <h2>BESS(ESS) 적정 입찰단가</h2>
+        <ul>
+          <li>목표 당사 이익 또는 목표 IRR → 적정 입찰단가 역산(이분탐색)</li>
+          <li>계약용량 기준 공급량 ①~⑤ 산정, 준공지연 · 이행률 패널티(공고 Ⅴ항)</li>
+          <li>선정평가 가격 점수 환산, KCH 개발수수료 단가산정</li>
+          <li>민감도 · 시나리오 비교 · 현금흐름 상세 · CSV/JSON 내보내기</li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="bess/index.html">열기</a>
+          <a class="btn" href="downloads/greenworth-bess-bid-price.zip" download>압축 파일 받기</a>
+        </div>
+      </article>
+    </section>
+    <p class="note">모든 수치는 공개 자료(공고문 · 보도 · 환경영향평가정보지원시스템)와 예시 가정에 기반한 사전 검토용 추정입니다. 실제 입찰 · 투자 판단 전에는 견적 · 계약 조건 · 금융 조건으로 교체해 확인하세요. 입력값과 시나리오는 각자의 브라우저에만 저장됩니다.</p>
+  </main>
+</body>
+</html>
