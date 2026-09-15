@@ -1,0 +1,276 @@
+//@@ ENTRY_MARKUP
+
+            <div class="subtotal strong"><span>상한가 진입 조건 — 한 가지만 바꿀 때 (SPC 기준, KCH 수수료 제외)</span><span></span></div>
+            <p class="callout-sm" id="entryNote"></p>
+            <table class="kv"><tbody id="entryBody"></tbody></table>
+            <p class="hint">각 행은 A. 산정 기준의 목표를 지키면서 써낼 입찰가격(수령단가 − 탄소 우대가격)을 상한가에 맞추기 위해 <strong>그 항목 하나만</strong> 바꿨을 때의 값입니다(다른 조건은 그대로). 태양광은 REC 가중치가 1.0이라 입찰가격 1원 인하 = 수령단가 1원 인하입니다. 탄소 등급 행은 우대가격만 바뀐다고 본 것이라, 상위 등급 모듈의 단가 상승은 EPC 단가로 따로 확인하세요. 여러 항목을 함께 조정하면 필요한 폭은 줄어듭니다. KCH 수수료 환산분까지 입찰가에 얹을 경우의 초과분은 위 경고에 따로 표시됩니다.</p>
+//@@ CASES_MARKUP
+      <!-- 입찰 사례 -->
+      <div class="tabpanel" role="tabpanel" id="panel-cases" aria-labelledby="tab-cases" hidden>
+        <section class="panel">
+          <h2>입찰 사례로 사업성 추정 — 경쟁입찰 회차 · 대형 태양광 사업</h2>
+          <div class="panel-body">
+            <p class="callout-sm"><strong>태양광 경쟁입찰은 발전소별 낙찰가를 공개하지 않고 회차별 낙찰 평균가만 발표합니다.</strong> 그래서 ① <strong>회차별 공고 상한가·낙찰 평균가</strong>를 지금 페이지의 우리 사업 조건에 넣어 "그 회차 평균가로 낙찰됐다면" 사업성이 어땠을지를 보고, ② <strong>보도·환경영향평가정보지원시스템(EIASS)으로 확인한 대형 태양광 사업</strong>의 사업비·발전량(이용률)을 넣어 목표 수익률에 필요한 수령단가를 역산합니다. 금융·세무·운영비 구성은 현재 페이지 조건을 쓰고(운영비·개발비는 용량 비례), 사례 판정은 <strong>A. 산정 기준과 관계없이 "기준 IRR · 목표 IRR" 칸</strong>으로 합니다(당사 이익 목표는 사업 규모에 따라 달라 사례 비교에 쓰지 않음).</p>
+            <p class="callout-sm" id="caseSummary"></p>
+
+            <div class="subtotal strong"><span>① 회차별 결과 → 우리 사업에 적용 (빈 칸 = 현재 페이지 가정)</span><span></span></div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">회차 · 공고 / 접수 / 선정</th><th>상한가<br>(원/kWh)</th><th>적용 입찰가<br>(원/kWh)</th><th>탄소 우대<br>(원/kWh)</th><th>1년차<br>이용률 (%)</th></tr></thead>
+                <tbody id="roundInputBody"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">회차</th><th>수령단가<br>(입찰가 + 우대)</th><th>P-IRR</th><th>E-IRR<br>(배당세전)</th><th>목표 IRR<br>대비</th><th>상한가 입찰 시<br>P-IRR</th></tr></thead>
+                <tbody id="roundResultBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">적용 입찰가 기본값 = 그 회차 <strong>낙찰 평균가</strong>(SMP+1REC, 원/MWh ÷ 1,000). 결과 발표 전 회차는 상한가를 넣었습니다. 탄소 우대가격은 우대제도가 도입된 2025년 공고부터 C. 판매 조건의 탄소 등급으로 채웁니다(칸을 비우면 "자동" — 2025년 상반기 1등급 12 · 2등급 9원, 2026년 16 · 7원). 낙찰 평균가는 대부분 소규모 발전소(선정 1곳당 평균 0.1~0.2MW)의 평균이라 대형 사업의 가격 수준과 다를 수 있습니다.</p>
+            <ul class="todo-list" id="roundSourceList"></ul>
+
+            <div class="subtotal strong"><span>② 대형 태양광 사업 — 보도 · EIASS 기준 (빈 칸 = 현재 페이지 가정)</span><span></span></div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">사업 · 용량 · 유형</th><th>총사업비<br>(억원/MW)</th><th>1년차<br>이용률 (%)</th><th>수령단가 가정<br>(원/kWh)</th></tr></thead>
+                <tbody id="caseInputBody"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">사업</th><th>총사업비<br>(계산, 억원/MW)</th><th>목표 IRR<br>적정 수령단가</th><th>P-IRR<br>(가정 단가)</th><th>E-IRR<br>(배당세전)</th><th>현재 상한가로<br>입찰 가능?</th></tr></thead>
+                <tbody id="caseResultBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">총사업비: 보도·EIASS 사업비 ÷ 용량을 현재 페이지의 사업비 구성(① 공사비 비중)으로 나눠 넣고, 총사업비가 없고 EPC 금액만 있으면 그 금액을 ① 공사비로 보고 역산합니다("총사업비(계산)" 열로 확인). 1년차 이용률: 연간 발전량 ÷ (용량 × 8,760h). 보도 발전량은 보통 손실을 반영한 값이라 C의 출력제어·가용 손실률이 이중으로 빠질 수 있습니다. 수령단가 가정(빈 칸) = 현재 상한가 + 현재 탄소 우대가격(지금 공고의 상한가에 낙찰됐다고 가정). 대형 사업 상당수는 경쟁입찰이 아닌 공급의무자 장기계약·기업PPA로 판매해 실제 단가는 공개되지 않습니다. "현재 상한가로 입찰 가능?"은 목표 IRR 적정 수령단가 − 현재 탄소 우대가격이 현재 상한가 이내인지입니다. 새 사례는 코드의 <code>ROUND_LIST</code> · <code>CASE_LIST</code>에 항목을 더하면 됩니다.</p>
+            <div class="subtotal strong"><span>사례 상세 — 사업자 · 모듈 · EPC · 사업비 · 발전량 · 입지 · 현황 · EIASS · 출처</span><span></span></div>
+            <ul class="todo-list" id="caseSourceList"></ul>
+          </div>
+        </section>
+      </div>
+//@@ CAVEATS
+              <li><strong>상한가 진입 조건</strong>(선정평가 탭) — 써낼 입찰가격(수령단가 − 탄소 우대가격)이 상한가를 넘을 때, A. 산정 기준의 목표를 지키며 상한가에 맞추려면 EPC 단가·이용률·고정 O&amp;M·목표 수익·탄소 등급 중 <strong>한 가지만</strong> 얼마나 바꿔야 하는지를 이분탐색으로 계산. 상위 탄소 등급 모듈의 단가 상승과 KCH 수수료 환산분은 반영하지 않음</li>
+              <li><strong>입찰 사례</strong> — 태양광 경쟁입찰은 발전소별 낙찰가를 공개하지 않아 <strong>회차별 공고 상한가·낙찰 평균가</strong>(2022년 상반기 ~ 2025년 상반기 5개 회차, 2026년 1차는 결과 발표 전이라 상한가 기준)를 우리 사업 조건에 적용. 2022~2025년 회차는 접수 용량이 공고 1~2GW의 5~52% 수준으로 미달이 이어졌고, 낙찰 평균가는 소규모 발전소 위주의 평균이라 대형 사업의 가격 수준과 다를 수 있음. 대형 사업 사례는 보도(사업비·발전량·모듈·EPC)와 환경영향평가정보지원시스템(EIASS) 사업 상세(협의 사업비·규모·사업시행자)·협의 이력으로 정리 — 평가 단계 사업비·계획 규모는 실제와 다를 수 있고, 합천댐(2021)·솔라시도(2020, ESS 포함) 등 준공 시점이 오래된 사례는 현재 사업비와 차이가 큼. 대형 사업 상당수는 경쟁입찰이 아닌 장기계약·PPA로 판매해 실제 단가는 비공개 — 사례표의 수령단가는 가정값</li>
+//@@ JS
+  // ---------- 목표 대비 여유 · 이분탐색 도우미 ----------
+  // 목표(A. 산정 기준) 대비 여유 — 0 이상이면 목표 달성. IRR 기준이면 소수(0.01 = 1%p), 당사 이익 기준이면 억원.
+  function targetGapOf(r) {
+    if (!r || (r.errors && r.errors.length)) return NaN;
+    if ($('solveMode').value === 'companyProfit') return (r[$('companyProfitKind').value] ?? NaN) - (+$('targetCompanyProfit').value || 0);
+    return (r[$('irrKind').value] ?? NaN) - rate(+$('targetIrrPct').value || 0);
+  }
+  const isProfitTarget = () => $('solveMode').value === 'companyProfit';
+  const targetMetricOf = (r) => (isProfitTarget() ? r[$('companyProfitKind').value] : r[$('irrKind').value]);
+  const fmtTargetMetric = (v) => (Number.isFinite(v) ? (isProfitTarget() ? `${fmt(v, 1)}억원` : `${fmt(v * 100, 2)}%`) : '—');
+  const targetLabel = () => (isProfitTarget()
+    ? `목표 당사 이익(${$('companyProfitKind').selectedOptions[0].textContent.trim()}) ${fmt(+$('targetCompanyProfit').value || 0, 0)}억원`
+    : `목표 ${$('irrKind').selectedOptions[0].textContent.trim()} ${fmt(+$('targetIrrPct').value || 0, 2)}%`);
+  // 사례 판정용 — A. 산정 기준과 관계없이 "기준 IRR · 목표 IRR" 칸으로(당사 이익 목표는 사업 규모에 따라 달라 비교에 부적합)
+  const irrGapOf = (r) => (!r || (r.errors && r.errors.length) ? NaN : (r[$('irrKind').value] ?? NaN) - rate(+$('targetIrrPct').value || 0));
+  const irrTargetLabel = () => `목표 ${$('irrKind').selectedOptions[0].textContent.trim()} ${fmt(+$('targetIrrPct').value || 0, 2)}%`;
+  const cloneModel = (m) => { try { return structuredClone(m); } catch (e) { return JSON.parse(JSON.stringify(m)); } };
+  // ok(lo)가 참이고 ok(hi)가 거짓일 때 참인 가장 큰 값 / ok(hi)가 참일 때 참인 가장 작은 값
+  function bisectMax(lo, hi, ok) { for (let i = 0; i < 32; i++) { const mid = (lo + hi) / 2; if (ok(mid)) lo = mid; else hi = mid; } return lo; }
+  function bisectMin(lo, hi, ok) { for (let i = 0; i < 32; i++) { const mid = (lo + hi) / 2; if (ok(mid)) hi = mid; else lo = mid; } return hi; }
+
+  // ---------- 상한가 진입 조건 — 한 가지만 바꿔 입찰가격을 상한가에 맞출 때의 값(목표 수익 유지, SPC 기준) ----------
+  // 상한가에 입찰했을 때의 수령단가(= 상한가 + 탄소 우대가격)에서 각 항목을 바꿔 목표 여유가 0이 되는 지점을 이분탐색으로 찾는다.
+  function renderEntryConditions() {
+    const body = $('entryBody'), note = $('entryNote');
+    const R0 = parseFloat(String($('heroBidPrice').textContent).replace(/,/g, ''));
+    const base = readModel(), rv = base.revenue;
+    if (rv.salesStructure !== 'fixed' || !Number.isFinite(R0) || !(rv.priceCapPerKWh > 0)) {
+      note.innerHTML = '기업PPA이거나 적정 수령단가를 산정하지 못해(또는 상한가격이 없어) 상한가 진입 조건을 계산하지 않습니다.';
+      body.innerHTML = '';
+      return;
+    }
+    const cap = rv.priceCapPerKWh, prem = rv.carbonPremiumPerKWh || 0;
+    const P0 = R0 - prem, gap = P0 - cap, Rcap = cap + prem;
+    const mw = rv.contractCapacityMW || 1, isEpc = (it) => it.group === 'construction';
+    const at = (mutate) => { const m = cloneModel(base); m.revenue.bidPricePerKWh = Rcap; if (mutate) mutate(m); return analyzeEss(m); };
+    const metricCap = targetMetricOf(at());
+    const row = (id, th, sub, text, value, cls = '') => `<tr><th>${th} <span class="sub">${sub}</span></th><td id="${id}" data-value="${Number.isFinite(value) ? value : ''}" class="${cls}">${text}</td></tr>`;
+    const rows = [];
+    if (gap <= 0) {
+      note.innerHTML = `<strong>지금 조건으로 상한가 이내입니다</strong> — 써낼 입찰가격(SPC 기준) ${fmt(P0, 2)}원/kWh, 상한가 ${fmt(cap, 3)}원까지 ${fmt(-gap, 2)}원 여유. 아래는 상한가에 그대로 입찰했을 때의 상승 여지입니다.`;
+      rows.push(row('entryGap', '상한가까지 여유', '상한가 − 입찰가격', `${fmt(-gap, 2)}원/kWh (상한가의 ${fmt(-gap / cap * 100, 1)}%)`, gap, 'best'));
+      rows.push(row('entryTarget', '상한가에 입찰하면', targetLabel(), `${fmtTargetMetric(metricCap)} 달성`, metricCap));
+      body.innerHTML = rows.join('');
+      return;
+    }
+    note.innerHTML = `<strong>상한가를 ${fmt(gap, 2)}원/kWh 넘어 응찰할 수 없습니다</strong> — 써낼 입찰가격(SPC 기준) ${fmt(P0, 2)}원 → 상한가 ${fmt(cap, 3)}원. 아래 각 행은 나머지 조건은 그대로 두고 <strong>그 항목 하나만</strong> 바꿔 상한가에 입찰해도 목표를 지키는 값입니다.`;
+    rows.push(row('entryGap', '입찰가격 인하 필요', '입찰가격 − 상한가 · SMP+1REC 기준', `${fmt(gap, 2)}원/kWh (입찰가격의 ${fmt(gap / P0 * 100, 1)}%)`, gap, 'over'));
+    rows.push(row('entryTarget', '목표 수익을 낮추면', `${targetLabel()} →`, `${fmtTargetMetric(metricCap)}까지 낮추면 상한가 입찰 가능`, metricCap));
+    // EPC 단가(원/W) — ① 공사비(억원) = 단가 × 설비용량(MW) ÷ 100
+    const epc0 = sum(base.capex.items.filter(isEpc).map((it) => it.value)) * 100 / mw;
+    const epcOk = (e) => targetGapOf(at((m) => {
+      m.capex = { ...m.capex, items: [{ id: 'epcLumpSum', label: 'EPC', value: e * mw / 100, category: '기자재', group: 'construction' }, ...m.capex.items.filter((it) => !isEpc(it))] };
+    })) >= 0;
+    const epcReq = epcOk(0) ? bisectMax(0, epc0, epcOk) : NaN;
+    rows.push(row('entryEpc', 'EPC 단가를 낮추면', '① 공사비 ÷ 설비용량 (모듈 + BOS·시공)', Number.isFinite(epcReq)
+      ? `${fmt(epc0, 0)} → ${fmt(epcReq, 1)}원/W (−${fmt(epc0 - epcReq, 1)}원 · −${fmt((1 - epcReq / epc0) * 100, 1)}%)` : 'EPC를 0으로 해도 부족', epcReq, Number.isFinite(epcReq) ? '' : 'over'));
+    const rates0 = rv.operatingRatesPct, kMax = 40 / Math.max(...rates0, 0.01);
+    const cfOk = (k) => targetGapOf(at((m) => { m.revenue.operatingRatesPct = rates0.map((v) => v * k); })) >= 0;
+    const kReq = cfOk(kMax) ? bisectMin(1, kMax, cfOk) : NaN;
+    rows.push(row('entryCf', '이용률을 높이면', '전 연차를 같은 비율로 (1년차 이용률 칸)', Number.isFinite(kReq)
+      ? `1년차 ${fmt(rates0[0], 2)}% → ${fmt(rates0[0] * kReq, 2)}% (+${fmt(rates0[0] * (kReq - 1), 2)}%p)` : '이용률 40%로도 부족', Number.isFinite(kReq) ? rates0[0] * kReq : NaN, Number.isFinite(kReq) ? '' : 'over'));
+    const opex0 = sum(base.opex.items.map((it) => it.value));
+    const opOk = (fct) => targetGapOf(at((m) => { m.opex = { ...m.opex, items: m.opex.items.map((it) => ({ ...it, value: it.value * fct })) }; })) >= 0;
+    const fReq = opOk(0) ? bisectMax(0, 1, opOk) : NaN;
+    rows.push(row('entryOpex', '고정 O&amp;M을 줄이면', 'E. OPEX 고정비 항목 합계', Number.isFinite(fReq)
+      ? `연 ${fmt(opex0, 1)} → ${fmt(opex0 * fReq, 1)}억원 (−${fmt((1 - fReq) * 100, 1)}%)` : '고정 O&amp;M을 0으로 해도 부족', Number.isFinite(fReq) ? opex0 * fReq : NaN, Number.isFinite(fReq) ? '' : 'over'));
+    // 탄소 등급 — 수령단가는 그대로, 우대가격만 커져 써낼 입찰가격이 내려간다(상위 등급 모듈의 단가 차이는 미반영)
+    const table = carbonGradeTable(), grade = $('carbonGrade').value;
+    ['1', '2'].filter((g) => +g < +grade && (table[g]?.premium || 0) > prem).forEach((g) => {
+      const Pg = R0 - table[g].premium, fits = Pg <= cap;
+      rows.push(row(`entryGrade${g}`, `탄소 ${g}등급 모듈을 쓰면`, `우대가격 ${fmt(table[g].premium, 0)}원 · 배점 ${fmt(table[g].score, 0)}점`,
+        `입찰가격 ${fmt(Pg, 2)}원 — ${fits ? `상한 이내(${fmt(cap - Pg, 2)}원 여유)` : `여전히 ${fmt(Pg - cap, 2)}원 초과`}`, Pg, fits ? 'best' : 'over'));
+    });
+    body.innerHTML = rows.join('');
+  }
+
+  // ---------- 입찰 사례 탭 — 회차별 공고·결과 + 대형 사업 사례(보도 · EIASS) ----------
+  // 회차: id · label · announcedMW · receivedMW · selectedMW · receivedCount · selectedCount · cap(육지 상한가 원/kWh) · avg(낙찰 평균가 원/kWh | null)
+  //       premiums({ '1': 원, '2': 원 } | null — 탄소 우대가격 도입 전은 null) · period · note · sources
+  const ROUND_LIST = __ROUNDS__;
+  // 대형 사업: id · name · mw · type · developer · module · epc · capexPerMW(억원/MW | null) · capexBasis(결과표 표시) · capexText
+  //       epcAmount(EPC 금액 억원 | null — 총사업비가 없을 때 역산) · genGWh(연간 발전량 | null) · cf(보도 이용률 % | null)
+  //       siteText · status · note · eiass(EIASS 코드·협의 이력·등록 제원 | '') · sources
+  const CASE_LIST = __CASES__;
+  const caseCfDefault = (c) => (c.cf != null ? c.cf : c.genGWh ? Math.round((c.genGWh / (c.mw * 8.76)) * 1000) / 10 : null);
+  const roundPremiumOf = (rd) => (rd.premiums ? +(rd.premiums[$('carbonGrade').value] || 0) : 0);
+  const fmtMW = (v) => (v == null ? '—' : v >= 100 ? fmt(v, 0) : fmt(v, 1));
+  const n3 = (v) => Number(v).toLocaleString('ko-KR', { maximumFractionDigits: 3 });
+
+  function renderCaseRows() {
+    const h = escapeHtml;
+    const inp = (pfx, id, fld, v, step, label, ph) => `<input id="${pfx}-${h(id)}-${fld}" type="number" value="${v ?? ''}" step="${step}" min="0" placeholder="${h(ph)}" aria-label="${h(label)}">`;
+    $('roundInputBody').innerHTML = ROUND_LIST.map((rd) => `
+      <tr data-rd-row="${h(rd.id)}">
+        <th class="mk-name">${h(rd.label)}<span class="sub">공고 ${fmtMW(rd.announcedMW)} / 접수 ${fmtMW(rd.receivedMW)} / 선정 ${fmtMW(rd.selectedMW)} MW</span></th>
+        <td>${fmt(rd.cap, 3)}</td>
+        <td>${inp('rd', rd.id, 'price', rd.avg ?? rd.cap, 0.01, `${rd.label} 적용 입찰가`, '상한가')}</td>
+        <td>${inp('rd', rd.id, 'prem', '', 0.5, `${rd.label} 탄소 우대가격`, rd.premiums ? '자동' : '없음')}</td>
+        <td>${inp('rd', rd.id, 'cf', '', 0.1, `${rd.label} 1년차 이용률`, '현재')}</td>
+      </tr>`).join('');
+    $('roundResultBody').innerHTML = ROUND_LIST.map((rd) => `
+      <tr data-rd-row="${h(rd.id)}">
+        <th class="mk-name">${h(rd.label)}<span class="sub">${rd.avg != null ? `낙찰 평균가 ${fmt(rd.avg, 3)}원` : '결과 발표 전 — 상한가 기준'}</span></th>
+        <td id="rd-${h(rd.id)}-recv">—</td><td id="rd-${h(rd.id)}-pirr">—</td><td id="rd-${h(rd.id)}-eirr">—</td><td id="rd-${h(rd.id)}-gap">—</td><td id="rd-${h(rd.id)}-cappirr">—</td>
+      </tr>`).join('');
+    $('caseInputBody').innerHTML = CASE_LIST.map((c) => `
+      <tr data-cs-row="${h(c.id)}">
+        <th class="mk-name">${h(c.name)}<span class="sub">${fmtMW(c.mw)}MW · ${h(c.type)}</span></th>
+        <td>${inp('cs', c.id, 'capex', c.capexPerMW, 0.1, `${c.name} 총사업비`, c.epcAmount ? 'EPC 역산' : '현재')}</td>
+        <td>${inp('cs', c.id, 'cf', caseCfDefault(c), 0.1, `${c.name} 1년차 이용률`, '현재')}</td>
+        <td>${inp('cs', c.id, 'r', '', 0.1, `${c.name} 수령단가 가정`, '상한가+우대')}</td>
+      </tr>`).join('');
+    $('caseResultBody').innerHTML = CASE_LIST.map((c) => `
+      <tr data-cs-row="${h(c.id)}">
+        <th class="mk-name">${h(c.name)}<span class="sub">${h(c.capexBasis)}${caseCfDefault(c) != null ? (c.cf != null ? ' · 이용률 보도' : ' · 발전량 환산') : ''}</span></th>
+        <td id="cs-${h(c.id)}-inv">—</td><td id="cs-${h(c.id)}-need">—</td><td id="cs-${h(c.id)}-pirr">—</td><td id="cs-${h(c.id)}-eirr">—</td><td id="cs-${h(c.id)}-fit">—</td>
+      </tr>`).join('');
+    const part = (label, v) => (v ? `<br><span class="sub" style="display:inline;">${label}</span> ${h(v)}` : '');
+    $('roundSourceList').innerHTML = ROUND_LIST.map((rd) => {
+      const flow = [rd.receivedMW != null ? `접수 ${n3(rd.receivedMW)}MW${rd.receivedCount ? `(${n3(rd.receivedCount)}개소)` : ''} — 공고의 ${fmt(rd.receivedMW / rd.announcedMW * 100, 1)}%` : '',
+        rd.selectedMW != null ? `선정 ${n3(rd.selectedMW)}MW${rd.selectedCount ? `(${n3(rd.selectedCount)}개소)` : ''}` : (rd.selectedCount ? `선정 ${n3(rd.selectedCount)}개소` : '')].filter(Boolean).join(' · ');
+      return `<li data-rd-detail="${h(rd.id)}"><strong>${h(rd.label)}</strong> — 공고 ${n3(rd.announcedMW)}MW · 상한가 ${fmt(rd.cap, 3)}원/kWh${rd.avg != null ? ` · 낙찰 평균가 ${fmt(rd.avg, 3)}원/kWh` : ''}${rd.premiums ? ` · 탄소 우대 1등급 ${rd.premiums['1']}원 · 2등급 ${rd.premiums['2']}원` : ''}`
+        + part('일정', rd.period) + part('접수 · 선정', flow) + part('참고', rd.note) + part('출처', rd.sources) + '</li>';
+    }).join('');
+    $('caseSourceList').innerHTML = CASE_LIST.map((c) => {
+      const cfd = caseCfDefault(c);
+      const gen = c.genGWh ? `연 ${n3(c.genGWh)}GWh → 1년차 이용률 약 ${fmt(cfd, 1)}%` : '';
+      return `<li data-cs-detail="${h(c.id)}"><strong>${h(c.name)}</strong> — ${n3(c.mw)}MW · ${h(c.type)}`
+        + part('사업자', c.developer) + part('모듈', c.module) + part('EPC·시공', c.epc) + part('사업비', c.capexText) + part('발전량', gen)
+        + part('입지', c.siteText) + part('현황', c.status) + part('참고', c.note)
+        + part('환경영향평가(EIASS)', c.eiass || 'EIASS 사업 검색에서 확인되지 않음(다른 사업명으로 등록됐을 가능성)') + part('출처', c.sources) + '</li>';
+    }).join('');
+  }
+
+  function renderCases() {
+    const base = readModel(), rv = base.revenue, n = rv.operatingRatesPct.length || 1;
+    const d = rate(+$('degradationPct').value || 0);
+    const cap0 = +$('priceCapPerKWh').value || 0, prem0 = carbonGradeTable()[$('carbonGrade').value]?.premium || 0;
+    const ratesOf = (cf) => (cf > 0 ? Array.from({ length: n }, (_, i) => cf * (1 - d) ** i) : rv.operatingRatesPct.slice());
+    // 사례는 고정가격계약(정액)으로 본다 — 페이지가 기업PPA 조합이어도 상승률 없이 계산
+    const asFixed = (m) => { m.revenue.salesStructure = 'fixed'; m.revenue.contractEscalationPct = 0; return m; };
+    const set = (id, text, cls = '') => { const el = $(id); el.textContent = text; el.className = cls; };
+    const pct2 = (v) => (Number.isFinite(v) ? `${fmt(v * 100, 2)}%` : '—');
+    const good = (r) => r && !(r.errors && r.errors.length);
+
+    // ① 회차 — 우리 사업(현재 페이지)을 그 회차 가격으로 낙찰받았다고 보고 계산
+    const roundPirrs = [];
+    let roundMet = 0;
+    ROUND_LIST.forEach((rd) => {
+      const val = (fld) => { const v = $(`rd-${rd.id}-${fld}`).value; return v === '' ? NaN : +v; };
+      const price = val('price') > 0 ? val('price') : (rd.avg ?? rd.cap), prem = val('prem') >= 0 ? val('prem') : roundPremiumOf(rd);
+      const run = (R) => { const m = asFixed(cloneModel(base)); m.revenue.operatingRatesPct = ratesOf(val('cf')); m.revenue.bidPricePerKWh = R; return analyzeEss(m); };
+      const r = run(price + prem);
+      set(`rd-${rd.id}-recv`, `${fmt(price + prem, 2)}원`);
+      if (!good(r)) { ['pirr', 'eirr', 'gap', 'cappirr'].forEach((fld) => set(`rd-${rd.id}-${fld}`, '산정 불가')); return; }
+      set(`rd-${rd.id}-pirr`, pct2(r.projectIrr));
+      set(`rd-${rd.id}-eirr`, pct2(r.equityIrr));
+      const g = irrGapOf(r);
+      if (g >= 0) roundMet++;
+      set(`rd-${rd.id}-gap`, Number.isFinite(g) ? `${g >= 0 ? '+' : '−'}${fmt(Math.abs(g) * 100, 2)}%p` : '—', g >= 0 ? 'best' : 'over');
+      const rc = run(rd.cap + prem);
+      set(`rd-${rd.id}-cappirr`, good(rc) ? pct2(rc.projectIrr) : '산정 불가');
+      roundPirrs.push(r.projectIrr);
+    });
+
+    // ② 대형 사업 — 사업비·이용률을 사례 값으로 바꿔 목표 IRR 적정 수령단가를 역산하고, 가정 단가의 수익률을 계산
+    const curMW = rv.contractCapacityMW || 1, isEpc = (it) => it.group === 'construction';
+    const baseInv = solveInvestment(base, buildCalendar(base.project)).totalInvestment;
+    // 보도 총사업비(억원/MW)를 현재 페이지의 사업비 구성으로 공사비에 환산 — ① 공사비 ÷ 총투자비 비중
+    const epcShare = baseInv > 0 ? sum(base.capex.items.filter(isEpc).map((it) => it.value)) / baseInv : 0.8;
+    const needs = [];
+    let fitCount = 0;
+    CASE_LIST.forEach((c) => {
+      const val = (fld) => { const v = $(`cs-${c.id}-${fld}`).value; return v === '' ? NaN : +v; };
+      // 총사업비 입력이 없으면: EPC 금액이 있으면 그 금액을 ① 공사비로 보고 총사업비로 역산, 없으면 현재 페이지 가정
+      const epcTotal = val('capex') > 0 ? val('capex') * c.mw * epcShare : c.epcAmount ? c.epcAmount : (baseInv / curMW) * c.mw * epcShare;
+      const ratio = c.mw / curMW, R = val('r') > 0 ? val('r') : cap0 + prem0;
+      const build = (price) => {
+        const m = asFixed(cloneModel(base));
+        m.revenue.contractCapacityMW = c.mw;
+        m.revenue.operatingRatesPct = ratesOf(val('cf'));
+        m.capex = { ...m.capex, items: [{ id: 'epcLumpSum', label: `EPC (${c.name})`, value: epcTotal, category: '기자재', group: 'construction' },
+          ...m.capex.items.filter((it) => !isEpc(it)).map((it) => ({ ...it, value: it.value * ratio }))] };
+        m.opex = { ...m.opex, items: m.opex.items.map((it) => ({ ...it, value: it.value * ratio })) };
+        m.finance = { ...m.finance, fundingMode: 'ratio' };
+        m.revenue.bidPricePerKWh = price;
+        return m;
+      };
+      const r = analyzeEss(build(R));
+      if (!good(r)) { ['inv', 'need', 'pirr', 'eirr', 'fit'].forEach((fld) => set(`cs-${c.id}-${fld}`, '산정 불가')); return; }
+      set(`cs-${c.id}-inv`, fmt(r.totalInvestment / c.mw, 1));
+      set(`cs-${c.id}-pirr`, pct2(r.projectIrr));
+      set(`cs-${c.id}-eirr`, pct2(r.equityIrr));
+      const sv = solveBidPriceForTarget(build(0), rate(+$('targetIrrPct').value || 0), $('irrKind').value);
+      if (!sv.ok) { set(`cs-${c.id}-need`, '500원으로도 미달', 'over'); set(`cs-${c.id}-fit`, '—'); return; }
+      needs.push(sv.price);
+      set(`cs-${c.id}-need`, `${fmt(sv.price, 2)}원`);
+      const bid = sv.price - prem0, fits = cap0 > 0 && bid <= cap0;
+      if (fits) fitCount++;
+      set(`cs-${c.id}-fit`, cap0 > 0 ? (fits ? `가능 (${fmt(cap0 - bid, 2)}원 여유)` : `${fmt(bid - cap0, 2)}원 초과`) : '—', fits ? 'best' : 'over');
+    });
+
+    const spread = (arr, f) => {
+      const s = [...arr].sort((a, b) => a - b);
+      return s.length ? { lo: f(s[0]), hi: f(s[s.length - 1]), med: f(s[Math.floor((s.length - 1) / 2)]) } : null;
+    };
+    const rp = spread(roundPirrs, pct2), np = spread(needs, (v) => `${fmt(v, 2)}원`);
+    $('caseSummary').innerHTML = [
+      rp ? `<strong>① 회차 가격으로 우리 사업을 낙찰받았다면 P-IRR ${rp.lo} ~ ${rp.hi}</strong> — ${irrTargetLabel()} 달성 ${roundMet}/${ROUND_LIST.length}회차` : '',
+      np ? `<strong>② 대형 사업 ${needs.length}건의 ${irrTargetLabel()} 적정 수령단가 ${np.lo} ~ ${np.hi} (중앙값 ${np.med})</strong> — 현재 상한가 ${fmt(cap0, 3)}원 + 우대 ${fmt(prem0, 0)}원 기준 입찰 가능 ${fitCount}건` : '',
+    ].filter(Boolean).join('<br>') || '사례를 계산하지 못했습니다.';
+  }
+//@@ LISTENERS
+  // 입찰 사례 — 사례 칸은 본 모델과 무관해 재계산 없이 사례 표만 다시 그린다(탭이 보일 때).
+  $('panel-cases').addEventListener('input', (e) => {
+    const id = e.target.id || '';
+    if (!id.startsWith('cs-') && !id.startsWith('rd-')) return;
+    resultsDirty.cases = true;
+    renderActiveTab();
+  });
+  renderCaseRows(); // 회차·대형 사업 목록으로 사례 표를 그린다(탭 선택보다 먼저)

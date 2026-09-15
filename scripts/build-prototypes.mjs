@@ -3,7 +3,7 @@
 //   prototypes/src/{id}.html        원본(아티팩트에 게시한 HTML 조각 그대로 — 고칠 때는 이 파일을 고친다)
 //   prototypes/{id}/index.html      생성 — 사이트용 독립 페이지(문서 골격 + 목록 링크 + 브라우저 다운로드 대체). 커밋한다.
 //   prototypes/index.html           생성 — 세 프로토타입 목록(허브). 커밋한다.
-//   prototypes/downloads/*.zip      생성 — 발전원별 압축 파일(독립 페이지 + 원본 + 안내문). 커밋하지 않는다(.gitignore).
+//   prototypes/downloads/*.zip      생성 — 발전원별 압축 파일(독립 페이지 + 원본 + 안내문). 커밋한다(항목 시각 고정 — 같은 원본이면 같은 파일).
 //
 // 외부 패키지 없이 동작한다(압축은 node:zlib의 deflateRaw · crc32로 직접 쓴다). 실행: npm run build:prototypes
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -255,6 +255,16 @@ export function createZip(entries) {
   return Buffer.concat([...locals, directory, end]);
 }
 
+export function buildZip(fragment, p) {
+  const source = fragment.replace(/\r\n/g, "\n"); // 체크아웃 줄바꿈(CRLF)과 무관하게 같은 압축 파일
+  const folder = p.zip.replace(/\.zip$/, "");
+  return createZip([
+    { name: `${folder}/index.html`, data: buildStandalone(source, p, { nav: false }) },
+    { name: `${folder}/artifact-source.html`, data: source },
+    { name: `${folder}/README.md`, data: zipReadme(p) },
+  ]);
+}
+
 export async function buildAll({ root = ROOT } = {}) {
   const written = [];
   const put = async (relativePath, content) => {
@@ -266,12 +276,7 @@ export async function buildAll({ root = ROOT } = {}) {
   for (const p of PROTOTYPES) {
     const fragment = await readFile(resolve(root, `prototypes/src/${p.id}.html`), "utf8");
     await put(`prototypes/${p.id}/index.html`, buildStandalone(fragment, p, { nav: true }));
-    const folder = p.zip.replace(/\.zip$/, "");
-    await put(`prototypes/downloads/${p.zip}`, createZip([
-      { name: `${folder}/index.html`, data: buildStandalone(fragment, p, { nav: false }) },
-      { name: `${folder}/artifact-source.html`, data: fragment },
-      { name: `${folder}/README.md`, data: zipReadme(p) },
-    ]));
+    await put(`prototypes/downloads/${p.zip}`, buildZip(fragment, p));
   }
   await put("prototypes/index.html", buildHub());
   return written;

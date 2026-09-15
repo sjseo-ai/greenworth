@@ -30,9 +30,10 @@ npm test
 | 해상풍력 | `prototypes/offshore-wind/index.html` | 터빈 6종 비교, 공공주도형/일반 트랙·REC 가중치, 상한가 진입 조건, 선정 단지 18건 사례(보도·EIASS) |
 | BESS(ESS) | `prototypes/bess/index.html` | ESS 중앙계약시장 적정 입찰단가 역산, 공급량·패널티, 선정평가 가격 환산, KCH 개발수수료 |
 
-- 원본은 Claude Artifact에 게시한 HTML 조각인 `prototypes/src/{solar,offshore-wind,bess}.html`입니다. 원본을 고친 뒤 `npm run build:prototypes`로 사이트용 페이지(`prototypes/*/index.html`, 커밋 대상)와 발전원별 압축 파일(`prototypes/downloads/*.zip`, 커밋 제외)을 다시 만듭니다. 생성 페이지가 원본과 어긋나면 `npm test`가 실패합니다.
+- 원본은 Claude Artifact에 게시한 HTML 조각인 `prototypes/src/{solar,offshore-wind,bess}.html`입니다. 원본을 고친 뒤 `npm run build:prototypes`로 사이트용 페이지(`prototypes/*/index.html`)와 발전원별 압축 파일(`prototypes/downloads/*.zip`)을 다시 만들어 함께 커밋합니다. 생성 페이지·압축 파일이 원본과 어긋나면 `npm test`가 실패합니다.
 - 압축 파일에는 독립 페이지(`index.html`), 원본 조각(`artifact-source.html`), 안내문(`README.md`)이 들어 있으며, 압축을 풀고 `index.html`을 더블클릭하면 설치·인터넷 연결 없이 동작합니다.
 - 사이트에서 열면 내보내기(CSV·JSON)는 브라우저 다운로드로 저장되고, 입력값·시나리오는 각자의 브라우저에만 저장됩니다.
+- 프로토타입을 만들고 검증할 때 쓴 변환 파이프라인·브라우저 점검 스크립트·EIASS 조사 결과는 `prototypes/tools/`에 작업 기록으로 모아 두었습니다(사이트 빌드·테스트와 무관, 폴더 안내는 `prototypes/tools/README.md`). 설계 기준 문서는 `web-app-blueprint.md`, `result-tabs-design-spec.md`, 엑셀 회신 사양은 `excel-export-spec.md`(변환기 `ESS_엑셀변환.bat` · `ess-bidprice-xlsx.mjs`)입니다.
 - `master`에 반영되면 GitHub Actions(`.github/workflows/pages.yml`)가 테스트 후 앱과 프로토타입, 압축 파일을 GitHub Pages로 배포합니다(저장소 설정 Pages의 Source = GitHub Actions).
 
 ## 모델 구조

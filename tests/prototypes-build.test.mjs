@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { inflateRawSync, crc32 } from "node:zlib";
-import { PROTOTYPES, ROOT, buildHub, buildStandalone, createZip } from "../scripts/build-prototypes.mjs";
+import { PROTOTYPES, ROOT, buildHub, buildStandalone, buildZip, createZip } from "../scripts/build-prototypes.mjs";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 const normalize = (text) => text.replace(/\r\n/g, "\n");
@@ -17,6 +17,14 @@ test("every prototype has a source fragment and a committed standalone page that
     assert.equal(normalize(await read(`prototypes/${prototype.id}/index.html`)), built, `${prototype.id} page is stale`);
   }
   assert.equal(normalize(await read("prototypes/index.html")), buildHub(), "hub page is stale");
+});
+
+test("committed zip downloads match the build of their source fragment", async () => {
+  for (const prototype of PROTOTYPES) {
+    const fragment = normalize(await read(`prototypes/src/${prototype.id}.html`));
+    const committed = await readFile(new URL(`../prototypes/downloads/${prototype.zip}`, import.meta.url));
+    assert.ok(buildZip(fragment, prototype).equals(committed), `${prototype.zip} is stale — run npm run build:prototypes`);
+  }
 });
 
 test("standalone pages are full documents with a list link and a browser download fallback", async () => {

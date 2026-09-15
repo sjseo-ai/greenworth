@@ -1,0 +1,34 @@
+// Screenshots of the D. CAPEX accordion (only D open) at 1440 and 390, plus the summary-tab 산출 근거 block.
+import { writeFileSync } from "node:fs";
+const SP = "C:/Users/KCH/AppData/Local/Temp/claude/c--Users-KCH-OneDrive--------------------/9deb6861-b75c-48d3-9c63-cddac223fff7/scratchpad";
+const URL_ = "file:///" + `${SP}/redesign-wrapped.html`.replace(/^\//, "");
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const tab = await (await fetch("http://127.0.0.1:9335/json/new?" + encodeURIComponent(URL_), { method: "PUT" })).json();
+const ws = new WebSocket(tab.webSocketDebuggerUrl);
+let id = 0; const pending = new Map(); const errors = [];
+ws.addEventListener("message", (e) => { const m = JSON.parse(e.data); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id); } if (m.method === "Runtime.exceptionThrown") errors.push(m.params.exceptionDetails.text); });
+await new Promise((r) => ws.addEventListener("open", r, { once: true }));
+const send = (method, params = {}) => new Promise((res) => { const i = ++id; pending.set(i, res); ws.send(JSON.stringify({ id: i, method, params })); });
+const ev = async (expression) => (await send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })).result?.result?.value;
+const shot = async (file) => { const r = await send("Page.captureScreenshot", { format: "png" }); writeFileSync(`${SP}/${file}`, Buffer.from(r.result.data, "base64")); console.log("screenshot:", file); };
+await send("Runtime.enable"); await send("Page.enable");
+await send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1400, deviceScaleFactor: 1, mobile: false });
+await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: "light" }] });
+await sleep(300); await ev("localStorage.clear()"); await send("Page.reload"); await sleep(1500);
+await ev("document.querySelectorAll('details.acc').forEach(d=>d.open=false); document.getElementById('capexBody').closest('details').open=true;");
+await sleep(200);
+// the input column scrolls on its own at 1440 (sticky) — scroll it so D's summary is at the top
+await ev("(()=>{const col=document.querySelector('.col-input'); const d=document.getElementById('capexBody').closest('details'); col.scrollTop = d.offsetTop - 60;})()");
+await sleep(200); await shot("capex-1440.png");
+await ev("(()=>{const col=document.querySelector('.col-input'); const t=document.getElementById('capexBreakdownBody'); col.scrollTop = t.getBoundingClientRect().top - col.getBoundingClientRect().top + col.scrollTop - 380;})()");
+await sleep(200); await shot("capex-1440-breakdown.png");
+await ev("document.getElementById('tab-summary').click(); document.getElementById('summaryBasis').scrollIntoView({block:'start'}); window.scrollBy(0,-70);");
+await sleep(300); await shot("capex-1440-basis.png");
+await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 1600, deviceScaleFactor: 1, mobile: true });
+await sleep(300);
+await ev("(()=>{const t=document.getElementById('capexBody').closest('details'); window.scrollTo(0, t.getBoundingClientRect().top + window.scrollY - 64);})()");
+await sleep(200); await shot("capex-390.png");
+const sw = await ev("document.documentElement.scrollWidth"), cw = await ev("document.documentElement.clientWidth");
+console.log(`390: scrollWidth ${sw} / clientWidth ${cw}`);
+console.log(errors.length ? "ERRORS: " + errors.join(" | ") : "no errors");
+process.exit(0);

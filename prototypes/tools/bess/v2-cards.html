@@ -1,0 +1,12 @@
+      <!-- KPI 카드 2줄 — 탭 바깥에 두어 어느 탭을 보든 기준점으로 계속 보인다(spec 4.1).
+           1줄 = 수익성(primary, 같은 종류는 같은 강조) / 2줄 = 규모(scale, 강조를 낮춘다). id는 시나리오 스냅샷·CSV가 textContent로 읽는다. -->
+      <div class="cards" id="cards" aria-label="수익성 지표">
+        <div class="card primary"><div class="k">달성 P-IRR</div><div class="v" id="kpiPIrr">—</div><div class="s">NPV <span id="kpiNpv">—</span> · 할인율 4.5%</div></div>
+        <div class="card primary"><div class="k">달성 E-IRR (배당세전)</div><div class="v" id="kpiEIrr">—</div><div class="s">배당세후 <span id="kpiEIrrAfterTax">—</span></div></div>
+        <div class="card primary"><div class="k">당사 누적 순이익 (세전 / 세후)</div><div class="v" id="kpiCompanyProfit">—</div><div class="s">MOIC <span id="kpiMoic">—</span> · 당사 지분율 <span id="kpiKchShare">—</span></div></div>
+      </div>
+      <div class="cards" id="cards-scale" aria-label="사업 규모">
+        <div class="card scale"><div class="k">총투자비</div><div class="v" id="kpiTotalInvestment">—</div><div class="s" id="kpiFundingSplit">—</div></div>
+        <div class="card scale"><div class="k">연간 매출 (환산)</div><div class="v" id="kpiRevenue">—</div><div class="s">방전량 <span id="kpiGeneration">—</span></div></div>
+        <div class="card scale"><div class="k">당사 누적 출자금</div><div class="v" id="kpiEquityInjected">—</div><div class="s">배당+최종회수 <span id="kpiEquityReturn">—</span></div></div>
+      </div>

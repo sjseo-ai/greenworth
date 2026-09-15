@@ -13,7 +13,7 @@ Korean-first (developer/lender/investment-committee personas — see `DESIGN.md`
 
 ```bash
 npm run serve   # node scripts/serve.mjs — serves the app at http://localhost:4173 (default port; --port/--host/PORT override)
-npm test        # node --test — runs every tests/*.test.mjs file
+npm test        # node --test "tests/**/*.test.mjs" — only tests/ (prototypes/tools/ holds archived test-*.mjs scripts that must not run)
 ```
 
 - Run a single test file: `node --test tests/finance.test.mjs`
@@ -49,9 +49,15 @@ app header. They are **not** built from `js/*.js`; each one comes from a Claude 
 - `scripts/build-prototypes.mjs` (`npm run build:prototypes`) wraps each fragment into a full document
   (`prototypes/{id}/index.html`, committed), adds a "← 프로토타입 목록" link, swaps the Artifact-only `downloads`
   capability for a browser-download fallback, writes the hub `prototypes/index.html` (committed), and writes one zip per
-  technology to `prototypes/downloads/` (ignored; built again in CI).
-- **Whenever you edit a fragment, rerun the build.** `tests/prototypes-build.test.mjs` fails when a committed page or
-  the hub no longer matches its build.
+  technology to `prototypes/downloads/` (committed; entry timestamps are fixed and line endings normalized, so the same
+  fragment always produces byte-identical zips).
+- **Whenever you edit a fragment, rerun the build.** `tests/prototypes-build.test.mjs` fails when a committed page, the
+  hub, or a zip no longer matches its build.
+- `prototypes/tools/` is an archive of the authoring pipelines (solar v1→v4→5a/5b, offshore wind 1a→4, BESS redesign
+  pieces), headless-Chrome check scripts and EIASS research. Nothing in the app, the site build or `npm test` uses it; its
+  scripts still point `SP` at the original session scratch folder (see `prototypes/tools/README.md`).
+- `ESS_엑셀변환.bat` / `ess-bidprice-xlsx.mjs` (+ `.check.mjs`, `ess-xlsx-lite.mjs`) at the repo root are the BESS
+  scenario-JSON → Excel reply converter (spec: `excel-export-spec.md`); only its `.xlsx`/log outputs stay ignored.
 - `.github/workflows/pages.yml` runs `npm test`, the build, and deploys `index.html`, `styles/`, `js/app.bundle.js`,
   the prototype pages and zips to GitHub Pages on every push to `master`. Nothing else is copied to the site.
 

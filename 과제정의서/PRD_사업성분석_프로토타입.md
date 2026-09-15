@@ -481,6 +481,13 @@ JSON을 읽어 우리 프로토타입과 대조한 핵심 발견:
 - **공개 범위 점검**: 공개 저장소에 올리기 전 세 페이지에 실제 거래처명·입찰 수치가 없는지 확인 — BESS 기본값은 일반 예시값(안좌 가정 파일 값과 다름), 실제 사업명은 시나리오 이름 예시 1곳뿐이라 사이트·압축본에서 일반 예시로 교체. 민감 원본 파일(`샘플/`, 안좌 가정, 베타테스트 파일 등)은 기존 .gitignore대로 제외.
 - **검증**: `npm test` 112건 통과(신규 `tests/prototypes-build.test.mjs` — 생성 페이지·목록이 원본 빌드와 일치, 목록 링크·다운로드 대체·실제 사업명 제거, 목록의 페이지·압축 링크, ZIP 이름·크기·CRC 판독, 로컬 서버 허용 목록). Windows 압축 풀기로 세 압축 파일 정상 해제 확인. 브라우저 점검 — 목록 카드 3개·링크, 세 페이지 로드·적정 단가 산정, 시나리오 저장 시 브라우저 다운로드로 JSON 저장 호출, 375px 가로 넘침 없음, 페이지 오류 0, 목록 링크 이동, 앱 헤더 링크 표시·이동.
 
+**사이트 통합 보완 — 만든 자료 전부 커밋(민감 원본 제외) (2026-09-15)**: "지금까지 된 자료는 보안과 관계없이 전부" → 범위 확인 결과 "만든 자료 전부(민감 원본 제외)", PR에만 반영(병합은 사용자 결정)
+- **압축 파일 커밋**: `prototypes/downloads/greenworth-{solar,offshore-wind,bess}-bid-price.zip`을 .gitignore에서 풀어 커밋. 빌드 스크립트에 `buildZip`을 분리하고 원본 줄바꿈을 정규화해(체크아웃 CRLF와 무관) 같은 원본이면 같은 바이트가 나오게 함 → `tests/prototypes-build.test.mjs`에 "커밋된 압축 파일 = 원본 빌드" 점검 추가.
+- **제작 도구 보관**: `prototypes/tools/` — 태양광 파이프라인(make-solar v1~v4, solar-5a/5b · 스니펫 · 모듈 카탈로그 · 탄소검증 목록 요약 · 단계 스냅숏 v1~v4 · test-solar), 해상풍력 파이프라인(wind-1a~4 · wind-lib · EIASS 반영 패치 · test-wind), BESS 화면 개편 조각 · 점검 · 엑셀 회신 검증 스크립트, 공통 점검(check-ids · site-smoke · app-header-check), EIASS 조사 스크립트 · 결과 JSON, 폴더 안내 README. 스크립트의 작업 폴더 경로(SP)는 원래 세션 폴더 기준이라 재실행 시 경로 변경 필요.
+- **ESS 엑셀 회신 변환기 커밋**: `ESS_엑셀변환.bat` · `ess-bidprice-xlsx.mjs` · `ess-bidprice-xlsx.check.mjs` · `ess-xlsx-lite.mjs`를 .gitignore에서 풀고, 산출물(`ESS_적정입찰단가_모델*.xlsx` · LOG)만 계속 제외.
+- **설계 문서 커밋**: `web-app-blueprint.md`, `result-tabs-design-spec.md`, `excel-export-spec.md`.
+- **계속 제외**: `샘플/`, `과제정의서/ESS_단가산정모델.xlsx` · `ESS_비가격점수_가격환산_계산기_1.xlsx`, `ESS 베타테스트용.xlsm` · `ESS_베타테스트용.json`, `안좌ESS_가정.json`(민감 원본), 엑셀 · PDF 산출물, 스크린샷 · 테스트 로그, 내려받은 원문(EIASS 상세 HTML · 사이트 스크립트 · 공단 PDF), 별도 프로젝트 `재태크 앱/`.
+
 ---
 
 ## 10. 리스크 및 열린 질문
