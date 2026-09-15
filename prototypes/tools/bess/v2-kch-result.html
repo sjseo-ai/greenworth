@@ -1,0 +1,31 @@
+          <div class="subhead">결과</div>
+          <table class="kv">
+            <tbody>
+              <tr id="kchScaleFactorRow" class="strong" style="display:none;"><th>공통 가격배율 (자동 역산)</th><td id="kchScaleFactor">—</td></tr>
+              <tr><th>달성 IRR (참고)</th><td id="kchAchievedIrr">—</td></tr>
+              <tr><th>NPV</th><td id="kchNpv">—</td></tr>
+              <tr><th>총수익 (운영기간 합계)</th><td id="kchTotalRevenue">—</td></tr>
+              <tr><th>KCH 총비용</th><td id="kchTotalCost">—</td></tr>
+            </tbody>
+          </table>
+          <div class="status-pill" id="kchSolveStatus">계산 중</div>
+
+          <div class="subhead">실제 적용 금액 (억원 — 총액 직접입력 모드는 입력값과 동일, 목표 IRR 역산 모드는 가격배율 반영 후)</div>
+          <div class="calc-grid" style="margin-top:0;">
+            <div class="field calc"><label for="kchOutLease">① 부지 임대료</label><div class="iw"><input id="kchOutLease" disabled><span class="unit">억원/년</span></div></div>
+            <div class="field calc"><label for="kchOutDevFee">② 사전개발비</label><div class="iw"><input id="kchOutDevFee" disabled><span class="unit">억원</span></div></div>
+            <div class="field calc"><label for="kchOutConn">③ 공동접속료</label><div class="iw"><input id="kchOutConn" disabled><span class="unit">억원</span></div></div>
+            <div class="field calc"><label for="kchOutOm">④ 운영수익</label><div class="iw"><input id="kchOutOm" disabled><span class="unit">억원/년</span></div></div>
+          </div>
+
+          <div class="subhead">민감도표 (가격배율 × 설비용량 → 달성 IRR)</div>
+          <p class="hint-block">초록은 목표 IRR 이상, 빨강은 미만입니다(목표의 8% 이상 벗어나면 진하게). 테두리 칸은 현재 가정(가격배율 1.0 · 현재 설비용량)입니다.</p>
+          <div class="table-wrap">
+            <table class="matrix">
+              <thead><tr id="kchSensHead"></tr></thead>
+              <tbody id="kchSensBody"></tbody>
+            </table>
+          </div>
+          </div>
+        </section>
+      </div>

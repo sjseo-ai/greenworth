@@ -1,0 +1,364 @@
+{
+  "dataset": "한국에너지공단_태양광 모듈 탄소검증 제품 정보 (공공데이터포털 15085909, 수정 2026-06-10)",
+  "asOf": "2026-09-14",
+  "total": 1832,
+  "companies": {
+    "hanwha": {
+      "name": "한화솔루션(주)",
+      "all": 567,
+      "valid": 268,
+      "recentValid": 139,
+      "grades": [
+        10,
+        81,
+        123,
+        54
+      ],
+      "min": 611.89,
+      "p25": 651.0475,
+      "median": 663.825,
+      "max": 799.54,
+      "factories": [
+        "음성 제2사업장",
+        "진천사업장"
+      ],
+      "best": [
+        {
+          "model": "Q.PEAK DUO XL-G10.7/BFG KR1 495",
+          "watt": 495,
+          "co2": 611.89,
+          "factory": "음성 제2사업장",
+          "expires": "2029-02-24"
+        },
+        {
+          "model": "Q.PEAK DUO XL-G10.7/BFG KR1 490",
+          "watt": 490,
+          "co2": 618.13,
+          "factory": "음성 제2사업장",
+          "expires": "2029-02-24"
+        },
+        {
+          "model": "Q.PEAK DUO L-G6 KR2 435",
+          "watt": 435,
+          "co2": 623.88,
+          "factory": "진천사업장",
+          "expires": "2027-06-24"
+        },
+        {
+          "model": "Q.PEAK DUO XL-G10.3/BFG KR1 480",
+          "watt": 480,
+          "co2": 623.89,
+          "factory": "음성 제2사업장",
+          "expires": "2028-05-30"
+        },
+        {
+          "model": "Q.PEAK DUO XL-G10.d/BFG KR1 480",
+          "watt": 480,
+          "co2": 623.89,
+          "factory": "진천사업장",
+          "expires": "2028-09-01"
+        }
+      ],
+      "families": [
+        {
+          "pattern": "/Q\\.TRON/i",
+          "n": 66,
+          "min": 648.47,
+          "median": 658.68,
+          "grades": [
+            0,
+            27,
+            39,
+            0
+          ]
+        },
+        {
+          "pattern": "/Q\\.PEAK/i",
+          "n": 202,
+          "min": 611.89,
+          "median": 670.4300000000001,
+          "grades": [
+            10,
+            54,
+            84,
+            54
+          ]
+        }
+      ],
+      "recentGrades": [
+        6,
+        53,
+        59,
+        21
+      ],
+      "recentMedian": 659.3
+    },
+    "hyundai": {
+      "name": "에이치디현대에너지솔루션(주)",
+      "all": 548,
+      "valid": 134,
+      "recentValid": 64,
+      "grades": [
+        17,
+        40,
+        37,
+        40
+      ],
+      "min": 548.76,
+      "p25": 642.5825,
+      "median": 664.47,
+      "max": 816.41,
+      "factories": [
+        "음성공장"
+      ],
+      "best": [
+        {
+          "model": "HiS-S490YJ-ON",
+          "watt": 490,
+          "co2": 548.76,
+          "factory": "음성공장",
+          "expires": "2028-03-31"
+        },
+        {
+          "model": "HiS-S485YJ-ON",
+          "watt": 485,
+          "co2": 555.39,
+          "factory": "음성공장",
+          "expires": "2027-12-02"
+        },
+        {
+          "model": "HiS-S480YJ-ON",
+          "watt": 480,
+          "co2": 561.18,
+          "factory": "음성공장",
+          "expires": "2027-12-02"
+        },
+        {
+          "model": "HiS-S495YJ-ON",
+          "watt": 495,
+          "co2": 561.83,
+          "factory": "음성공장",
+          "expires": "2028-06-30"
+        },
+        {
+          "model": "HiS-S490YJ-ON",
+          "watt": 490,
+          "co2": 567.56,
+          "factory": "음성공장",
+          "expires": "2028-06-30"
+        }
+      ],
+      "families": [
+        {
+          "pattern": "/HiN-T/i",
+          "n": 0,
+          "min": null,
+          "median": null,
+          "grades": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "pattern": "/HiS-/i",
+          "n": 134,
+          "min": 548.76,
+          "median": 664.47,
+          "grades": [
+            17,
+            40,
+            37,
+            40
+          ]
+        },
+        {
+          "pattern": "/HiN-/i",
+          "n": 0,
+          "min": null,
+          "median": null,
+          "grades": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "recentGrades": [
+        14,
+        20,
+        12,
+        18
+      ],
+      "recentMedian": 648.8
+    },
+    "shinsung": {
+      "name": "(주)신성이엔지",
+      "all": 98,
+      "valid": 23,
+      "recentValid": 8,
+      "grades": [
+        0,
+        1,
+        18,
+        4
+      ],
+      "min": 649.1,
+      "p25": 669.45,
+      "median": 681.08,
+      "max": 758.47,
+      "factories": [
+        "김제공장"
+      ],
+      "best": [
+        {
+          "model": "SS-CM610TE",
+          "watt": 610,
+          "co2": 649.1,
+          "factory": "김제공장",
+          "expires": "2028-04-24"
+        },
+        {
+          "model": "SS-CM610TE",
+          "watt": 610,
+          "co2": 658.6,
+          "factory": "김제공장",
+          "expires": "2028-02-27"
+        },
+        {
+          "model": "SS-CM605TE",
+          "watt": 605,
+          "co2": 664.04,
+          "factory": "김제공장",
+          "expires": "2028-02-27"
+        },
+        {
+          "model": "SS-DM550BL",
+          "watt": 550,
+          "co2": 665.79,
+          "factory": "김제공장",
+          "expires": "2027-04-28"
+        },
+        {
+          "model": "SS-CM610TE",
+          "watt": 610,
+          "co2": 667.79,
+          "factory": "김제공장",
+          "expires": "2027-10-31"
+        }
+      ],
+      "families": [
+        {
+          "pattern": "/BD/i",
+          "n": 0,
+          "min": null,
+          "median": null,
+          "grades": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "pattern": "/SS-DM/i",
+          "n": 9,
+          "min": 665.79,
+          "median": 697.44,
+          "grades": [
+            0,
+            0,
+            5,
+            4
+          ]
+        }
+      ],
+      "recentGrades": [
+        0,
+        1,
+        7,
+        0
+      ],
+      "recentMedian": 669.45
+    },
+    "hansol": {
+      "name": "한솔에너지온",
+      "all": 324,
+      "valid": 159,
+      "recentValid": 62,
+      "grades": [
+        19,
+        23,
+        57,
+        60
+      ],
+      "min": 560.18,
+      "p25": 653.28,
+      "median": 668.96,
+      "max": 824.03,
+      "factories": [
+        "한솔에너지온 오창공장"
+      ],
+      "best": [
+        {
+          "model": "HS505WE-GHD30",
+          "watt": 505,
+          "co2": 560.18,
+          "factory": "한솔에너지온 오창공장",
+          "expires": "2029-02-24"
+        },
+        {
+          "model": "HS505WE-GHD10",
+          "watt": 505,
+          "co2": 572.66,
+          "factory": "한솔에너지온 오창공장",
+          "expires": "2028-12-19"
+        },
+        {
+          "model": "HS505WE-GHD10",
+          "watt": 505,
+          "co2": 593.86,
+          "factory": "한솔에너지온 오창공장",
+          "expires": "2028-05-30"
+        },
+        {
+          "model": "HS500WE-GHD10",
+          "watt": 500,
+          "co2": 599.8,
+          "factory": "한솔에너지온 오창공장",
+          "expires": "2028-05-30"
+        },
+        {
+          "model": "HS505WE-GHD50",
+          "watt": 505,
+          "co2": 603.56,
+          "factory": "한솔에너지온 오창공장",
+          "expires": "2027-10-31"
+        }
+      ],
+      "families": [
+        {
+          "pattern": "/TOP|N|HS/i",
+          "n": 149,
+          "min": 560.18,
+          "median": 668.96,
+          "grades": [
+            19,
+            23,
+            49,
+            58
+          ]
+        }
+      ],
+      "recentGrades": [
+        13,
+        19,
+        20,
+        10
+      ],
+      "recentMedian": 654.06
+    }
+  }
+}

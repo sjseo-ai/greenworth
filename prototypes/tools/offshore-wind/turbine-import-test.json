@@ -1,0 +1,10 @@
+{
+  "tool": "해상풍력 적정 입찰가격 프로토타입 (초안)",
+  "kind": "turbineCatalog",
+  "exportedAt": "2026-09-14T00:00:00.000Z",
+  "turbines": [
+    { "id": "whatever", "origin": "domestic", "maker": "두산에너빌리티", "model": "DS220-15MW (테스트)", "mw": 15, "rotor": 220, "price": 35, "avail": 95, "degA": 0.2, "local": 60, "specLabel": "사용자 추가", "source": "갱신 테스트" },
+    { "id": "bad-id!", "origin": "foreign", "maker": "Siemens Gamesa", "model": "SG 21-276 DD", "mw": 21.5, "rotor": 276, "price": 30, "avail": 96, "degA": 0.2, "local": 15, "specLabel": "사용자 추가", "source": "불러오기 테스트" },
+    { "origin": "foreign", "maker": "Vestas", "model": "V236-15.0MW", "mw": 15, "rotor": 236 }
+  ]
+}

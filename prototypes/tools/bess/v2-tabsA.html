@@ -1,0 +1,135 @@
+      <!-- 결과 탭 — 각 탭이 서로 다른 질문에 답한다: 요약(얼마나 버나) · 민감도(무엇이 흔드나) · 시나리오(어느 안이 낫나) -->
+      <div class="tabs" role="tablist" aria-label="분석 결과">
+        <button type="button" class="tab" role="tab" id="tab-summary" aria-controls="panel-summary" data-panel="panel-summary" aria-selected="true">요약</button>
+        <button type="button" class="tab" role="tab" id="tab-sens" aria-controls="panel-sens" data-panel="panel-sens" aria-selected="false">민감도</button>
+        <button type="button" class="tab" role="tab" id="tab-scenario" aria-controls="panel-scenario" data-panel="panel-scenario" aria-selected="false">시나리오 비교</button>
+        <button type="button" class="tab" role="tab" id="tab-price" aria-controls="panel-price" data-panel="panel-price" aria-selected="false">가격환산</button>
+        <button type="button" class="tab" role="tab" id="tab-kch" aria-controls="panel-kch" data-panel="panel-kch" aria-selected="false">KCH 개발수수료</button>
+        <button type="button" class="tab" role="tab" id="tab-caveats" aria-controls="panel-caveats" data-panel="panel-caveats" aria-selected="false">확정 필요 항목</button>
+      </div>
+
+      <!-- 요약 -->
+      <div class="tabpanel" role="tabpanel" id="panel-summary" aria-labelledby="tab-summary">
+        <section class="panel">
+          <h2>연도별 현금흐름</h2>
+          <div class="panel-body"><div id="summaryChart"></div></div>
+        </section>
+        <section class="panel">
+          <h2>산출 근거</h2>
+          <div class="panel-body">
+            <div id="summaryBasis"></div>
+            <div id="warnings" role="status" hidden></div>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>연도별 상세</h2>
+          <div class="panel-body">
+            <p class="hint-block">금액 단위 억원 · 적정 입찰단가 기준 · 값이 전부 0인 칼럼은 생략합니다. 전체 44개 칼럼(DSCR 게이트·이익준비금·NOL 등)은 시나리오 비교 탭의 CSV 다운로드에 들어 있습니다.</p>
+            <div id="summaryDetail"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 민감도 -->
+      <div class="tabpanel" role="tabpanel" id="panel-sens" aria-labelledby="tab-sens" hidden>
+        <section class="panel">
+          <h2>민감도 — 입찰단가 고정</h2>
+          <div class="panel-body">
+            <div class="toolbar">
+              <div class="field"><label for="sensMetric">표시 지표</label><div class="iw"><select id="sensMetric">
+                <option value="equityIrr" selected>E-IRR (배당세전)</option>
+                <option value="equityIrrAfterInvestorTax">E-IRR (배당세후)</option>
+                <option value="companyProfitPreTax">당사 누적 순이익 (세전)</option>
+              </select></div></div>
+              <span class="note">상단의 적정 입찰단가를 고정하고, 표시된 변수 외 가정은 모두 현재 입력값 그대로 둔 채 다시 계산합니다.</span>
+            </div>
+
+            <div class="subtotal strong"><span>변수별 영향 크기 — <span data-sens-metric-label>E-IRR (배당세전)</span></span><span></span></div>
+            <p class="hint-block">각 변수를 표 양 끝(최소·최대)까지 하나씩만 움직였을 때의 범위입니다. 영향이 큰 변수부터 위에 놓았습니다 — 빨강은 기준보다 불리한 쪽, 초록은 유리한 쪽입니다.</p>
+            <div class="chart-wrap" id="sensTornado"></div>
+
+            <div class="subtotal strong"><span>1) 선순위 대출금리 × OPEX 물가상승률 — <span data-sens-metric-label>E-IRR (배당세전)</span></span><span></span></div>
+            <div class="calc-grid" style="margin:0 0 10px;">
+              <div class="field calc"><label for="sensBaseSeniorRate">기준 선순위 대출금리</label><div class="iw"><input id="sensBaseSeniorRate" disabled><span class="unit">%</span></div></div>
+              <div class="field calc"><label for="sensBaseOpexEsc">기준 OPEX 물가상승률</label><div class="iw"><input id="sensBaseOpexEsc" disabled><span class="unit">%/년</span></div></div>
+              <div class="field calc"><label for="sensBaseIrr">기준(Δ=0,0) 달성 E-IRR</label><div class="iw"><input id="sensBaseIrr" disabled><span class="unit">%</span></div></div>
+            </div>
+            <p class="hint-block">각 칸의 윗줄은 선택한 지표, 아랫줄은 기준 칸(테두리) 대비 차이입니다. 행·열 머리의 회색 글씨는 그때 변수의 실제 값입니다.</p>
+            <div class="table-wrap">
+              <table class="matrix">
+                <thead><tr id="macroSensHead"></tr></thead>
+                <tbody id="macroSensBody"></tbody>
+              </table>
+            </div>
+
+            <div class="subtotal strong"><span>2) 선순위 대출금리 × EPC 총액 — <span data-sens-metric-label>E-IRR (배당세전)</span></span><span></span></div>
+            <div class="calc-grid" style="margin:0 0 10px;">
+              <div class="field calc"><label for="sensBaseSeniorRate2">기준 선순위 대출금리</label><div class="iw"><input id="sensBaseSeniorRate2" disabled><span class="unit">%</span></div></div>
+              <div class="field calc"><label for="sensBaseEpcTotal">기준 EPC 총액</label><div class="iw"><input id="sensBaseEpcTotal" disabled><span class="unit">억원</span></div></div>
+              <div class="field calc"><label for="sensBaseEpcIrr">기준(Δ=0,0) 달성 E-IRR</label><div class="iw"><input id="sensBaseEpcIrr" disabled><span class="unit">%</span></div></div>
+            </div>
+            <p class="hint-block">EPC 총액(D. CAPEX 합계 — 항목별 입력이든 총액 직접 입력이든 현재 합계 기준)을 −15%~+15% 범위로 비례 변동시킵니다.</p>
+            <div class="table-wrap">
+              <table class="matrix">
+                <thead><tr id="epcSensHead"></tr></thead>
+                <tbody id="epcSensBody"></tbody>
+              </table>
+            </div>
+
+            <div class="callout-sm" style="margin-top:14px;"><strong>읽는 법 — 색은 "기준 칸 대비"입니다. </strong>기준값의 8% 이상 차이 나면 진한 초록·빨강, 2%~8%는 옅은 색, 그 안쪽은 무색입니다. 두 표는 각각 두 변수만 함께 움직인 결과라 세 변수(금리·OPEX 상승률·EPC)가 동시에 나빠지는 경우는 담지 않습니다 — 그런 조합은 입력값을 바꿔 시나리오 비교 탭에 저장해 나란히 비교하세요. 단가산정이 유효한 값을 찾지 못한 경우(예: 준공지연 3단계) 표가 비어 있습니다.</div>
+            <details class="help" style="margin:0;">
+              <summary>왜 P-IRR 대신 E-IRR인가</summary>
+              <div>대출금리가 원리금 상환액을 통해 직접 반영되는 지표라 E-IRR을 씁니다. 본 모델의 P-IRR은 이자비용의 법인세 절감효과만 반영하고 원리금 상환 자체는 프로젝트 현금흐름에서 빠지는 정의라, 금리가 오히려 P-IRR을 올리는 역설이 있어 대출금리 민감도 표에는 부적합합니다.</div>
+            </details>
+          </div>
+        </section>
+      </div>
+
+      <!-- 시나리오 비교 -->
+      <div class="tabpanel" role="tabpanel" id="panel-scenario" aria-labelledby="tab-scenario" hidden>
+        <section class="panel">
+          <h2>적정 입찰단가 비교 (원/kWh)</h2>
+          <div class="panel-body">
+            <div id="scenarioPriceChartWrap" class="chart-wrap">
+              <div id="scenarioPriceChart"></div>
+              <div id="chartTooltip" class="chart-tooltip" role="presentation"></div>
+            </div>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>시나리오 저장</h2>
+          <div class="panel-body">
+            <p class="hint-block">현재 입력값을 이름 붙여 저장하고 여러 시나리오를 나란히 비교합니다. 이 브라우저에만 저장되며 다른 기기·브라우저와 공유되지 않습니다 — 저장하는 순간 입력 모델 전체가 .json 파일로도 내려받아집니다.</p>
+            <div class="toolbar">
+              <div class="field grow"><label for="scenarioName">시나리오 이름</label><div class="iw"><input id="scenarioName" type="text" placeholder="예: 안좌 96MW 기본안"></div></div>
+              <button id="saveScenarioBtn" type="button" class="btn btn-primary">현재값 저장</button>
+              <span class="btn-group">
+                <button id="downloadCsvBtn" type="button" class="btn btn-soft">CSV 다운로드 (Excel에서 열기)</button>
+                <button id="clearScenariosBtn" type="button" class="btn btn-danger">전체 삭제</button>
+              </span>
+            </div>
+            <div id="scenarioStorageWarn" class="warn" role="status"></div>
+            <div id="scenarioList"></div>
+          </div>
+        </section>
+        <section class="panel">
+          <h2>시나리오 비교표</h2>
+          <div class="panel-body" id="scenarioCompareWrap">
+            <p class="hint-block">열 = 시나리오, 행 = 항목. 결과 행의 초록은 가장 유리한 값, 빨강은 가장 불리한 값입니다(적정 입찰단가는 같은 목표를 더 낮은 단가로 달성할수록 유리 · 시나리오가 2개 이상일 때만 표시).</p>
+            <div class="table-wrap">
+              <table class="scenario">
+                <thead><tr id="scenarioCompareHead"></tr></thead>
+                <tbody id="scenarioCompareBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <details class="help" style="margin:16px 0 0;">
+          <summary>다운로드 안내 — JSON · CSV · 서식 적용 엑셀(.xlsx)</summary>
+          <div>
+            <p style="margin:0 0 6px;">"현재값 저장"을 누르면 이 브라우저(localStorage)에 저장됨과 동시에, 그 시나리오의 <b>입력 모델 전체를 담은 <code>.json</code> 파일이 즉시 다운로드</b>됩니다 — 다른 기기·다른 사람과 공유하거나 나중에 정확히 그 시점 값으로 되돌아가고 싶을 때 이 파일을 보관하세요. 저장된 시나리오 목록의 "다운로드" 버튼으로 언제든 같은 파일을 다시 받을 수 있습니다.</p>
+            <p style="margin:0 0 6px;">"CSV 다운로드"는 지금까지 저장한 모든 시나리오를 한 파일로 나란히 비교하기 위한 별도 기능입니다 — <code>.csv</code>(엑셀에서 그대로 열림)이며, <b>1) Assumption(입력값, 계산된 표시값 포함)</b> · <b>2) Summary(핵심 결과지표)</b> · <b>3) Appendix(연도별 현금흐름 상세 — DSCR 게이트·이익준비금 잔여액까지 반영해 저장 시점 값으로 다시 계산)</b> 세 절이 순서대로 들어 있습니다.</p>
+            <p style="margin:0;"><b>서식이 적용된 다중 시트 엑셀(.xlsx)이 필요하면</b> — 이 뷰어는 .xlsx 저장을 허용하지 않으므로, 위에서 받은 시나리오 <code>.json</code> 파일을 프로젝트 폴더의 <code>ESS_엑셀변환.bat</code>에 끌어다 놓으세요. Assumptions·Summary·Funding·IS·Depreciation·DebtSchedule·CashFlow·KCH·가격환산 9개 시트로 된 <code>.xlsx</code>가 같은 폴더에 만들어지고 바로 Excel로 열립니다(수치는 이 화면과 동일하게 계산).</p>
+          </div>
+        </details>
+      </div>

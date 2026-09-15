@@ -11,8 +11,12 @@ ESS 베타테스트용.xlsm
 ESS_베타테스트용.json
 안좌ESS_가정.json
 
-# ESS 적정 입찰단가 프로토타입(별도 Artifact) 로컬 검증용 — GreenWorth 앱과 무관, 커밋 대상 아님
-ess-bidprice-xlsx.mjs
+# ESS 적정 입찰단가 엑셀 회신 산출물 — ESS_엑셀변환.bat이 만드는 파일(변환 스크립트는 커밋, 산출물은 제외)
 ESS_적정입찰단가_모델*.xlsx
 ESS_적정입찰단가_모델*_LOG.txt
-ESS_엑셀변환.bat
+
+# 재테크(진가) 웹앱 — 별도 프로젝트(Cloudflare 배포), GreenWorth 공개 저장소에 올리지 않음
+재태크 앱/
+
+# GitHub Pages 사이트 조립 결과(GitHub Actions에서 생성)
+_site/

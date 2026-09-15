@@ -1,0 +1,226 @@
+//@@ FORM
+            <div class="subtotal strong"><span>새 모듈 등록 · 목록 관리</span><span class="muted" id="moduleCatalogInfo"></span></div>
+            <p class="hint" style="margin-top:0;">새 모듈(신제품·새 제조사)이 나오면 <strong>① 아래 칸을 채워 "모듈 추가"</strong> — 이 브라우저에 저장되고 C. 발전매출의 모듈 제조사·혼용 모듈사 목록, 위 세 표, 근거 목록에 바로 나타납니다. 탄소배출량(검증값, kg·CO2/kW)을 넣으면 공고 구간으로 등급·배점·우대가격이 자동으로 매겨지고, 비우면 미검증(4등급)입니다. <strong>② 팀에 공유</strong>하려면 "사용자 추가 모듈 내보내기"로 JSON을 받아 전달하고, 받는 사람은 "불러오기"(시나리오 JSON 파일도 받음). 사용자 추가 모듈은 시나리오를 저장할 때 함께 담겨 시나리오 파일만으로도 복원됩니다. <strong>③ 기본 목록에 영구 반영</strong>하려면 내보낸 JSON의 항목을 페이지 코드의 <code>MODULE_CATALOG</code>에 그대로 붙여넣으면 됩니다(항목 모양이 같습니다).</p>
+            <div class="calc-grid" style="margin-top:0;">
+              <div class="field"><label for="newMkName">제조사</label><div class="iw"><input id="newMkName" type="text" placeholder="예) 한화큐셀"></div></div>
+              <div class="field"><label for="newMkModel">모델명</label><div class="iw"><input id="newMkModel" type="text" placeholder="예) Q.TRON G3 (신제품)"></div></div>
+              <div class="field"><label for="newMkOrigin">원산지</label><div class="iw"><select id="newMkOrigin"><option value="domestic" selected>국산</option><option value="china">중국산·기타 외산</option></select></div></div>
+              <div class="field"><label for="newMkPrice">모듈 단가</label><div class="iw"><input id="newMkPrice" type="number" value="380" step="5" min="0"><span class="unit">원/W</span></div></div>
+              <div class="field"><label for="newMkGamma">온도계수</label><div class="iw"><input id="newMkGamma" type="number" value="-0.29" step="0.01"><span class="unit">%/℃</span></div></div>
+              <div class="field"><label for="newMkBif">양면율</label><div class="iw"><input id="newMkBif" type="number" value="80" step="1" min="0" max="100"><span class="unit">%</span></div></div>
+              <div class="field"><label for="newMkDeg1">1년차 열화</label><div class="iw"><input id="newMkDeg1" type="number" value="1.0" step="0.1" min="0"><span class="unit">%</span></div></div>
+              <div class="field"><label for="newMkDegA">연간 열화</label><div class="iw"><input id="newMkDegA" type="number" value="0.40" step="0.01" min="0"><span class="unit">%/년</span></div></div>
+              <div class="field"><label for="newMkCo2">탄소배출량 (검증값)</label><div class="iw"><input id="newMkCo2" type="number" value="" step="0.01" min="0" placeholder="비우면 미검증"><span class="unit">kg·CO2/kW</span></div></div>
+              <div class="field"><label for="newMkSource">근거 · 확인 수준</label><div class="iw"><input id="newMkSource" type="text" placeholder="예) 데이터시트(2026-10), 탄소검증 등록 전"></div></div>
+            </div>
+            <div class="module-link">
+              <button type="button" class="btn btn-soft" id="addModuleBtn">모듈 추가</button>
+              <button type="button" class="btn" id="exportModulesBtn">사용자 추가 모듈 내보내기 (JSON)</button>
+              <button type="button" class="btn" id="importModulesBtn">불러오기</button>
+              <input type="file" id="importModulesFile" accept=".json,application/json" hidden>
+            </div>
+            <p id="moduleFormMsg" role="status" hidden></p>
+
+//@@ CATALOG
+  // ---------- 모듈사 카탈로그 ----------
+  // 새 모듈(또는 새 제조사)은 MODULE_CATALOG에 항목 하나를 더하면 C. 발전매출의 선택 목록·비교표·탄소검증 표·스펙표·근거 목록에 자동 반영된다.
+  // 필드: id(영문·숫자·_ 고유값) · origin('domestic' | 'china') · name(제조사) · model(대표 모델) · specLabel(스펙 확인 수준, 짧게)
+  //       registered(탄소검증 등록명·공장) · dist(검증 제품 등급 분포 문구) · price(모듈 단가 원/W, 예시) · gamma(온도계수 %/℃)
+  //       bif(양면율 %) · deg1(1년차 열화 %) · degA(연간 열화 %/년) · products([{ v, label, co2 }] — 첫 항목이 기본 선택, co2 0 = 미검증)
+  //       source(스펙 근거 문장). 화면의 "새 모듈 등록"으로 추가한 모듈도 같은 모양으로 저장·내보낸다.
+  const MODULE_CATALOG_UPDATED = '2026-09-14';
+  const MODULE_CATALOG = __CATALOG__;
+  // 사용자 추가 모듈 — 이 브라우저(localStorage)에 저장하고, 시나리오 저장·내보내기에도 담는다.
+  const CUSTOM_MODULE_KEY = 'solarCustomModules.v1';
+  const MODULE_ID_RE = /^[A-Za-z0-9_]+$/; // 표 칸 id(mk-{id}-price)에 들어가므로 하이픈 없이
+  function validModule(t) { return !!(t && t.name && t.model && +t.price > 0); }
+  // 빈 필드를 채운다 — 탄소검증 제품 목록이 없으면 배출량(co2)으로 한 항목 + 미검증 항목을 만든다.
+  function normalizeModule(t) {
+    const num = (v, d) => (v === '' || v == null || !Number.isFinite(+v) ? d : +v);
+    const co2 = num(t.co2, 0);
+    const products = Array.isArray(t.products) && t.products.length
+      ? t.products.map((p) => ({ v: String(p.v), label: String(p.label || p.v), co2: num(p.co2, 0) }))
+      : [...(co2 > 0 ? [{ v: 'verified', label: `검증 배출량 · ${co2.toFixed(2)}`, co2 }] : []), { v: 'none', label: '미검증 제품 사용', co2: 0 }];
+    const out = { ...t, id: String(t.id), origin: t.origin === 'domestic' ? 'domestic' : 'china', name: String(t.name).trim(), model: String(t.model).trim(),
+      price: num(t.price, 0), gamma: num(t.gamma, -0.3), bif: num(t.bif, 80), deg1: num(t.deg1, 1), degA: num(t.degA, 0.4), products };
+    delete out.co2; delete out.custom;
+    return out;
+  }
+  function loadCustomModules() {
+    try {
+      const v = JSON.parse(localStorage.getItem(CUSTOM_MODULE_KEY) || '[]');
+      return Array.isArray(v) ? v.filter((t) => validModule(t) && MODULE_ID_RE.test(String(t.id))).map(normalizeModule) : [];
+    } catch (e) { return []; }
+  }
+  function saveCustomModules() {
+    try { localStorage.setItem(CUSTOM_MODULE_KEY, JSON.stringify(customModules)); return true; } catch (e) { return false; }
+  }
+  let customModules = loadCustomModules();
+  const newModuleId = () => 'm' + Date.now().toString(36) + Math.floor(Math.random() * 46656).toString(36);
+  const allModules = () => [...MODULE_CATALOG, ...customModules.map((t) => ({ ...t, custom: true }))];
+  const makerById = (id) => allModules().find((m) => m.id === id);
+  const productsOf = (id) => (makerById(id) || {}).products || [];
+  // ---------- 사업 구성 조합 ----------
+  // 기자재 원산지가 EPC 단가와 탄소 등급을 동시에 움직이고, 그에 따라 판매 구조까지 달라지는 두 조합.
+  // 조합을 따로 저장하지 않고 "지금 입력값이 어느 조합과 일치하는지"로 판정한다(시나리오 저장·복원과 자동으로 맞는다).
+//@@ UI
+  // ---------- 모듈사 목록(카탈로그 + 사용자 추가) → 선택 목록 · 비교표 · 탄소검증 표 · 스펙표 · 근거 목록 ----------
+  // 이미 있던 표 칸의 값(이번 세션에 고친 값)과 선택 모듈사는 유지한다. 칸의 HTML value·selected는 정의값이라 "기본값으로 되돌리기"가 그 값으로 돌아간다.
+  function renderModuleUI() {
+    const list = allModules(), keep = {}, h = escapeHtml;
+    document.querySelectorAll('#moduleCarbonBody [id^="mk-"], #moduleSpecBody [id^="mk-"]').forEach((el) => { keep[el.id] = el.value; });
+    const sel = $('moduleMaker'), sec = $('secondaryMaker'), prevSel = sel.value, prevSec = sec.value;
+    const originLabel = (m) => (m.origin === 'domestic' ? '국산' : '중국산');
+    const opt = (m) => `<option value="${h(m.id)}"${m.id === 'hanwha' ? ' selected' : ''}>${h(m.name)} · ${h(m.model)}${m.custom ? ' (사용자 추가)' : ''}</option>`;
+    sel.innerHTML = `<optgroup label="국산 (탄소검증 우대 대상)">${list.filter((m) => m.origin === 'domestic').map(opt).join('')}</optgroup>`
+      + `<optgroup label="중국산">${list.filter((m) => m.origin !== 'domestic').map(opt).join('')}</optgroup>`;
+    sel.value = list.some((m) => m.id === prevSel) ? prevSel : 'hanwha';
+    sec.innerHTML = '<option value="" selected>혼용 없음</option>' + list.map((m) => `<option value="${h(m.id)}">${h(m.name)}${m.custom ? ` · ${h(m.model)}` : ''}</option>`).join('');
+    sec.value = list.some((m) => m.id === prevSec) ? prevSec : '';
+    const val = (v, d) => (v === '' || v == null || !Number.isFinite(+v) ? '' : d == null ? String(+v) : (+v).toFixed(d));
+    const nameCell = (m, sub) => `<th class="mk-name"><span class="mk-origin ${m.origin === 'domestic' ? 'domestic' : 'china'}">${originLabel(m)}</span>${h(m.name)}<span class="sub">${sub}</span></th>`;
+    const specSub = (m) => `${h(m.model)} · ${h(m.custom ? '사용자 추가' : m.specLabel || '')}`;
+    $('moduleTableBody').innerHTML = list.map((m) => {
+      const id = h(m.id);
+      return `
+                  <tr data-mk-row="${id}">${nameCell(m, specSub(m))}
+                    <td id="mk-${id}-y1">—</td><td id="mk-${id}-avg">—</td><td id="mk-${id}-epc">—</td><td id="mk-${id}-solve">—</td><td id="mk-${id}-bid">—</td>
+                    <td><button type="button" class="btn btn-soft" data-mk-pick="${id}">선택</button></td>
+                  </tr>`;
+    }).join('');
+    $('moduleCarbonBody').innerHTML = list.map((m) => {
+      const id = h(m.id), p0 = m.products[0] || { co2: 0 };
+      const opts = m.products.map((p, i) => `<option value="${h(p.v)}"${i === 0 ? ' selected' : ''}>${h(p.label)}</option>`).join('');
+      return `
+                  <tr data-mk-row="${id}">${nameCell(m, h(m.registered || (m.custom ? '사용자 추가' : '')))}
+                    <td style="text-align:left;"><select id="mk-${id}-product" class="mk-product" aria-label="${h(m.name)} 탄소검증 제품">${opts}<option value="custom">직접 입력</option></select></td>
+                    <td><input id="mk-${id}-co2" type="number" value="${p0.co2 > 0 ? p0.co2 : ''}" step="0.01" min="0" placeholder="미검증" aria-label="${h(m.name)} 탄소배출량"></td>
+                    <td id="mk-${id}-cgrade">—</td><td id="mk-${id}-cscore">—</td><td id="mk-${id}-cprem">—</td>
+                    <td>${h(m.dist || (m.custom ? '사용자 입력' : ''))}</td>
+                  </tr>`;
+    }).join('');
+    const cell = (m, fld, step, label, d) => `<td><input id="mk-${h(m.id)}-${fld}" type="number" value="${val(m[fld], d)}" step="${step}" aria-label="${h(m.name)} ${label}"></td>`;
+    $('moduleSpecBody').innerHTML = list.map((m) => `
+                  <tr data-mk-row="${h(m.id)}">${nameCell(m, specSub(m))}${cell(m, 'price', 5, '모듈 단가')}${cell(m, 'gamma', 0.01, '온도계수', 2)}${cell(m, 'bif', 1, '양면율')}${cell(m, 'deg1', 0.1, '1년차 열화', 1)}${cell(m, 'degA', 0.01, '연간 열화', 2)}
+                    <td>${m.custom ? `<button type="button" class="btn" data-mk-del="${h(m.id)}">삭제</button>` : ''}</td>
+                  </tr>`).join('');
+    document.querySelectorAll('#moduleCarbonBody [id^="mk-"], #moduleSpecBody [id^="mk-"]').forEach((el) => { if (keep[el.id] != null) el.value = keep[el.id]; });
+    $('moduleSourceList').innerHTML = list.map((m) => `<li>${m.custom ? `<strong>[사용자 추가 ${h(m.addedAt || '')}]</strong> ` : ''}${h(m.source || `${m.name} ${m.model} — 근거 미입력`)}</li>`).join('');
+    const dom = list.filter((m) => m.origin === 'domestic').length;
+    $('moduleCountHead').textContent = `국산 ${dom}종 · 중국산 ${list.length - dom}종`;
+    $('moduleCatalogInfo').textContent = `기본 목록 ${MODULE_CATALOG.length}종 (기준일 ${MODULE_CATALOG_UPDATED}) · 사용자 추가 ${customModules.length}종`;
+    resultsDirty.module = true;
+  }
+//@@ LISTENERS
+  // 모듈사 선택 → 모듈 단가·탄소 등급·1년차 이용률·열화율을 C·D 입력에 주입(공통 recalcAll 리스너보다 먼저 등록해 주입값으로 재계산)
+  $('moduleMaker').addEventListener('input', applyModuleDerived);
+  // 보정 기준·BOS·부지 기준 이용률·공고 기준값을 고치면, 직전까지 모듈사 값이 적용 중이었을 때만 다시 주입한다
+  // (사용자가 C·D를 직접 조정한 상태는 덮어쓰지 않는다). 모듈사 표의 칸은 아래 패널 위임 리스너가 처리한다.
+  const MODULE_UPSTREAM_IDS = ['siteBaseRatePct', 'bosUnitPrice', 'refTempCoef', 'refBifaciality', 'refFirstYearDeg', 'tempDeltaC', 'rearGainPct', 'secondaryMaker', 'tenderPreset',
+    'carbonT1', 'carbonT2', 'carbonT3', 'carbonS1', 'carbonS2', 'carbonS3', 'carbonS4', 'carbonP1', 'carbonP2', 'carbonP3', 'carbonP4'];
+  MODULE_UPSTREAM_IDS.forEach((id) => $(id).addEventListener('input', () => { if (moduleLinked) applyModuleDerived(); }));
+  $('applyModuleBtn').addEventListener('click', () => { applyModuleDerived(); recalcAll(); });
+  $('gotoModuleTab').addEventListener('click', () => $('tab-module').click());
+  // 모듈사 표는 목록이 바뀔 때마다 다시 그려지므로, 표 입력·버튼 이벤트는 패널에 한 번만 걸어 위임한다.
+  $('panel-module').addEventListener('input', (e) => {
+    const el = e.target;
+    if (!el.id || !el.id.startsWith('mk-')) return;
+    const cut = el.id.lastIndexOf('-'), own = el.id.slice(3, cut), fld = el.id.slice(cut + 1);
+    // 탄소검증 제품 선택 → 그 제품의 검증 배출량을 칸에 채운다(직접 입력이면 그대로)
+    if (fld === 'product') {
+      const p = productsOf(own).find((x) => x.v === el.value);
+      if (p) $(`mk-${own}-co2`).value = p.co2 > 0 ? String(p.co2) : '';
+    }
+    // 사용자 추가 모듈의 스펙을 고치면 저장된 정의도 함께 고친다(기본 목록 모듈은 이번 세션 값 — 시나리오로 저장)
+    const c = customModules.find((t) => t.id === own);
+    if (c && ['price', 'gamma', 'bif', 'deg1', 'degA'].includes(fld) && el.value !== '') { c[fld] = +el.value; saveCustomModules(); }
+    if (moduleLinked && own === $('moduleMaker').value) applyModuleDerived();
+    recalcAll();
+  });
+  $('panel-module').addEventListener('click', (e) => {
+    const pick = e.target.closest('[data-mk-pick]'), del = e.target.closest('[data-mk-del]');
+    if (pick) { $('moduleMaker').value = pick.dataset.mkPick; applyModuleDerived(); recalcAll(); }
+    if (del) removeCustomModule(del.dataset.mkDel);
+  });
+
+  // ---------- 새 모듈 등록 · 삭제 · 내보내기 · 불러오기 ----------
+  function moduleMsg(text, isError) {
+    const m = $('moduleFormMsg');
+    m.className = isError ? 'warn show' : 'callout-sm';
+    m.textContent = text;
+    m.hidden = false;
+  }
+  $('addModuleBtn').addEventListener('click', () => {
+    const g = (id) => $(id).value.trim();
+    const co2 = g('newMkCo2');
+    if (!g('newMkName') || !g('newMkModel')) return moduleMsg('제조사와 모델명을 입력해 주세요.', true);
+    if (co2 !== '' && !(+co2 > 0)) return moduleMsg('탄소배출량은 0보다 큰 숫자로 입력하거나 비워 두세요(미검증).', true);
+    const t = normalizeModule({ id: newModuleId(), origin: $('newMkOrigin').value, name: g('newMkName'), model: g('newMkModel'), specLabel: '사용자 추가',
+      registered: co2 ? '사용자 입력 검증 배출량' : '탄소검증 정보 없음', dist: '사용자 입력', price: g('newMkPrice'), gamma: g('newMkGamma'), bif: g('newMkBif'),
+      deg1: g('newMkDeg1'), degA: g('newMkDegA'), co2, source: g('newMkSource') ? `${g('newMkName')} ${g('newMkModel')} — ${g('newMkSource')}` : '', addedAt: new Date().toISOString().slice(0, 10) });
+    if (!(t.price > 0)) return moduleMsg('모듈 단가(원/W)는 0보다 커야 합니다.', true);
+    if (!(t.bif >= 0 && t.bif <= 100) || !(t.deg1 >= 0 && t.deg1 < 100) || !(t.degA >= 0 && t.degA < 100)) return moduleMsg('양면율은 0~100%, 열화율은 0 이상으로 입력해 주세요.', true);
+    if (allModules().some((x) => x.name === t.name && x.model === t.model)) return moduleMsg(`${t.name} ${t.model}은(는) 이미 목록에 있습니다 — 스펙 표에서 값을 고쳐 주세요.`, true);
+    customModules.push(t);
+    const saved = saveCustomModules();
+    renderModuleUI();
+    recalcAll();
+    ['newMkName', 'newMkModel', 'newMkCo2', 'newMkSource'].forEach((id) => { $(id).value = ''; });
+    moduleMsg(`${t.name} ${t.model}을(를) 추가했습니다${saved ? '(이 브라우저에 저장)' : ' — 브라우저 저장이 막혀 이 화면에서만 유지되니 내보내기로 파일을 받아 두세요'}. 선택 목록·비교표·탄소검증 표에 반영됐습니다.`, !saved);
+  });
+  function removeCustomModule(id) {
+    const t = customModules.find((x) => x.id === id);
+    if (!t) return;
+    customModules = customModules.filter((x) => x.id !== id);
+    saveCustomModules();
+    const wasSelected = $('moduleMaker').value === id, wasSecondary = $('secondaryMaker').value === id;
+    renderModuleUI();
+    if (wasSelected || (wasSecondary && moduleLinked)) applyModuleDerived();
+    recalcAll();
+    moduleMsg(`${t.name} ${t.model}을(를) 목록에서 뺐습니다${wasSelected ? ' — 선택 모듈사는 한화큐셀로 바뀌었습니다' : ''}${wasSecondary ? ' — 혼용 모듈사는 "혼용 없음"으로 바뀌었습니다' : ''}. 내보낸 파일이 있으면 불러오기로 되살릴 수 있습니다.`, false);
+  }
+  // 같은 id(또는 같은 제조사+모델)의 사용자 추가 모듈은 갱신, 새 것은 추가. 기본 목록과 같은 제조사+모델은 건너뛴다.
+  function mergeModules(incoming) {
+    const r = { added: 0, updated: 0, skipped: 0 };
+    (Array.isArray(incoming) ? incoming : []).forEach((raw) => {
+      if (!validModule(raw)) { r.skipped++; return; }
+      const t = normalizeModule(raw);
+      if (MODULE_CATALOG.some((x) => x.name === t.name && x.model === t.model)) { r.skipped++; return; }
+      if (!MODULE_ID_RE.test(t.id) || MODULE_CATALOG.some((x) => x.id === t.id)) t.id = newModuleId();
+      const i = customModules.findIndex((x) => x.id === t.id || (x.name === t.name && x.model === t.model));
+      if (i >= 0) { customModules[i] = { ...customModules[i], ...t, id: customModules[i].id }; r.updated++; } else { customModules.push(t); r.added++; }
+    });
+    if (r.added + r.updated) saveCustomModules();
+    return r;
+  }
+  $('exportModulesBtn').addEventListener('click', async () => {
+    if (!customModules.length) return moduleMsg('내보낼 사용자 추가 모듈이 없습니다.', true);
+    if (!downloadsApi) return moduleMsg('이 화면에서는 다운로드 기능을 사용할 수 없습니다(Claude 앱/웹의 아티팩트 화면에서 다시 시도해 주세요).', true);
+    try {
+      const data = JSON.stringify({ tool: '태양광 적정 입찰가격 프로토타입 (초안)', kind: 'moduleCatalog', exportedAt: new Date().toISOString(),
+        modules: customModules.map(({ custom, ...t }) => t) }, null, 2);
+      await downloadsApi.save({ filename: `태양광_모듈목록_${new Date().toISOString().slice(0, 10)}.json`, data });
+      moduleMsg(`사용자 추가 모듈 ${customModules.length}종을 내보냈습니다.`, false);
+    } catch (e) {
+      moduleMsg(e && e.code === 'declined' ? '다운로드를 취소했습니다.' : '다운로드에 실패했습니다: ' + (e && e.message ? e.message : e), true);
+    }
+  });
+  $('importModulesBtn').addEventListener('click', () => $('importModulesFile').click());
+  $('importModulesFile').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      // 모듈 목록 파일(modules) · 시나리오 파일(inputs.customModules) · 항목 배열 모두 받는다
+      const incoming = Array.isArray(parsed) ? parsed : parsed.modules || (parsed.inputs && parsed.inputs.customModules) || parsed.customModules || [];
+      const r = mergeModules(incoming);
+      renderModuleUI();
+      recalcAll();
+      moduleMsg(`불러오기: 추가 ${r.added}종 · 갱신 ${r.updated}종${r.skipped ? ` · 건너뜀 ${r.skipped}종(필수값 누락 또는 기본 목록과 같은 모델)` : ''}.`, r.added + r.updated === 0);
+    } catch (err) {
+      moduleMsg('JSON 파일을 읽지 못했습니다: ' + (err && err.message ? err.message : err), true);
+    } finally {
+      e.target.value = '';
+    }
+  });
+  renderModuleUI(); // 카탈로그 + 사용자 추가 모듈로 선택 목록·모듈사 표를 그린다(표 칸을 읽는 계산·탭 선택보다 먼저)

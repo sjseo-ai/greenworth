@@ -2,6 +2,23 @@
 
 육상풍력, 해상풍력, 태양광, ESS의 개발·건설부터 운영까지를 달력연도로 연결해 비교하는 프로젝트금융 사전 타당성 웹 애플리케이션입니다. 예시 엑셀에서는 입력 범주, 기간 구조와 검증용 결과만 참고했고 화면과 계산 코드는 새로 작성했습니다.
 
+## 온라인에서 보기 · 공유
+
+GitHub Pages로 배포되어 링크만 있으면 누구나 로그인 없이 열 수 있습니다(`master`에 반영될 때마다 자동 갱신, 보통 2~3분).
+
+| 페이지 | 링크 |
+| --- | --- |
+| GreenWorth 사업성 분석 앱 | https://sjseo-ai.github.io/greenworth/ |
+| 입찰단가 프로토타입 목록 | https://sjseo-ai.github.io/greenworth/prototypes/ |
+| 태양광 적정 입찰가격 | https://sjseo-ai.github.io/greenworth/prototypes/solar/ |
+| 해상풍력 적정 입찰가격 | https://sjseo-ai.github.io/greenworth/prototypes/offshore-wind/ |
+| BESS(ESS) 적정 입찰단가 | https://sjseo-ai.github.io/greenworth/prototypes/bess/ |
+
+- 압축 파일(오프라인용): 목록 페이지의 "압축 파일 받기" 또는 `https://sjseo-ai.github.io/greenworth/prototypes/downloads/greenworth-{solar,offshore-wind,bess}-bid-price.zip`
+- 받는 사람이 입력한 값·시나리오·추가한 모듈/터빈은 그 사람의 브라우저에만 저장되고 서로 공유되지 않습니다. 결과를 주고받을 때는 시나리오 JSON·CSV 내보내기 파일을 전달하고, 받는 쪽은 "불러오기"로 엽니다.
+- 내용 수정 흐름: 브랜치에서 수정(프로토타입은 `prototypes/src/*.html` 수정 후 `npm run build:prototypes`) → PR → `master` 병합 → GitHub Actions "Deploy site"가 테스트 후 자동 배포(저장소 Actions 탭에서 진행 확인).
+- 저장소가 공개이므로 사이트도 공개입니다. 민감 원본 파일은 `.gitignore`로 제외되어 사이트에 올라가지 않습니다.
+
 ## 실행
 
 가장 간단한 방법은 `index.html`을 더블클릭해 바로 여는 것입니다. 별도 서버 없이도 모든 계산 기능이 동작합니다.
@@ -19,6 +36,22 @@ npm run serve
 ```bash
 npm test
 ```
+
+## 입찰단가 프로토타입 (태양광 · 해상풍력 · BESS)
+
+발전원별 경쟁입찰 조건으로 목표 수익(당사 이익 또는 목표 IRR)을 만족하는 적정 입찰가격을 역산하는 독립 페이지 3종입니다. 앱 상단의 "입찰단가 프로토타입" 링크 또는 `prototypes/index.html`에서 엽니다.
+
+| 발전원 | 페이지 | 주요 기능 |
+| --- | --- | --- |
+| 태양광 | `prototypes/solar/index.html` | 국산·중국산 모듈 7종 비교와 탄소검증 등급 우대가격, 고정가격계약/기업PPA 조합, 상한가 진입 조건, 경쟁입찰 회차·대형 사업 사례 |
+| 해상풍력 | `prototypes/offshore-wind/index.html` | 터빈 6종 비교, 공공주도형/일반 트랙·REC 가중치, 상한가 진입 조건, 선정 단지 18건 사례(보도·EIASS) |
+| BESS(ESS) | `prototypes/bess/index.html` | ESS 중앙계약시장 적정 입찰단가 역산, 공급량·패널티, 선정평가 가격 환산, KCH 개발수수료 |
+
+- 원본은 Claude Artifact에 게시한 HTML 조각인 `prototypes/src/{solar,offshore-wind,bess}.html`입니다. 원본을 고친 뒤 `npm run build:prototypes`로 사이트용 페이지(`prototypes/*/index.html`)와 발전원별 압축 파일(`prototypes/downloads/*.zip`)을 다시 만들어 함께 커밋합니다. 생성 페이지·압축 파일이 원본과 어긋나면 `npm test`가 실패합니다.
+- 압축 파일에는 독립 페이지(`index.html`), 원본 조각(`artifact-source.html`), 안내문(`README.md`)이 들어 있으며, 압축을 풀고 `index.html`을 더블클릭하면 설치·인터넷 연결 없이 동작합니다.
+- 사이트에서 열면 내보내기(CSV·JSON)는 브라우저 다운로드로 저장되고, 입력값·시나리오는 각자의 브라우저에만 저장됩니다.
+- 프로토타입을 만들고 검증할 때 쓴 변환 파이프라인·브라우저 점검 스크립트·EIASS 조사 결과는 `prototypes/tools/`에 작업 기록으로 모아 두었습니다(사이트 빌드·테스트와 무관, 폴더 안내는 `prototypes/tools/README.md`). 설계 기준 문서는 `web-app-blueprint.md`, `result-tabs-design-spec.md`, 엑셀 회신 사양은 `excel-export-spec.md`(변환기 `ESS_엑셀변환.bat` · `ess-bidprice-xlsx.mjs`)입니다.
+- `master`에 반영되면 GitHub Actions(`.github/workflows/pages.yml`)가 테스트 후 앱과 프로토타입, 압축 파일을 GitHub Pages로 배포합니다(저장소 설정 Pages의 Source = GitHub Actions).
 
 ## 모델 구조
 

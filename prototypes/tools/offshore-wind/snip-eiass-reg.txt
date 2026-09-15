@@ -1,0 +1,26 @@
+// EIASS 사업 상세(eiaInfo.do) 표에서 읽은 협의 등록 제원 — 규모(MW)·사업비(억원)·사업시행자·평가대행자(2026-09-14 조회).
+// 사업비가 보도되지 않은 사례는 등록 사업비 ÷ 등록 규모를 총사업비 기본값으로 쓴다(capexOk: false면 제외).
+const EIASS_REG = {
+  c23_sinanui: { mw: 390, capex: 24000, dev: "한화건설(주) · 한국남동발전(주) · SK D&D(주)", agent: "(주)세광종합기술단", extra: "본문 표기 400MW · 우이도 남측 약 4km · 해상·육상 154kV 송전선로" },
+  c23_nakwol: { mw: 352.8, capex: 17000, dev: "명운산업개발(주)", agent: "(주)한국종합기술", extra: "협의 등록 규모(352.8MW)가 입찰 용량과 다름" },
+  c23_geumil1: { mw: 600, capex: 32710, dev: "한국남동발전(주)", agent: "(주)한국종합기술", extra: "금일 1·2 합산 등록 · 완도변전소 연계" },
+  c23_geumil2: { mw: 600, capex: 32710, dev: "한국남동발전(주)", agent: "(주)한국종합기술", extra: "금일 1·2 합산 등록 · 완도변전소 연계" },
+  c24_anma: { mw: 546, capex: 33967, dev: "안마해상풍력(주)", agent: "(주)한솔이엔씨" },
+  c24_taean: { mw: null, capex: 26000, dev: "㈜태안풍력발전", agent: "(주)도화엔지니어링", extra: "규모란이 용량 대신 39.3km(연장)로 등록" },
+  c24_yawol: { mw: 104, capex: 4500, dev: "(주)재원에너지", agent: "(주)세광종합기술단", extra: "사업규모 104MW(8MW×13기) · 협의 사업비는 EPC 계약(5,750억원) 이전 값" },
+  c24_bandi: { mw: 810, capex: 57000, dev: "반딧불이에너지(주)(당초 파이어플라이플로팅오프쇼어윈드(주))", agent: "(주)세광종합기술단" },
+  c25_seonamhae: { mw: 460, capex: 24000, dev: "한국해상풍력(주)", agent: "(주)세광종합기술단 · (주)유신 · (주)마린", extra: "부안 위도 대리 남측 해상 및 고창 전면 해역" },
+  c26_geumo: { mw: 160, capex: 8601, dev: "금오도해상풍력(주)(DL에너지 → 2025-03-31 사업 양수인가)", agent: "(주)한국종합기술", extra: "본문 표기 166.8MW(5.56MW×30기) · 송전선로 57.7km(해저 51.6km · 육상 지중 6.1km) · 해상변전소 1개소" },
+  c26_hanbit: { mw: 340, capex: 22100, dev: "한빛해상풍력(주)", agent: "한국종합기술" },
+  c26_gulup: { mw: 250, capex: 18000, dev: "굴업풍력개발(주)", agent: "(주)세광종합기술단" },
+  c26_haesong3: { mw: 1008, capex: 4575, capexOk: false, dev: "(주)해송해상풍력발전1 · (주)해송해상풍력발전3", agent: "(주)도화엔지니어링", extra: "HS1 504MW + HS3 504MW · 신안 서남측 약 84~92km 공유수면 · 육상변전소 해남 문내면 · 등록 사업비가 1,008MW에 비해 지나치게 작아(일부 구간 값으로 추정) 기본값에 쓰지 않음" },
+  c26_haeuli2: { mw: 1500, capex: 105768, dev: "(주)해울이해상풍력발전1 · 2 · 3", agent: "(주)한국종합기술", extra: "해울이 1~3 합산 등록" },
+};
+CASES.forEach((c) => {
+  const g = EIASS_REG[c.id];
+  if (!g) return;
+  const per = g.mw && g.capex && g.capexOk !== false ? Math.round((g.capex / g.mw) * 10) / 10 : null;
+  c.eiassCapexPerMW = per;
+  c.eiassReg = [g.mw ? `등록 규모 ${g.mw.toLocaleString("en-US")}MW` : "", g.capex ? `협의 사업비 ${g.capex.toLocaleString("en-US")}억원${per != null ? `(MW당 ${per}억원)` : ""}` : "",
+    `사업시행자 ${g.dev}`, `평가대행 ${g.agent}`, g.extra || ""].filter(Boolean).join(" · ");
+});
