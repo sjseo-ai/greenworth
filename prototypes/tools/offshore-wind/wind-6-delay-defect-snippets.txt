@@ -1,0 +1,72 @@
+//@@ OPEX_FIELDS
+              <div class="subhead">하자보수 보증 — 보증기간 중 SPC가 부담하지 않는 고정 O&amp;M</div>
+              <div class="field-grid" style="margin-top:0;">
+                <div class="field"><label for="defectTurbineYears">터빈 보증기간<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="defectTurbineYears" type="number" value="5" step="1" min="0" max="30"><span class="unit">년</span></div></div>
+                <div class="field"><label for="defectTurbinePct">터빈 부담분<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="defectTurbinePct" type="number" value="15" step="1" min="0" max="100"><span class="unit">고정 O&amp;M %</span></div></div>
+                <div class="field"><label for="defectEpcYears">BOP 보증기간<span class="wg wg-e">EPC</span></label><div class="iw"><input id="defectEpcYears" type="number" value="2" step="1" min="0" max="30"><span class="unit">년</span></div></div>
+                <div class="field"><label for="defectEpcPct">BOP 부담분<span class="wg wg-e">EPC</span></label><div class="iw"><input id="defectEpcPct" type="number" value="5" step="1" min="0" max="100"><span class="unit">고정 O&amp;M %</span></div></div>
+              </div>
+              <p class="hint" style="margin:6px 0 0;">하자보수(결함) 보증기간에는 해당 범위의 수리·교체를 터빈사·EPC가 부담하므로 그만큼 <strong>SPC의 고정 O&amp;M이 줄어드는 것으로 반영</strong>합니다(보증기간이 끝나면 원래 금액으로 복귀). 기간·부담 비율은 계약마다 다른 예시값이고, 하자보수 보증금(이행보증)은 담보라 현금흐름에 넣지 않았습니다 — <button type="button" class="link-btn" data-goto-tab="tab-warranty">보증·LD 탭에서 효과 보기 →</button>
+
+//@@ PANEL_BLOCKS
+            <div class="subtotal strong"><span>준공지연 LD (EPC 도급)</span><span></span></div>
+            <div class="calc-grid" style="margin-top:0;">
+              <div class="field"><label for="delayWeeks">준공지연</label><div class="iw"><input id="delayWeeks" type="number" value="8" step="1" min="0" max="260"><span class="unit">주</span></div></div>
+              <div class="field"><label for="delayLdRatePct">LD 요율</label><div class="iw"><input id="delayLdRatePct" type="number" value="0.2" step="0.05" min="0" max="10"><span class="unit">도급액 %/주</span></div></div>
+              <div class="field"><label for="delayLdCapPct">LD 총액 상한</label><div class="iw"><input id="delayLdCapPct" type="number" value="10" step="1" min="0" max="100"><span class="unit">도급액 %</span></div></div>
+            </div>
+            <table class="kv"><tbody id="delayBody"></tbody></table>
+            <p class="hint" style="margin:6px 0 12px;">지연 손실은 <strong>지연 기간만큼 매출이 뒤로 밀리는 것</strong>으로 보고 1년차 발전매출의 일할로 계산합니다. LD는 도급액(① 공사비 = EPC 단가 × 설비용량) 기준 요율 × 지연 주수이며 총액 상한에서 잘립니다. 고정가격계약은 준공기한을 넘기면 계약 해지·가격 조정이 따로 걸릴 수 있어 LD만으로 상쇄되지 않습니다. <strong>실제 일정까지 반영하려면 B. 사업개요의 COD를 옮겨</strong> 전체 현금흐름을 다시 계산하세요.</p>
+
+            <div class="subtotal strong"><span>하자보수 보증 효과 (E. OPEX 반영분)</span><span></span></div>
+            <table class="kv"><tbody id="defectBody"></tbody></table>
+            <p class="hint" style="margin:6px 0 0;">보증기간 중 고정 O&amp;M이 줄어드는 효과는 <strong>이미 본 모델(현금흐름·적정 수령단가)에 반영</strong>되어 있습니다. 아래 "보증 없을 때"는 같은 조건에서 하자보수 보증만 뺐을 때의 값입니다.</p>
+
+//@@ JS_DELAY_DEFECT
+    // ── 준공지연 LD ──
+    const weeks = Math.max(0, +$('delayWeeks').value || 0);
+    const epcContract = (+$('epcUnitPrice').value || 0) * mw; // ① 공사비(도급액) 억원 = EPC 단가(억원/MW) × MW
+    const annualRevenue = moneyOf(genOf(cfGuar));
+    const delayLoss = Number.isFinite(annualRevenue) ? (annualRevenue / 365) * weeks * 7 : NaN;
+    const ldDelayRaw = epcContract * (num('delayLdRatePct') / 100) * weeks;
+    const ldDelay = Math.min(ldDelayRaw, epcContract * (num('delayLdCapPct') / 100));
+    const delayNet = delayLoss - ldDelay;
+    $('delayBody').innerHTML = [
+      row('dlContract', '도급액(① 공사비)', 'EPC 단가 × 설비용량', won(epcContract)),
+      row('dlLoss', '지연에 따른 매출 손실', `${fmt(weeks, 0)}주 = ${fmt(weeks * 7, 0)}일 · 1년차 발전매출 일할`, won(delayLoss), delayLoss > 0 ? 'over' : ''),
+      row('dlLd', '수령 LD', `요율 ${fmt(num('delayLdRatePct'), 2)}%/주 × ${fmt(weeks, 0)}주 = ${fmt(num('delayLdRatePct') * weeks, 2)}%${ldDelayRaw > ldDelay ? ` → 상한 ${fmt(num('delayLdCapPct'), 0)}%에서 제한` : ''}`, won(ldDelay), ldDelay > 0 ? 'best' : ''),
+      row('dlNet', 'LD 반영 후 순손실', '매출 손실 − 수령 LD', won(delayNet), delayNet > 0 ? 'over' : 'best'),
+    ].join('');
+
+    // ── 하자보수 보증 효과 — 보증기간 중 고정 O&M 경감(모델에 이미 반영) ──
+    const fixedOpex = sum(model.opex.items.map((it) => it.value)); // 억원/년(1년차 기준)
+    const dw = model.opex.defectWarranty || { turbineYears: 0, turbinePct: 0, epcYears: 0, epcPct: 0 };
+    const saveTurbine = fixedOpex * rate(dw.turbinePct) * dw.turbineYears;
+    const saveEpc = fixedOpex * rate(dw.epcPct) * dw.epcYears;
+    const noWarranty = cloneModel(model);
+    noWarranty.opex = { ...noWarranty.opex, defectWarranty: null };
+    const solvedNo = solveCurrentModel(cloneModel(noWarranty));
+    noWarranty.revenue.bidPricePerKWh = Number.isFinite(price) ? price : 0;
+    const rNo = analyzeEss(noWarranty);
+    const withW = cloneModel(model);
+    withW.revenue.bidPricePerKWh = Number.isFinite(price) ? price : 0;
+    const rYes = analyzeEss(withW);
+    const irrTxt = (r) => (r && !(r.errors && r.errors.length) ? `${fmt(r.projectIrr * 100, 2)}%` : '산정 불가');
+    $('defectBody').innerHTML = [
+      row('dfFixed', '고정 O&amp;M (1년차)', 'E. OPEX 항목 합계', won(fixedOpex)),
+      row('dfTurbine', '터빈 보증 경감', `${fmt(dw.turbineYears, 0)}년 × ${fmt(dw.turbinePct, 0)}% <span class="wg wg-t">터빈사</span>`, `${won(fixedOpex * rate(dw.turbinePct))}/년 · 누적 ${won(saveTurbine)}`, saveTurbine > 0 ? 'best' : ''),
+      row('dfEpc', 'BOP 보증 경감', `${fmt(dw.epcYears, 0)}년 × ${fmt(dw.epcPct, 0)}% <span class="wg wg-e">EPC</span>`, `${won(fixedOpex * rate(dw.epcPct))}/년 · 누적 ${won(saveEpc)}`, saveEpc > 0 ? 'best' : ''),
+      row('dfIrr', '하자보수 보증 반영 / 미반영', '같은 수령단가 기준 P-IRR', `${irrTxt(rYes)} / ${irrTxt(rNo)}`),
+      row('dfPrice', '적정 수령단가 차이', '보증 미반영 − 반영', solvedNo.ok && lastSolved && lastSolved.ok ? `${fmt(solvedNo.price - lastSolved.price, 2)} 원/kWh (${fmt(solvedNo.price, 2)} ← ${fmt(lastSolved.price, 2)})` : '—'),
+    ].join('');
+
+//@@ JS_LISTENERS
+  // 준공지연 LD 입력도 사례 입력처럼 본 모델과 무관해 탭만 다시 그린다(하자보수 보증은 E. OPEX라 본 모델을 다시 계산).
+  $('panel-warranty').addEventListener('input', (e) => {
+    if (!/^delay(Weeks|LdRatePct|LdCapPct)$/.test(e.target.id || '')) return;
+    resultsDirty.warranty = true;
+    renderActiveTab();
+  });
+
+//@@ CAVEAT
+              <li>C·E — <strong>준공지연 LD · 하자보수 보증</strong>: 준공지연 8주 · LD 요율 0.2%/주 · 총액 상한 10%(도급액), 하자보수 보증 터빈 5년 15% · BOP 2년 5%(고정 O&amp;M 기준)는 예시값입니다. 지연 손실은 1년차 발전매출 일할로만 보고 <strong>실제 일정 변경(COD 이동)·고정가격계약의 준공기한 위반 효과(계약 해지·가격 조정)는 반영하지 않았습니다</strong>. 하자보수 보증금(이행보증)은 담보라 현금흐름에 넣지 않았고, 보증 범위를 고정 O&amp;M의 일정 비율로 단순화했습니다</li>
