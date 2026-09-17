@@ -45,7 +45,7 @@ npm test
 | --- | --- | --- |
 | 태양광 | `prototypes/solar/index.html` | 국산·중국산 모듈 7종 비교와 탄소검증 등급 우대가격, 고정가격계약/기업PPA 조합, 상한가 진입 조건, 경쟁입찰 회차·대형 사업 사례, O&M 보증 발전시간 분석 |
 | 해상풍력 | `prototypes/offshore-wind/index.html` | 터빈 6종 비교, 공공주도형/일반 트랙·REC 가중치, 상한가 진입 조건, 선정 단지 18건 사례(보도·EIASS), 보증·LD(터빈사/EPC사)·준공지연 LD·하자보수 보증 |
-| BESS(ESS) | `prototypes/bess/index.html` | ESS 중앙계약시장 적정 입찰단가 역산, 공급량·패널티, 선정평가 가격 환산, KCH 개발수수료 |
+| BESS(ESS) | `prototypes/bess/index.html` | ESS 중앙계약시장 적정 입찰단가 역산, 공급량·패널티, 선정평가 가격 환산, KCH 개발수수료, 입찰 사례(중앙계약시장 회차·선정 사업지) |
 
 - 원본은 Claude Artifact에 게시한 HTML 조각인 `prototypes/src/{solar,offshore-wind,bess}.html`입니다. 원본을 고친 뒤 `npm run build:prototypes`로 사이트용 페이지(`prototypes/*/index.html`)와 발전원별 압축 파일(`prototypes/downloads/*.zip`)을 다시 만들어 함께 커밋합니다. 생성 페이지·압축 파일이 원본과 어긋나면 `npm test`가 실패합니다.
 - 압축 파일에는 독립 페이지(`index.html`), 원본 조각(`artifact-source.html`), 안내문(`README.md`)이 들어 있으며, 압축을 풀고 `index.html`을 더블클릭하면 설치·인터넷 연결 없이 동작합니다.

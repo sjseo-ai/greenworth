@@ -36,7 +36,9 @@ test("standalone pages are full documents with a list link and a browser downloa
     assert.ok(page.includes("window.greenworthBrowserDownloads = {"), `${prototype.id} defines the download fallback`);
     assert.ok(page.includes("let downloadsApi = window.claude ? null : (window.greenworthBrowserDownloads || null);"));
     assert.ok(!page.includes("let downloadsApi = null;"));
-    assert.ok(!page.includes("안좌"), `${prototype.id} does not carry the real project name`);
+    // 시나리오 이름 예시에 실제 사업명을 쓰지 않는다는 점검(원래 의도). 공개 보도로 확인된 입찰 선정 사업지처럼
+    // 출처가 있는 사업명은 본문에 남을 수 있어, 예시 문구 자체만 확인한다.
+    assert.ok(!page.includes("예: 안좌 96MW 기본안"), `${prototype.id} does not carry the real project name in the scenario placeholder`);
     const zipPage = buildStandalone(await read(`prototypes/src/${prototype.id}.html`), prototype, { nav: false });
     assert.ok(!zipPage.includes("gw-site-nav"), `${prototype.id} zip page has no list link`);
   }
