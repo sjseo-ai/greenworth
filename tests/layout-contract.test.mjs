@@ -86,11 +86,20 @@ test("accurate-model styling preserves responsive reading and overflow contracts
   assert.doesNotMatch(productStyles, /(?:linear|radial|conic)-gradient\s*\(/i);
 });
 
-test("resume repair browser harness covers every responsive and state contract", async () => {
-  const harness = await readFile(new URL(
-    "../.omo/evidence/refine-feasibility-model-v3/task-6-responsive-docs/style-final-qa/resume-repair/browser-qa.mjs",
-    import.meta.url,
-  ), "utf8");
+// 이 하네스는 .omo/evidence/ 아래에 있고 그 폴더는 .gitignore로 제외돼 있다(작업 기록용 도구 폴더).
+// 따라서 하네스가 있는 작업 PC에서만 검사하고, 없는 환경(새로 클론한 저장소·CI)에서는 건너뛴다.
+test("resume repair browser harness covers every responsive and state contract", async (t) => {
+  let harness;
+  try {
+    harness = await readFile(new URL(
+      "../.omo/evidence/refine-feasibility-model-v3/task-6-responsive-docs/style-final-qa/resume-repair/browser-qa.mjs",
+      import.meta.url,
+    ), "utf8");
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    t.skip("browser-qa.mjs가 없는 환경(.omo/evidence 제외 — 클론·CI)에서는 건너뜁니다");
+    return;
+  }
 
   for (const viewport of ["375x900", "768x1024", "1280x900", "640x900-dpr2"]) {
     assert.match(harness, new RegExp(`id:\\s*"${viewport}"`));
