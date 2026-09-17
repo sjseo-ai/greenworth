@@ -1,0 +1,160 @@
+//@@ FIELD_HOURS
+                <div class="field"><label for="year1HoursPerDay">1년차 일평균 발전시간</label><div class="iw"><input id="year1HoursPerDay" type="number" value="3.48" step="0.01" min="0"><span class="unit">h/일 (실발전)</span></div></div>
+
+//@@ HINT_HOURS
+              <p class="hint" style="margin:6px 0 0;">발전시간과 이용률은 서로 연동됩니다 — <strong>발전시간(h/일) = 이용률 × 24h × (1 − 출력제어·가용 손실률)</strong>. O&amp;M 계약이 보증하는 일평균 발전시간을 넣으면 발전량이 그 시간에 정비례해 계산됩니다(<button type="button" class="link-btn" data-goto-tab="tab-oam">O&amp;M 보증 탭에서 분석 →</button>).</p>
+
+//@@ TAB_BUTTON
+        <button type="button" class="tab" role="tab" id="tab-oam" aria-controls="panel-oam" data-panel="panel-oam" aria-selected="false">O&amp;M 보증</button>
+
+//@@ PANEL
+      <!-- O&M 보증 발전시간 -->
+      <div class="tabpanel" role="tabpanel" id="panel-oam" aria-labelledby="tab-oam" hidden>
+        <section class="panel">
+          <h2>O&amp;M 보증 발전시간 — 발전량 · 발전매출 분석</h2>
+          <div class="panel-body">
+            <p class="callout-sm"><strong>태양광 O&amp;M 계약은 대부분 발전량 또는 일평균 발전시간을 보증합니다. </strong>보증시간을 넣으면 발전량이 그 시간에 정비례해 계산됩니다 — <strong>연간 발전량(MWh) = 설비용량(MW) × 보증 발전시간(h/일) × 365일</strong>. 이용률로 되돌리면 <strong>이용률 = 보증시간 ÷ 24h ÷ (1 − 출력제어·가용 손실률)</strong>입니다. 보증시간은 계량기 기준 실발전으로 봅니다(출력제어·가용 손실이 이미 반영된 값).</p>
+            <div class="calc-grid" style="margin-top:0;">
+              <div class="field"><label for="oamGuaranteeHours">보증 발전시간</label><div class="iw"><input id="oamGuaranteeHours" type="number" value="3.7" step="0.05" min="0"><span class="unit" id="oamHoursUnitLabel">h/일</span></div></div>
+              <div class="field"><label for="oamHoursUnit">보증 기준</label><div class="iw"><select id="oamHoursUnit">
+                <option value="perDay" selected>일평균 (h/일)</option>
+                <option value="perYear">연간 (h/년)</option>
+              </select></div></div>
+              <div class="field"><label for="oamCoverPct">미달분 보전율</label><div class="iw"><input id="oamCoverPct" type="number" value="100" step="5" min="0" max="100"><span class="unit">%</span></div></div>
+            </div>
+            <div class="module-link">
+              <span class="module-state" id="oamState">—</span>
+              <button type="button" class="link-btn" id="applyOamHours">보증시간으로 발전량 맞추기</button>
+            </div>
+            <div class="subtotal strong"><span>보증시간 기준 발전량 · 발전매출 (1년차 · 전체 연도 기준)</span><span></span></div>
+            <table class="kv"><tbody id="oamBody"></tbody></table>
+            <div class="subtotal strong"><span>보증시간별 비교</span><span></span></div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">보증 발전시간</th><th>이용률<br>(환산)</th><th>연간 발전량<br>(MWh)</th><th>연간 발전매출<br>(억원)</th><th>P-IRR<br>(현재 단가)</th><th>적정 수령단가<br>(원/kWh)</th></tr></thead>
+                <tbody id="oamTableBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">연간 발전량·발전매출은 <strong>1년차를 전체 연도로 환산한 값</strong>입니다 — 첫 해가 부분 연도(COD 이후 가동일수)면 실제 첫 해 매출은 그만큼 줄어듭니다. 발전매출은 현재 산정된 수령단가를 곱한 값이고, "적정 수령단가"는 그 발전량에서 A. 산정 기준의 목표를 달성하는 단가입니다. 연차별로는 현재 입력한 열화율만큼 줄어듭니다. 초록 굵은 글씨 = 지금 발전량 가정과 같은 행.</p>
+          </div>
+        </section>
+      </div>
+
+//@@ TABLE_HEAD
+                  <thead><tr><th>연차 · 연도</th><th>이용률</th><th>발전시간<br>(h/일)</th><th>발전량 (MWh)</th><th>판매</th></tr></thead>
+
+//@@ TABLE_ROW
+        <td>${fmt(r.ratePct, 2)}%</td>
+        <td>${fmt(r.hours, 2)}</td>
+
+//@@ JS_HELPERS
+  // ---------- 발전시간(h/일) ↔ 이용률 ----------
+  // 태양광 O&M 계약은 대개 일평균 발전시간(h/일) 또는 연간 발전시간을 보증한다. 발전량은 그 시간에 정비례한다:
+  //   연간 발전량(MWh) = 설비용량(MW) × 보증시간(h/일) × 365일
+  // 엔진은 이용률로 발전량을 계산하므로(= 용량 × 24h × 365 × 이용률 × (1 − 손실률)), 보증시간은 계량기 기준
+  // 실발전으로 보고 손실률을 되돌려 이용률로 환산한다: 이용률 = 시간 ÷ 24 ÷ (1 − 손실률).
+  const DAYS_PER_YEAR = 365;
+  const availabilityFactor = () => 1 - rate(Math.min(100, Math.max(0, +$('curtailmentPct').value || 0)));
+  const hoursFromRatePct = (ratePct) => rate(ratePct) * 24 * availabilityFactor();
+  const ratePctFromHours = (hours) => (availabilityFactor() > 0 ? (hours / 24 / availabilityFactor()) * 100 : 0);
+  const oamGuaranteeHoursPerDay = () => {
+    const v = Math.max(0, +$('oamGuaranteeHours').value || 0);
+    return $('oamHoursUnit').value === 'perYear' ? v / DAYS_PER_YEAR : v;
+  };
+  // 1년차 발전시간 칸을 지금 이용률·손실률에 맞춘다(그 칸을 직접 고치는 중이면 덮어쓰지 않는다 — 반대 방향은 리스너가 처리).
+  function syncGenerationHours() {
+    if (document.activeElement === $('year1HoursPerDay')) return;
+    $('year1HoursPerDay').value = (Math.round(hoursFromRatePct(+$('year1RatePct').value || 0) * 100) / 100).toFixed(2);
+  }
+
+  // ---------- O&M 보증 탭 — 보증시간 기준 발전량·발전매출과 보증시간별 비교(탭이 보일 때만 역산) ----------
+  function renderOamGuarantee() {
+    const base = readModel(), rv = base.revenue;
+    const mw = rv.contractCapacityMW || 0, guaranteed = oamGuaranteeHoursPerDay();
+    const current = hoursFromRatePct(rv.operatingRatesPct[0] || 0);
+    const genOf = (hours) => mw * hours * DAYS_PER_YEAR; // MWh/년 (전체 연도 기준)
+    const price = lastSolved && lastSolved.ok ? lastSolved.price : NaN; // 원/kWh — 현재 산정된 수령단가
+    const moneyOf = (genMWh) => (Number.isFinite(price) ? (genMWh * 1000 * price) / HUNDRED_MILLION : NaN); // 억원
+    const cover = Math.min(100, Math.max(0, +$('oamCoverPct').value || 0)) / 100;
+    const gapGen = genOf(guaranteed) - genOf(current), gapMoney = moneyOf(genOf(guaranteed)) - moneyOf(genOf(current));
+    $('oamHoursUnitLabel').textContent = $('oamHoursUnit').value === 'perYear' ? 'h/년' : 'h/일';
+    const near = Math.abs(guaranteed - current) < 0.005;
+    const state = $('oamState');
+    state.textContent = near ? `● 보증시간 ${fmt(guaranteed, 2)}h/일로 발전량 적용 중`
+      : `○ 현재 발전량은 ${fmt(current, 2)}h/일 (보증 ${fmt(guaranteed, 2)}h/일 대비 ${gapGen >= 0 ? '−' : '+'}${fmt(Math.abs(gapGen), 0)}MWh/년)`;
+    state.className = near ? 'module-state on' : 'module-state';
+
+    // 계약기간 누적 — 보증시간은 매년 같고, 현재 가정은 열화율만큼 줄어든다(계약기간과 운영기간 중 짧은 쪽).
+    const years = Math.max(0, Math.min(Math.round(rv.contractYears || 0), rv.operatingRatesPct.length));
+    let cumGap = 0;
+    for (let i = 0; i < years; i++) cumGap += genOf(guaranteed) - genOf(hoursFromRatePct(rv.operatingRatesPct[i] || 0));
+    const row = (id, th, sub, text, cls = '') => `<tr><th>${th} <span class="sub">${sub}</span></th><td id="${id}" class="${cls}">${text}</td></tr>`;
+    $('oamBody').innerHTML = [
+      row('oamHours', '보증 발전시간', '일평균 · 연간', `${fmt(guaranteed, 2)} h/일 · ${fmt(guaranteed * DAYS_PER_YEAR, 0)} h/년`),
+      row('oamRate', '이용률 환산', '= 시간 ÷ 24h ÷ (1 − 손실률)', `${fmt(ratePctFromHours(guaranteed), 2)}% (현재 ${fmt(rv.operatingRatesPct[0] || 0, 2)}%)`),
+      row('oamGen', '보증 기준 연간 발전량', '= 용량 × 보증시간 × 365일', `${fmt(genOf(guaranteed), 0)} MWh`),
+      row('oamGenNow', '현재 가정 연간 발전량', `${fmt(current, 2)} h/일 기준`, `${fmt(genOf(current), 0)} MWh`),
+      row('oamGenGap', '발전량 차이', '보증 − 현재', `${gapGen >= 0 ? '+' : ''}${fmt(gapGen, 0)} MWh${genOf(current) > 0 ? ` (${gapGen >= 0 ? '+' : ''}${fmt((gapGen / genOf(current)) * 100, 1)}%)` : ''}`, gapGen >= 0 ? 'best' : 'over'),
+      row('oamPrice', '적용 수령단가', '현재 산정값', Number.isFinite(price) ? `${fmt(price, 2)} 원/kWh` : '— (산정 불가)'),
+      row('oamMoney', '보증 기준 연간 발전매출', '= 발전량 × 수령단가', Number.isFinite(price) ? `${fmt(moneyOf(genOf(guaranteed)), 2)} 억원` : '—'),
+      row('oamMoneyNow', '현재 가정 연간 발전매출', `${fmt(current, 2)} h/일 기준`, Number.isFinite(price) ? `${fmt(moneyOf(genOf(current)), 2)} 억원` : '—'),
+      row('oamMoneyGap', '발전매출 차이', '보증 − 현재 · 연간', Number.isFinite(price) ? `${gapMoney >= 0 ? '+' : ''}${fmt(gapMoney, 2)} 억원` : '—', gapMoney >= 0 ? 'best' : 'over'),
+      row('oamCover', '미달분 보전액', `보증 미달 × 수령단가 × 보전율 ${fmt(cover * 100, 0)}%`, Number.isFinite(price) ? `${fmt(Math.max(0, gapMoney) * cover, 2)} 억원/년` : '—'),
+      row('oamCum', `계약기간(${fmt(years, 0)}년) 누적 발전량 차이`, '열화율 반영 · 보증시간은 매년 동일 가정', `${cumGap >= 0 ? '+' : ''}${fmt(cumGap, 0)} MWh${Number.isFinite(price) ? ` · ${cumGap >= 0 ? '+' : ''}${fmt(moneyOf(cumGap), 1)} 억원` : ''}`),
+    ].join('');
+
+    // 보증시간별 비교 — 시간마다 1년차 이용률을 환산해 넣고(열화율은 그대로) 목표 달성 단가를 다시 푼다.
+    const deg = rate(+$('degradationPct').value || 0);
+    const list = [...new Set([3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, Math.round(guaranteed * 100) / 100, Math.round(current * 100) / 100])]
+      .filter((h) => h > 0).sort((a, b) => a - b);
+    const withRates = (hours) => {
+      const m = cloneModel(base), r0 = ratePctFromHours(hours);
+      m.revenue.operatingRatesPct = rv.operatingRatesPct.map((_, i) => Math.round(r0 * (1 - deg) ** i * 100) / 100);
+      return m;
+    };
+    const rows = list.map((hours) => {
+      const solved = solveCurrentModel(withRates(hours));
+      const atPrice = withRates(hours);
+      atPrice.revenue.bidPricePerKWh = Number.isFinite(price) ? price : 0;
+      const analyzed = analyzeEss(atPrice);
+      const ok = !(analyzed.errors && analyzed.errors.length);
+      return { hours, gen: genOf(hours), money: moneyOf(genOf(hours)), irr: ok ? analyzed.projectIrr : NaN, solve: solved.ok ? solved.price : NaN };
+    });
+    const bestIrr = Math.max(...rows.map((r) => (Number.isFinite(r.irr) ? r.irr : -Infinity)));
+    $('oamTableBody').innerHTML = rows.map((r) => {
+      const isNow = Math.abs(r.hours - current) < 0.005, isGuarantee = Math.abs(r.hours - guaranteed) < 0.005;
+      const tag = isGuarantee ? '<span class="mk-origin domestic">보증</span>' : isNow ? '<span class="mk-origin china">현재</span>' : '';
+      return `
+      <tr${isNow ? ' class="is-picked"' : ''}>
+        <th class="mk-name">${tag}${fmt(r.hours, 2)} h/일<span class="sub">${fmt(r.hours * DAYS_PER_YEAR, 0)} h/년</span></th>
+        <td>${fmt(ratePctFromHours(r.hours), 2)}%</td>
+        <td>${fmt(r.gen, 0)}</td>
+        <td>${Number.isFinite(r.money) ? fmt(r.money, 2) : '—'}</td>
+        <td class="${Number.isFinite(r.irr) && r.irr === bestIrr ? 'best' : ''}">${Number.isFinite(r.irr) ? `${fmt(r.irr * 100, 2)}%` : '산정 불가'}</td>
+        <td>${Number.isFinite(r.solve) ? fmt(r.solve, 2) : '산정 불가'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+//@@ JS_LISTENERS
+  // 발전시간 칸을 고치면 이용률을 환산해 넣고(발전량이 시간에 정비례), 연차별 이용률 표도 규칙대로 다시 채운다.
+  $('year1HoursPerDay').addEventListener('input', () => {
+    const hours = Math.max(0, +$('year1HoursPerDay').value || 0);
+    $('year1RatePct').value = String(Math.round(ratePctFromHours(hours) * 100) / 100);
+    document.querySelectorAll('#opRateGrid [data-oprate-index]').forEach((el, i) => { el.value = defaultRatePctForYear(i + 1); });
+    recalcAll();
+  });
+  // O&M 보증 탭 입력은 본 모델과 무관해 재계산 없이 그 탭만 다시 그린다.
+  $('panel-oam').addEventListener('input', (e) => {
+    if (!['oamGuaranteeHours', 'oamHoursUnit', 'oamCoverPct'].includes(e.target.id)) return;
+    resultsDirty.oam = true;
+    renderActiveTab();
+  });
+  $('applyOamHours').addEventListener('click', () => {
+    $('year1RatePct').value = String(Math.round(ratePctFromHours(oamGuaranteeHoursPerDay()) * 100) / 100);
+    document.querySelectorAll('#opRateGrid [data-oprate-index]').forEach((el, i) => { el.value = defaultRatePctForYear(i + 1); });
+    recalcAll();
+  });
+
+//@@ CAVEAT
+              <li>C. 발전매출 — <strong>O&amp;M 보증 발전시간</strong>: 기본값 3.7h/일(연 1,350.5h)은 예시이며, 실제 계약의 보증 기준(일평균·연간·보증 대상 기간), 미달 시 보전 방식(O&amp;M 수수료 차감·현금 보전·보전 상한), 초과 발전 시 성과급(sharing)은 반영하지 않았습니다. 보증시간은 계량기 기준 실발전으로 보고 출력제어·가용 손실률을 되돌려 이용률로 환산합니다 — 계약서의 보증 기준이 손실 이전 값이면 환산식을 바꿔야 합니다</li>
