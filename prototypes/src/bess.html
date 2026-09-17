@@ -627,7 +627,7 @@
           <li>준공지연 1단계 감액식·이행률 패널티는 공고 원문 <strong>초안 해석</strong>/연평균 근사치</li>
           <li>연간(annual) 단위 모델 — 분기·월별 발전량·가격 곡선 <strong>미반영</strong></li>
         </ul>
-        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 11개 항목 상세 보기 →</button></p>
+        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 12개 항목 상세 보기 →</button></p>
       </aside>
 
       <!-- 결과 탭 — 각 탭이 서로 다른 질문에 답한다: 요약(얼마나 버나) · 민감도(무엇이 흔드나) · 시나리오(어느 안이 낫나) -->
@@ -636,6 +636,7 @@
         <button type="button" class="tab" role="tab" id="tab-sens" aria-controls="panel-sens" data-panel="panel-sens" aria-selected="false">민감도</button>
         <button type="button" class="tab" role="tab" id="tab-scenario" aria-controls="panel-scenario" data-panel="panel-scenario" aria-selected="false">시나리오 비교</button>
         <button type="button" class="tab" role="tab" id="tab-price" aria-controls="panel-price" data-panel="panel-price" aria-selected="false">가격환산</button>
+        <button type="button" class="tab" role="tab" id="tab-cases" aria-controls="panel-cases" data-panel="panel-cases" aria-selected="false">입찰 사례</button>
         <button type="button" class="tab" role="tab" id="tab-kch" aria-controls="panel-kch" data-panel="panel-kch" aria-selected="false">KCH 개발수수료</button>
         <button type="button" class="tab" role="tab" id="tab-caveats" aria-controls="panel-caveats" data-panel="panel-caveats" aria-selected="false">확정 필요 항목</button>
       </div>
@@ -806,6 +807,50 @@
       </div>
 
       <!-- KCH 개발수수료 -->
+      <!-- 입찰 사례 -->
+      <div class="tabpanel" role="tabpanel" id="panel-cases" aria-labelledby="tab-cases" hidden>
+        <section class="panel">
+          <h2>입찰 사례로 사업성 추정 — ESS 중앙계약시장 회차 · 선정 사업지</h2>
+          <div class="panel-body">
+            <p class="callout-sm"><strong>ESS 중앙계약시장은 사업자별 낙찰가격을 공개하지 않습니다. </strong>그래서 ① <strong>회차별 공고·낙찰 물량과 보도된 낙찰가 수준</strong>을 지금 페이지의 우리 사업 조건에 넣어 "그 회차 가격으로 낙찰됐다면" 사업성이 어땠을지 보고, ② <strong>회차별 선정 사업지(용량 · 사업자 · 배터리사)</strong>의 용량으로 바꿔 목표 수익률에 필요한 단가를 역산합니다. 매출 산식이 <strong>계약용량 × 24h × 365일 × 가동률 × 단가</strong>라 저장시간(4h · 6h)은 매출에 직접 들어가지 않고 사업비(배터리 용량)에만 영향을 줍니다. 사례 판정은 A. 산정 기준과 관계없이 <strong>"기준 IRR · 목표 IRR" 칸</strong>으로 합니다.</p>
+            <p class="callout-sm" id="caseSummary"></p>
+
+            <div class="subtotal strong"><span>① 회차별 결과 → 우리 사업에 적용 (빈 칸 = 현재 페이지 가정)</span><span></span></div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">회차 · 공고 / 낙찰</th><th>보도 낙찰가<br>(원/kWh)</th><th>적용 단가<br>(원/kWh)</th><th>가동률<br>(%)</th></tr></thead>
+                <tbody id="roundInputBody"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">회차</th><th>연간 매출<br>(억원)</th><th>P-IRR</th><th>E-IRR<br>(배당세전)</th><th>당사 누적 순이익<br>(세전, 억원)</th><th>목표 IRR<br>대비</th></tr></thead>
+                <tbody id="roundResultBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">적용 단가 기본값은 <strong>보도로 알려진 낙찰가 수준</strong>입니다 — 전력거래소·기후에너지환경부는 사업자별 낙찰가를 공개하지 않아 정확한 값이 아니며, 회차 전체의 평균·범위를 전한 보도를 그대로 옮긴 추정치입니다. 2023년 제주 회차는 금액이 보도되지 않아(예상가 대비 약 15% 인하만 공개) 빈 칸이며, 넣어 보고 싶은 값을 직접 입력하면 됩니다. 계약기간 15년·정산 방식은 현재 페이지 조건을 그대로 씁니다.</p>
+            <ul class="todo-list" id="roundSourceList"></ul>
+
+            <div class="subtotal strong"><span>② 회차별 선정 사업지 — 용량 기준 (빈 칸 = 현재 페이지 가정)</span><span></span></div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">사업지 · 회차</th><th>계약용량<br>(MW)</th><th>적용 단가<br>(원/kWh)</th><th>가동률<br>(%)</th></tr></thead>
+                <tbody id="caseInputBody"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">사업지</th><th>총사업비<br>(계산, 억원)</th><th>목표 IRR<br>적정 단가</th><th>P-IRR<br>(적용 단가)</th><th>당사 누적 순이익<br>(세전, 억원)</th><th>적용 단가로<br>목표 달성?</th></tr></thead>
+                <tbody id="caseResultBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">총사업비·운영비는 현재 페이지 값을 <strong>계약용량 비율</strong>로 늘리거나 줄여 씁니다(사업지별 실제 사업비는 공개되지 않음). 저장시간이 다른 회차(2023년 제주 4시간, 2025년 이후 6시간)는 같은 용량이라도 배터리 용량이 달라 사업비가 다르므로, 4시간 사업지는 총사업비가 과대 추정됩니다. 배터리사·사업자는 보도 기준이며, 2차 회차의 사업자명은 공개되지 않아 배터리사만 표시합니다. 새 사례는 코드의 <code>ROUND_LIST</code> · <code>CASE_LIST</code>에 항목을 더하면 됩니다.</p>
+            <div class="subtotal strong"><span>사례 상세 — 사업지 · 사업자 · 배터리 · 현황 · 출처</span><span></span></div>
+            <ul class="todo-list" id="caseSourceList"></ul>
+          </div>
+        </section>
+      </div>
+
       <div class="tabpanel" role="tabpanel" id="panel-kch" aria-labelledby="tab-kch" hidden>
         <section class="panel">
           <h2>KCH 개발수수료 — 생애주기 누적 총 수취액</h2>
@@ -921,6 +966,7 @@
               <li>D·E. CAPEX·OPEX — 실제 장비 대수(배터리 150대·PCS 25대)로 기본값을 바꾸면서 <strong>배터리 유닛 대수·PCS 대수와 CAPEX·OPEX 배수 연동을 끊고 프로젝트 총액 직접 입력 방식으로 전환</strong>함(대수를 그대로 곱하면 총액이 비현실적으로 커지는 문제 해결)</li>
               <li>D~F. CAPEX·OPEX·금융조건 — 실제 견적/계약 조건으로 교체 (현재는 사업성모델 앱 ESS 프리셋 초안값)</li>
               <li>목표 IRR — KCH 내부 허들레이트 확인</li>
+                          <li><strong>입찰 사례</strong> — ESS 중앙계약시장은 <strong>사업자별 낙찰가격을 공개하지 않습니다</strong>. 적용 단가 기본값(2025년 제1차 kWh당 30원, 제2차 20원)은 "1차 평균 30원대 · 2차 20원대 이하"라는 보도를 옮긴 <strong>추정치</strong>이고, 2023년 제주 회차는 금액이 공개되지 않아(예상가 대비 약 15% 인하만 발표) 비워 두었습니다. 선정 사업지의 용량·사업자·배터리사는 보도 기준이며 2차 회차 사업자명은 확인되지 않았습니다. 사업지별 총사업비·운영비는 공개되지 않아 <strong>현재 페이지 값을 계약용량 비율로 조정</strong>한 값이고, 저장시간이 다른 회차(2023년 제주 4시간)는 배터리 용량 차이 때문에 사업비가 과대 추정됩니다. 계약기간 15년·가동률·금융·세무는 현재 페이지 조건</li>
             </ul>
           </div>
           </div>
@@ -1719,7 +1765,7 @@
   let linked = true;
   // 결과 탭 상태 — 마지막 산정 결과(요약 탭이 그린다), 민감도 캐시(지표 전환 시 재계산 없이 다시 그림), 탭별 "다시 그려야 함" 표시.
   let lastSolved = null, sensCache = null, activeTabId = 'tab-summary';
-  const resultsDirty = { summary: true, sens: true };
+  const resultsDirty = { summary: true, sens: true, cases: true };
   // 재계산 시간을 상단 바에 상시 노출한다(web-app-blueprint.md 5.5 — 성능 회귀를 바로 눈치채기 위함).
   // 계산 로직은 recalcAllCore()에 그대로 두고, 여기서는 시간만 잰다.
   function recalcAll() {
@@ -1823,10 +1869,181 @@
   // recalcAllCore()는 hero·KPI 카드·가격환산처럼 항상 보이는 값만 즉시 갱신하고, 요약(차트·상세표)·민감도(98회 재계산)는
   // "다시 그려야 함" 표시만 한 뒤 지금 열려 있는 탭 하나만 그린다. 숨은 탭은 열리는 순간 그린다.
   // 내보내기(CSV·JSON)는 이 화면 캐시를 쓰지 않고 captureDetailSnapshot()으로 따로 다시 계산하므로 영향이 없다.
-  function markResultsDirty() { resultsDirty.summary = true; resultsDirty.sens = true; }
+  function markResultsDirty() { resultsDirty.summary = true; resultsDirty.sens = true; resultsDirty.cases = true; }
   function renderActiveTab() {
     if (activeTabId === 'tab-summary' && resultsDirty.summary) { resultsDirty.summary = false; renderSummaryTab(); }
     else if (activeTabId === 'tab-sens' && resultsDirty.sens) { resultsDirty.sens = false; computeSensitivity(); renderSensitivityView(); }
+    else if (activeTabId === 'tab-cases' && resultsDirty.cases) { resultsDirty.cases = false; renderCases(); }
+  }
+
+  // ---------- 입찰 사례 — ESS 중앙계약시장 회차 · 선정 사업지 ----------
+  // 사업자별 낙찰가격은 공개되지 않는다. 회차별로 공고·낙찰 물량과 "보도로 알려진 낙찰가 수준"만 담고,
+  // 그 단가를 현재 페이지 조건(계약용량·사업비·금융)에 넣어 사업성을 되짚어 본다.
+  // 회차: id · label · period · announcedMW · awardedMW · sites · priceKWh(보도 낙찰가 수준 원/kWh | null) · hours(저장시간)
+  //       flow(접수·경쟁률) · battery(배터리사 배분) · note · sources
+  const ROUND_LIST = [
+    { id: 'r23jeju', label: '2023년 제주 (국내 최초)', period: '입찰 2023-11 · 낙찰 발표 2023-12 · 준공 2025년 초 예상',
+      announcedMW: 65, awardedMW: 65, sites: 3, priceKWh: null, hours: 4,
+      flow: '응찰 13개 발전소(11개사 · 206MW) — 동쪽 3.6:1(126MW · 7건) · 서쪽 2.7:1(80MW · 6건)',
+      battery: 'LG에너지솔루션(동쪽 컨소시엄) 등',
+      note: '총 65MW/260MWh를 동쪽 35MW · 서쪽 30MW로 나눠 입찰. 낙찰가는 공개되지 않았고 "당초 예상 가격 대비 약 15% 인하" 발표만 있음. 15년 고정가격 보상',
+      sources: '산업통상자원부 보도자료 「국내 최초 ESS 중앙계약시장 경쟁입찰, 경제성과 안정성 모두 잡아」, 전기신문 2023-12 「제주 장주기 BESS 계약시장 입찰 발표…동서-제주에공 등 3곳 낙찰」' },
+    { id: 'r25_1', label: '2025년 제1차 (호남 · 제주)', period: '공고 2025-04 · 낙찰 발표 2025-07 · 6시간 충방전',
+      announcedMW: 540, awardedMW: 565, sites: 8, priceKWh: 30, hours: 6,
+      flow: '약 120개사 참여(보도) — 공고 540MW(호남 500 · 제주 40)에 낙찰 565MW',
+      battery: '삼성SDI 76%(465MW/2,574MWh · 6개 사업지) · LG에너지솔루션 24% · SK온 0%',
+      note: '보도된 낙찰가 수준은 kWh당 평균 30원대(용량요금 기준 20원대 후반~30원대 초반), 배터리 단가는 MWh당 2억원 이하로 2023년 제주 대비 30% 이상 하락. 예상 사업비 1조원 이상',
+      sources: '전기신문 2025-07 「중앙계약시장 ESS 입찰 결과…남부발전·한양 등 8곳 선정」·「입찰결과에 삼성SDI 크게 웃었다」, 디일렉 「K-ESS 전쟁 첫 승자 삼성SDI」, 시사저널e(낙찰가 추이)' },
+    { id: 'r25_2', label: '2025년 제2차 (육지 · 제주)', period: '공고 2025-11 · 우선협상대상자 발표 2026-02-12 · 물량 확정 2026-02-25 · 구축 2027-12까지',
+      announcedMW: 540, awardedMW: 565, sites: 7, priceKWh: 20, hours: 6,
+      flow: '공고 540MW(육지 500 · 제주 40) → 낙찰 565MW(육지 525 · 제주 40) · 전남 6곳 + 제주 1곳',
+      battery: 'SK온 50%(284MW) · 삼성SDI 36%(202MW) · LG에너지솔루션 14%(79MW)',
+      note: '가격 : 비가격 배점을 60:40에서 50:50으로 조정(화재 안전성·산업경쟁력 강화). 낙찰가는 kWh당 20원대 이하로 1차보다 더 내려간 것으로 보도 — 배터리 3사가 가격 위주 경쟁 완화를 정부에 건의',
+      sources: '기후에너지환경부 「(참고) ESS 중앙계약시장 7개 사업자 선정」(2026-02-12), 한국경제TV·네이트(배터리사별 물량), 시사저널e 「정부 ESS 입찰 출혈경쟁 논란」' },
+    { id: 'r26_3', label: '제3차 (공고 예정)', period: '2026년 9월 공고 예상 · 2028년 공급 물량',
+      announcedMW: null, awardedMW: null, sites: null, priceKWh: null, hours: 6,
+      flow: '발주 규모 1조원 안팎 · 물량 1GW 이상 확대 검토(보도)',
+      battery: '미정',
+      note: '가격 하한제 도입 여부와 가격·비가격 배점 등 입찰 조건은 아직 확정되지 않음. 결과 전이라 적용 단가는 비워 두었습니다(현재 페이지 산정값으로 계산)',
+      sources: '조달경제신문 2026-09 「ESS 중앙계약시장, 3차 입찰 9월중 공고 촉각」, 딜사이트·이데일리(규모·가격룰 논의)' },
+  ];
+  // 선정 사업지: id · round · name · mw · developer · battery · note
+  const CASE_LIST = [
+    { id: 'c1_jindo', round: 'r25_1', name: '진도', mw: 48, developer: '한국남부발전 · 브라이트에너지파트너스(BEP)', battery: '삼성SDI', note: '' },
+    { id: 'c1_goheung', round: 'r25_1', name: '고흥', mw: 96, developer: 'BS한양 · 한국남부발전', battery: '삼성SDI', note: '남부발전은 1차에서 광양·고흥·진도 합계 240MW 확보' },
+    { id: 'c1_gwangyang', round: 'r25_1', name: '광양', mw: 96, developer: 'BS한양 · 한국남부발전', battery: 'LG에너지솔루션', note: '' },
+    { id: 'c1_muan', round: 'r25_1', name: '무안', mw: 80, developer: '탑솔라 · 전남개발공사', battery: '삼성SDI', note: '' },
+    { id: 'c1_yeonggwang', round: 'r25_1', name: '영광', mw: 80, developer: '탑솔라 · 전남개발공사', battery: '삼성SDI', note: '' },
+    { id: 'c1_anjwa', round: 'r25_1', name: '안좌', mw: 96, developer: 'KCH', battery: '삼성SDI', note: '현재 페이지 기본값(96MW/576MWh)과 같은 규모' },
+    { id: 'c1_jeju', round: 'r25_1', name: '제주', mw: 40, developer: 'SK이터닉스', battery: 'LG에너지솔루션', note: '' },
+    { id: 'c1_nuclear', round: 'r25_1', name: '한수원 원전부지', mw: 29, developer: '한국수력원자력', battery: '미공개', note: '' },
+    { id: 'c2_namchang', round: 'r25_2', name: '남창', mw: 96, developer: '미공개(보도 미확인)', battery: 'SK온', note: '' },
+    { id: 'c2_unnam', round: 'r25_2', name: '운남', mw: 92, developer: '미공개(보도 미확인)', battery: 'SK온', note: '' },
+    { id: 'c2_eupdong', round: 'r25_2', name: '읍동', mw: 96, developer: '미공개(보도 미확인)', battery: 'SK온', note: '' },
+    { id: 'c2_jindo', round: 'r25_2', name: '진도(2차)', mw: 66, developer: '미공개(보도 미확인)', battery: '삼성SDI', note: '' },
+    { id: 'c2_haenam', round: 'r25_2', name: '해남', mw: 79, developer: '미공개(보도 미확인)', battery: 'LG에너지솔루션', note: '' },
+    { id: 'c2_hwawon', round: 'r25_2', name: '화원', mw: 96, developer: '미공개(보도 미확인)', battery: '삼성SDI', note: '' },
+    { id: 'c2_pyoseon', round: 'r25_2', name: '표선(제주)', mw: 40, developer: '미공개(보도 미확인)', battery: '삼성SDI', note: '' },
+  ];
+  const roundById = (id) => ROUND_LIST.find((r) => r.id === id);
+  const cloneModel = (m) => { try { return structuredClone(m); } catch (e) { return JSON.parse(JSON.stringify(m)); } };
+  // 사례 판정은 A. 산정 기준(당사 이익 목표일 수 있음)과 무관하게 "기준 IRR · 목표 IRR" 칸으로 한다 — 용량이 다르면 당사 이익 절대금액이 달라져 비교에 부적합.
+  const irrGapOf = (r) => (!r || (r.errors && r.errors.length) ? NaN : (r[$('irrKind').value] ?? NaN) - rate(+$('targetIrrPct').value || 0));
+  const irrTargetLabel = () => `목표 ${$('irrKind').selectedOptions[0].textContent.trim()} ${fmt(+$('targetIrrPct').value || 0, 2)}%`;
+  const fmtMW = (v) => (v == null ? '—' : fmt(v, 0));
+
+  function renderCaseRows() {
+    const h = escapeHtml;
+    const inp = (pfx, id, fld, v, step, label, ph) => `<input id="${pfx}-${h(id)}-${fld}" type="number" value="${v ?? ''}" step="${step}" min="0" placeholder="${h(ph)}" aria-label="${h(label)}">`;
+    $('roundInputBody').innerHTML = ROUND_LIST.map((rd) => `
+      <tr data-rd-row="${h(rd.id)}">
+        <th class="mk-name">${h(rd.label)}<span class="sub">공고 ${fmtMW(rd.announcedMW)} / 낙찰 ${fmtMW(rd.awardedMW)} MW${rd.sites ? ` · ${rd.sites}곳` : ''} · 저장 ${fmt(rd.hours, 0)}시간</span></th>
+        <td>${rd.priceKWh != null ? `${fmt(rd.priceKWh, 1)} 수준` : '비공개'}</td>
+        <td>${inp('rd', rd.id, 'price', rd.priceKWh, 0.5, `${rd.label} 적용 단가`, '현재 산정값')}</td>
+        <td>${inp('rd', rd.id, 'rate', '', 0.1, `${rd.label} 가동률`, '현재')}</td>
+      </tr>`).join('');
+    $('roundResultBody').innerHTML = ROUND_LIST.map((rd) => `
+      <tr data-rd-row="${h(rd.id)}">
+        <th class="mk-name">${h(rd.label)}<span class="sub">${rd.priceKWh != null ? '보도 낙찰가 수준 적용' : '낙찰가 비공개 — 현재 산정값'}</span></th>
+        <td id="rd-${h(rd.id)}-rev">—</td><td id="rd-${h(rd.id)}-pirr">—</td><td id="rd-${h(rd.id)}-eirr">—</td><td id="rd-${h(rd.id)}-profit">—</td><td id="rd-${h(rd.id)}-gap">—</td>
+      </tr>`).join('');
+    $('caseInputBody').innerHTML = CASE_LIST.map((c) => {
+      const rd = roundById(c.round);
+      return `
+      <tr data-cs-row="${h(c.id)}">
+        <th class="mk-name">${h(c.name)}<span class="sub">${h(rd.label)} · ${h(c.battery)}</span></th>
+        <td>${inp('cs', c.id, 'mw', c.mw, 1, `${c.name} 계약용량`, '현재')}</td>
+        <td>${inp('cs', c.id, 'price', rd.priceKWh, 0.5, `${c.name} 적용 단가`, '현재 산정값')}</td>
+        <td>${inp('cs', c.id, 'rate', '', 0.1, `${c.name} 가동률`, '현재')}</td>
+      </tr>`;
+    }).join('');
+    $('caseResultBody').innerHTML = CASE_LIST.map((c) => `
+      <tr data-cs-row="${h(c.id)}">
+        <th class="mk-name">${h(c.name)}<span class="sub">${fmt(c.mw, 0)}MW · ${h(c.developer)}</span></th>
+        <td id="cs-${h(c.id)}-inv">—</td><td id="cs-${h(c.id)}-need">—</td><td id="cs-${h(c.id)}-pirr">—</td><td id="cs-${h(c.id)}-profit">—</td><td id="cs-${h(c.id)}-fit">—</td>
+      </tr>`).join('');
+    const part = (label, v) => (v ? `<br><span class="sub" style="display:inline;">${label}</span> ${h(v)}` : '');
+    $('roundSourceList').innerHTML = ROUND_LIST.map((rd) => `<li data-rd-detail="${h(rd.id)}"><strong>${h(rd.label)}</strong> — 공고 ${fmtMW(rd.announcedMW)}MW · 낙찰 ${fmtMW(rd.awardedMW)}MW${rd.sites ? ` · ${rd.sites}곳` : ''}${rd.priceKWh != null ? ` · 보도 낙찰가 ${fmt(rd.priceKWh, 1)}원/kWh 수준` : ' · 낙찰가 비공개'}`
+      + part('일정', rd.period) + part('접수 · 경쟁률', rd.flow) + part('배터리', rd.battery) + part('참고', rd.note) + part('출처', rd.sources) + '</li>').join('');
+    $('caseSourceList').innerHTML = CASE_LIST.map((c) => {
+      const rd = roundById(c.round);
+      return `<li data-cs-detail="${h(c.id)}"><strong>${h(c.name)}</strong> — ${fmt(c.mw, 0)}MW · ${h(rd.label)}`
+        + part('사업자', c.developer) + part('배터리', c.battery) + part('참고', c.note)
+        + part('출처', rd.sources) + '</li>';
+    }).join('');
+  }
+
+  function renderCases() {
+    const base = readModel(), rv = base.revenue, n = rv.operatingRatesPct.length || 1;
+    const curMW = rv.contractCapacityMW || 1;
+    const solvedPrice = lastSolved && lastSolved.ok ? lastSolved.price : NaN;
+    const ratesOf = (v) => (v > 0 ? Array.from({ length: n }, () => v) : rv.operatingRatesPct.slice());
+    const set = (id, text, cls = '') => { const el = $(id); el.textContent = text; el.className = cls; };
+    const pct2 = (v) => (Number.isFinite(v) ? `${fmt(v * 100, 2)}%` : '—');
+    const good = (r) => r && !(r.errors && r.errors.length);
+
+    // ① 회차 — 우리 사업(현재 페이지)을 그 회차 낙찰가 수준으로 낙찰받았다고 보고 계산
+    const roundPirrs = [];
+    let roundMet = 0;
+    ROUND_LIST.forEach((rd) => {
+      const val = (fld) => { const v = $(`rd-${rd.id}-${fld}`).value; return v === '' ? NaN : +v; };
+      const price = val('price') > 0 ? val('price') : solvedPrice;
+      if (!Number.isFinite(price)) { ['rev', 'pirr', 'eirr', 'profit', 'gap'].forEach((f) => set(`rd-${rd.id}-${f}`, '—')); return; }
+      const m = cloneModel(base);
+      m.revenue.operatingRatesPct = ratesOf(val('rate'));
+      m.revenue.bidPricePerKWh = price;
+      const r = analyzeEss(m);
+      if (!good(r)) { ['rev', 'pirr', 'eirr', 'profit', 'gap'].forEach((f) => set(`rd-${rd.id}-${f}`, '산정 불가')); return; }
+      set(`rd-${rd.id}-rev`, fmt(r.annualRevenue, 1));
+      set(`rd-${rd.id}-pirr`, pct2(r.projectIrr));
+      set(`rd-${rd.id}-eirr`, pct2(r.equityIrr));
+      set(`rd-${rd.id}-profit`, fmt(r.companyProfitPreTax, 1));
+      const g = irrGapOf(r);
+      if (g >= 0) roundMet++;
+      set(`rd-${rd.id}-gap`, Number.isFinite(g) ? `${g >= 0 ? '+' : '−'}${fmt(Math.abs(g) * 100, 2)}%p` : '—', g >= 0 ? 'best' : 'over');
+      roundPirrs.push(r.projectIrr);
+    });
+
+    // ② 선정 사업지 — 계약용량을 사례 값으로 바꾸고(사업비·운영비는 용량 비율) 목표 IRR 적정 단가를 역산
+    const needs = [];
+    let fitCount = 0;
+    CASE_LIST.forEach((c) => {
+      const rd = roundById(c.round);
+      const val = (fld) => { const v = $(`cs-${c.id}-${fld}`).value; return v === '' ? NaN : +v; };
+      const mw = val('mw') > 0 ? val('mw') : curMW, ratio = mw / curMW;
+      const price = val('price') > 0 ? val('price') : solvedPrice;
+      const build = (p) => {
+        const m = cloneModel(base);
+        m.revenue.contractCapacityMW = mw;
+        m.revenue.operatingRatesPct = ratesOf(val('rate'));
+        m.capex = { ...m.capex, items: m.capex.items.map((it) => ({ ...it, value: it.value * ratio })) };
+        m.opex = { ...m.opex, items: m.opex.items.map((it) => ({ ...it, value: it.value * ratio })) };
+        m.finance = { ...m.finance, fundingMode: 'ratio' };
+        m.revenue.bidPricePerKWh = p;
+        return m;
+      };
+      const sv = solveBidPriceForTarget(build(0), rate(+$('targetIrrPct').value || 0), $('irrKind').value);
+      const r = Number.isFinite(price) ? analyzeEss(build(price)) : null;
+      set(`cs-${c.id}-inv`, good(r) ? fmt(r.totalInvestment, 0) : (sv.ok ? fmt(sv.result.totalInvestment, 0) : '산정 불가'));
+      set(`cs-${c.id}-need`, sv.ok ? `${fmt(sv.price, 2)}원` : '500원으로도 미달', sv.ok ? '' : 'over');
+      if (sv.ok) needs.push(sv.price);
+      set(`cs-${c.id}-pirr`, good(r) ? pct2(r.projectIrr) : '—');
+      set(`cs-${c.id}-profit`, good(r) ? fmt(r.companyProfitPreTax, 1) : '—');
+      if (!good(r) || !sv.ok) { set(`cs-${c.id}-fit`, '—'); return; }
+      const gap = irrGapOf(r), fits = gap >= 0;
+      if (fits) fitCount++;
+      set(`cs-${c.id}-fit`, fits ? `달성 (${fmt(price - sv.price, 2)}원 여유)` : `${fmt(sv.price - price, 2)}원 부족`, fits ? 'best' : 'over');
+    });
+
+    const spread = (arr, f) => {
+      const s = [...arr].sort((a, b) => a - b);
+      return s.length ? { lo: f(s[0]), hi: f(s[s.length - 1]), med: f(s[Math.floor((s.length - 1) / 2)]) } : null;
+    };
+    const rp = spread(roundPirrs, pct2), np = spread(needs, (v) => `${fmt(v, 2)}원`);
+    $('caseSummary').innerHTML = [
+      rp ? `<strong>① 회차 낙찰가 수준으로 우리 사업(${fmt(curMW, 0)}MW)을 낙찰받았다면 P-IRR ${rp.lo} ~ ${rp.hi}</strong> — ${irrTargetLabel()} 달성 ${roundMet}/${ROUND_LIST.length}회차` : '',
+      np ? `<strong>② 선정 사업지 ${needs.length}곳의 ${irrTargetLabel()} 적정 단가 ${np.lo} ~ ${np.hi} (중앙값 ${np.med})</strong> — 적용 단가로 목표 달성 ${fitCount}곳` : '',
+    ].filter(Boolean).join('<br>') || '사례를 계산하지 못했습니다.';
   }
 
   // ---------- 요약 탭 — 연도별 현금흐름 차트 · 산출 근거(kv) · 경고 · 연도별 상세 (spec 4장) ----------
@@ -3001,7 +3218,7 @@
   });
 
   document.querySelectorAll('.wrap input, .wrap select').forEach((el) => {
-    if (el.id === 'bidPrice' || el.id === 'minPrice' || el.id === 'priceCap' || el.id === 'sensMetric' || el.id.startsWith('kch') || el.disabled) return;
+    if (el.id === 'bidPrice' || el.id === 'minPrice' || el.id === 'priceCap' || el.id === 'sensMetric' || el.id.startsWith('kch') || el.id.startsWith('cs-') || el.id.startsWith('rd-') || el.disabled) return;
     // 계약용량은 KCH 탭 설비용량에도 연동되므로 KCH까지 다시 계산(kchRecalc가 끝에서 recalcAll을 부른다)
     el.addEventListener('input', el.id === 'contractCapacityMW' ? kchRecalc : recalcAll);
   });
@@ -3011,6 +3228,15 @@
     if (el.disabled) return;
     el.addEventListener('input', kchRecalc);
   });
+
+  // 입찰 사례 — 사례 칸은 본 모델과 무관해 재계산 없이 사례 표만 다시 그린다(탭이 보일 때).
+  $('panel-cases').addEventListener('input', (e) => {
+    const id = e.target.id || '';
+    if (!id.startsWith('cs-') && !id.startsWith('rd-')) return;
+    resultsDirty.cases = true;
+    renderActiveTab();
+  });
+  renderCaseRows(); // 회차·사업지 목록으로 사례 표를 그린다(탭 선택보다 먼저)
 
   // ---------- 탭 — 초기 상태를 HTML 속성에 기대지 않고 JS가 정한다(web-app-blueprint.md 5.5) ----------
   const TABS = Array.from(document.querySelectorAll('.tab[data-panel]'));
