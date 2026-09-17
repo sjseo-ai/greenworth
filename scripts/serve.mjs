@@ -34,8 +34,16 @@ const PRELOAD_PATHS = [
   "styles/responsive.css",
   "js/app.bundle.js",
 ];
+// 입찰단가 프로토타입(scripts/build-prototypes.mjs 생성 파일) — 페이지가 커서 시작할 때 미리 압축하지 않고,
+// 첫 요청 때 압축해 캐시한다(시작 시간을 앱 파일 기준으로 유지).
+const ON_DEMAND_PATHS = [
+  "prototypes/index.html",
+  "prototypes/solar/index.html",
+  "prototypes/offshore-wind/index.html",
+  "prototypes/bess/index.html",
+];
 const ROOT = await realpath(process.cwd());
-const PUBLIC_FILES = new Set(PRELOAD_PATHS.map((relativePath) => resolve(ROOT, relativePath)));
+const PUBLIC_FILES = new Set([...PRELOAD_PATHS, ...ON_DEMAND_PATHS].map((relativePath) => resolve(ROOT, relativePath)));
 const assetCache = new Map();
 const COMPRESSIBLE_ENCODINGS = ["br", "gzip", "identity"];
 const IDENTITY_ENCODING = ["identity"];

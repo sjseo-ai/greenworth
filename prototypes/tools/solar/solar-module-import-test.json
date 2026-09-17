@@ -1,0 +1,10 @@
+{
+  "tool": "태양광 적정 입찰가격 프로토타입 (초안)",
+  "kind": "moduleCatalog",
+  "exportedAt": "2026-09-15T00:00:00.000Z",
+  "modules": [
+    { "id": "whatever", "origin": "domestic", "name": "한화큐셀", "model": "Q.TRON G3 (테스트)", "price": 410, "gamma": -0.26, "bif": 85, "deg1": 1, "degA": 0.3, "co2": 600, "source": "갱신 테스트" },
+    { "id": "bad-id!", "origin": "china", "name": "LONGi", "model": "Hi-MO 9 (테스트)", "price": 210, "gamma": -0.26, "bif": 80, "deg1": 1, "degA": 0.4, "source": "불러오기 테스트" },
+    { "origin": "china", "name": "진코솔라", "model": "Tiger Neo 3.0", "price": 205 }
+  ]
+}

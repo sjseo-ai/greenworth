@@ -1,0 +1,709 @@
+<title>ESS 적정 입찰단가 프로토타입</title>
+<style>
+  /* ═══ 토큰 — web-app-blueprint.md 6장 규약(:root 토큰 우선) ═══
+     잠그는 것: 44px 터치 타깃, 1180px·760px 브레이크포인트, 넓은 콘텐츠의 자체 가로 스크롤.
+     아래 "레거시 별칭"은 JS 템플릿·인라인 스타일이 쓰는 옛 변수명을 새 토큰에 연결한다(값의 원본은 위쪽 토큰). */
+  :root {
+    --bg: #f4f6f8; --panel: #ffffff; --panel-alt: #fafbfc; --acc-body: #f7f9fa;
+    --line: #e3e7ec; --line-strong: #cbd2da;
+    --ink: #1a1f28; --ink-2: #4a5462; --muted: #7b8794;
+    --accent: #0f6b4a; --accent-strong: #0a5238; --accent-soft: #e7f2ed;
+    --danger: #b3261e; --danger-soft: #fdecea; --warn-bg: #fff5e6; --warn-ink: #8a4b08;
+    --pos: #0f6b4a; --neg: #b3261e;
+    --radius: 10px; --shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+    --font: "Pretendard", "Malgun Gothic", "맑은 고딕", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "Consolas", "SFMono-Regular", ui-monospace, monospace;
+    /* 레거시 별칭 */
+    --surface: var(--panel); --ink-soft: var(--ink-2); --ink-faint: var(--muted);
+    --good: var(--pos); --good-soft: var(--accent-soft); --bad: var(--danger); --bad-soft: var(--danger-soft);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1417; --panel: #161d21; --panel-alt: #1b2328; --acc-body: #12191c;
+      --line: #26313a; --line-strong: #35424c;
+      --ink: #e6ecef; --ink-2: #b3c0c8; --muted: #83929c;
+      --accent: #3fbf8c; --accent-strong: #5fd4a4; --accent-soft: #16302a;
+      --danger: #f08a80; --danger-soft: #3a1f1d; --warn-bg: #352a17; --warn-ink: #f2c078;
+      --pos: #3fbf8c; --neg: #f08a80;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1417; --panel: #161d21; --panel-alt: #1b2328; --acc-body: #12191c;
+    --line: #26313a; --line-strong: #35424c;
+    --ink: #e6ecef; --ink-2: #b3c0c8; --muted: #83929c;
+    --accent: #3fbf8c; --accent-strong: #5fd4a4; --accent-soft: #16302a;
+    --danger: #f08a80; --danger-soft: #3a1f1d; --warn-bg: #352a17; --warn-ink: #f2c078;
+    --pos: #3fbf8c; --neg: #f08a80;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 1px 3px rgba(0,0,0,.4);
+  }
+
+  /* ═══ body ═══ */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font); }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  code { font-family: var(--mono); font-size: 12px; background: var(--panel-alt); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+
+  /* ═══ 헤더 ═══ */
+  .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 6px 24px; background: var(--panel); border-bottom: 1px solid var(--line); box-shadow: var(--shadow); }
+  .brand { display: flex; align-items: baseline; gap: 10px; min-height: 44px; flex-wrap: wrap; align-content: center; }
+  .brand h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+  .brand-sub { font-size: 12.5px; color: var(--muted); }
+  .spacer { flex: 1; }
+  .timing { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* ═══ 레이아웃 — ⚠ minmax(0, 1fr): 그냥 1fr 이면 넓은 표가 칼럼을 밀어 본문이 가로로 찢어진다 ═══ */
+  .layout { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 20px; align-items: start; padding: 20px 24px 48px; max-width: 1600px; margin: 0 auto; }
+  .col-input { position: sticky; top: 68px; max-height: calc(100vh - 88px); overflow-y: auto; overscroll-behavior: contain; }
+  .col-result { min-width: 0; display: grid; gap: 16px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .panel-head { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .panel-head h2 { margin: 0; font-size: 15px; font-weight: 700; }
+  .panel-head .muted { margin-left: auto; font-size: 12px; color: var(--muted); }
+  .panel-body { padding: 10px; }
+
+  /* ═══ 아코디언 — 바탕(회색) → 카드(흰색) → 강조(accent-soft) 3단 ═══ */
+  .acc { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 8px; }
+  .acc:last-child { margin-bottom: 0; }
+  .acc > summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; cursor: pointer; position: sticky; top: 0; z-index: 2; background: var(--panel); border-left: 3px solid transparent; border-radius: var(--radius); }
+  .acc > summary::-webkit-details-marker { display: none; }
+  .acc[open] > summary { background: var(--accent-soft); border-left-color: var(--accent); border-radius: var(--radius) var(--radius) 0 0; border-bottom: 1px solid var(--line); }
+  .acc-badge { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 700; }
+  .acc[open] .acc-badge { background: var(--accent); color: #fff; }
+  .acc-title { font-size: 14.5px; font-weight: 700; }
+  .acc[open] > summary .acc-title { color: var(--accent); }
+  .acc-total { margin-left: auto; font-size: 12px; color: var(--muted); }
+  .acc-chev { color: var(--muted); font-size: 11px; transition: rotate .15s; }
+  .acc[open] .acc-chev { rotate: 90deg; }
+  .acc-body { background: var(--acc-body); padding: 12px 12px 14px; border-radius: 0 0 var(--radius) var(--radius); }
+  .group-card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; }
+
+  /* ═══ 입력 필드 ═══ */
+  .field-grid, .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px 12px; margin-top: 10px; }
+  .col-input .field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .col-input .field-grid.one, .field-grid.one { grid-template-columns: minmax(0, 1fr); }
+  .col-input .field-grid.three, .field-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .span-2 { grid-column: 1 / -1; }
+  .field { min-width: 0; } /* 그리드 아이템 기본 min-width:auto 가 좁은 화면에서 그리드를 부풀리는 것을 막는다 */
+  .field label { display: block; font-size: 12.5px; font-weight: 500; color: var(--ink-2); margin-bottom: 4px; }
+  .field .iw, .iw { display: flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel); }
+  .field .iw:focus-within, .iw:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  input[type="number"], input[type="text"], input[type="date"], select { min-height: 44px; width: 100%; }
+  .field input, .field select, .iw select { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0 10px; font-size: 14px; color: var(--ink); font-variant-numeric: tabular-nums; outline: none; }
+  .field input:focus-visible, .iw select:focus-visible { outline: none; }
+  .field .unit { padding: 0 10px 0 4px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .field.calc .iw { background: var(--panel-alt); border-style: dashed; }
+  .field.calc input { color: var(--ink-2); }
+  .field.calc label::after { content: " (계산)"; color: var(--muted); font-weight: 400; }
+  .subhead { font-size: 13px; font-weight: 700; color: var(--ink); margin: 16px 0 8px; }
+  .subhead-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 10px; }
+  .hint { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 8px 0 0; }
+  .cap { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; margin: 6px 0 0; }
+  .flag { font-size: 11px; font-weight: 600; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 8px; }
+
+  /* ═══ 버튼 ═══ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel); color: var(--ink); font-size: 13.5px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); color: #fff; }
+  .btn-soft { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+  .btn-danger { background: var(--danger-soft); border-color: transparent; color: var(--danger); }
+  .btn-danger:hover { border-color: var(--danger); color: var(--danger); }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .link-btn { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+
+  /* ═══ 항목 목록 ═══ */
+  .item-row { display: grid; grid-template-columns: minmax(0, 1fr) 130px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+  .item-row:last-child { border-bottom: 0; }
+  .item-row label { min-width: 0; }
+  .item-row .cat { font-size: 11px; color: var(--muted); }
+  .item-row input { min-height: 44px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel); padding: 0 10px; font-size: 14px; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+  .item-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }
+  .item-row.scenario-row { grid-template-columns: minmax(0, 1.4fr) 1fr .8fr auto auto auto; }
+  .item-total { display: flex; justify-content: space-between; padding: 10px 2px 0; font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* ═══ 결과 카드 ═══ */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px 14px; min-width: 0; }
+  .card .k { font-size: 12.5px; color: var(--ink-2); }
+  .card .v { margin-top: 4px; font-size: 21px; font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .card.emph { border-color: var(--accent); background: var(--accent-soft); }
+  .card.emph .v { color: var(--accent); }
+  .group-label { font-size: 13px; font-weight: 700; color: var(--ink-2); margin: 2px 0 8px; }
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px 24px; align-items: start; padding: 18px 20px; border-color: var(--accent); }
+  .hero .k { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+  .hero-num { font-size: 52px; font-weight: 800; line-height: 1.05; letter-spacing: -.03em; color: var(--accent); margin-top: 4px; }
+  .hero-unit { font-size: 16px; font-weight: 600; color: var(--ink-2); margin-left: 6px; }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--panel-alt); color: var(--ink-2); }
+  .status-pill.ok { background: var(--accent-soft); color: var(--pos); }
+  .status-pill.bad { background: var(--danger-soft); color: var(--danger); }
+  .price-range { display: grid; gap: 8px; padding: 12px 14px; background: var(--panel-alt); border: 1px solid var(--line); border-radius: 8px; }
+  .price-range .cap { margin: 0; font-size: 12px; color: var(--muted); }
+  .price-range .bar { height: 6px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .price-range .bar .fill { height: 100%; background: var(--accent); border-radius: 4px; }
+  .price-range .pts { display: flex; justify-content: space-between; gap: 12px; }
+  .price-range .pt .l { display: block; font-size: 11.5px; color: var(--muted); }
+  .price-range .pt .v { display: block; margin-top: 2px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .price-range .pt.hi { text-align: right; }
+  .kpi-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+  .kpi-row:last-child { border-bottom: 0; }
+  .kpi-row .v { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .notice { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--warn-ink); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; line-height: 1.65; }
+  .notice strong.t { display: block; margin-bottom: 4px; font-size: 13.5px; color: var(--warn-ink); }
+  .notice ul { margin: 0; padding-left: 18px; columns: 2 320px; column-gap: 28px; }
+  .notice li { break-inside: avoid; }
+
+  /* ═══ 탭 ═══ */
+  .tabs { display: flex; gap: 2px; padding: 0 8px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tab { min-height: 44px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; color: var(--ink-2); font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { padding: 16px; }
+  .tab-lede { font-size: 13px; color: var(--ink-2); line-height: 1.7; margin: 0 0 12px; max-width: 90ch; }
+  .help { margin: 0 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-alt); }
+  .help > summary { min-height: 44px; display: flex; align-items: center; padding: 0 12px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); }
+  .help > div { padding: 0 12px 12px; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
+
+  /* ═══ 표 ═══ */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  th:first-child, td:first-child { text-align: left; }
+  th { background: var(--panel-alt); color: var(--ink-2); font-size: 12px; font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  tr.current-row td { background: var(--accent-soft); font-weight: 700; }
+  td.hit { background: var(--accent-soft); color: var(--pos); font-weight: 700; }
+  td.current-cell { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+
+  /* ═══ 차트 ═══ */
+  .chart-wrap { overflow-x: auto; }
+  .price-bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 100px; align-items: center; gap: 10px; padding: 6px 6px; border-radius: 6px; }
+  .price-bar-row:hover, .price-bar-row:focus-visible { background: var(--accent-soft); outline: none; }
+  .price-bar-label { font-size: 12.5px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .price-bar-track { height: 18px; background: var(--panel-alt); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .price-bar-fill { height: 100%; border-radius: 0 4px 4px 0; min-width: 2px; transition: width .3s ease; }
+  .price-bar-value { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; white-space: nowrap; }
+  .chart-tooltip { position: fixed; z-index: 50; display: none; max-width: 240px; padding: 7px 10px; border-radius: 7px; background: var(--ink); color: var(--bg); font-size: 12px; line-height: 1.5; pointer-events: none; box-shadow: 0 8px 20px -6px rgba(0,0,0,.35); }
+  .chart-tooltip .tt-value { font-weight: 700; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  .chart-tooltip .tt-name { opacity: .75; margin-bottom: 2px; }
+
+  /* ═══ 경고 ═══ */
+  .warn { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 8px; border-left: 3px solid var(--warn-ink); background: var(--warn-bg); color: var(--warn-ink); font-size: 13px; line-height: 1.6; }
+  .warn.show { display: block; }
+
+  /* ═══ 확정 필요 목록 · 푸터 ═══ */
+  .todo-list li { font-size: 13px; color: var(--ink-2); line-height: 1.75; margin-bottom: 6px; }
+  footer { max-width: 1600px; margin: 0 auto; padding: 0 24px 40px; font-size: 12px; color: var(--muted); line-height: 1.8; }
+  footer p { margin: 0 0 6px; }
+
+  /* ═══ 좁은 화면 — 브레이크포인트 1180px(2단→1단) / 760px(모바일) ═══ */
+  @media (max-width: 1180px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .col-input { position: static; max-height: none; overflow: visible; }
+  }
+  @media (max-width: 760px) {
+    .layout { padding: 8px; gap: 8px; }
+    .topbar { padding: 6px 10px; }
+    .brand-sub { display: none; }
+    .hero { grid-template-columns: minmax(0, 1fr); padding: 14px; }
+    .hero-num { font-size: 42px; }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tab-panel { padding: 12px 10px; }
+    .item-row.scenario-row { grid-template-columns: minmax(0, 1fr); }
+    .item-row.scenario-row span[style*="text-align:right"] { text-align: left; }
+    .price-bar-row { grid-template-columns: 96px minmax(0, 1fr) 88px; }
+    footer { padding: 0 10px 32px; }
+  }
+  @media (max-width: 420px) {
+    .col-input .field-grid:not(.three) { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+
+<div class="wrap" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <h1>ESS 적정 입찰단가</h1>
+      <span class="brand-sub">KCH그룹 · 이터레이션 1~3 · ESS 전용</span>
+    </div>
+    <div class="spacer"></div>
+    <span id="timing" class="timing"></span>
+    <button id="reset" class="btn" type="button">기본값으로 되돌리기</button>
+  </header>
+
+  <main class="layout" id="layout">
+    <!-- ════════════ 좌측: 입력 (380px, 스크롤해도 따라옴) ════════════ -->
+    <div class="col-input">
+      <section class="panel">
+        <div class="panel-head"><h2>입력 가정</h2><span class="muted">A~F 6개 구역</span></div>
+        <div class="panel-body" id="form">
+
+          <details class="acc" open>
+            <summary><span class="acc-badge">A</span><span class="acc-title">산정 기준 (목표)</span><span class="acc-chev" aria-hidden="true">▶</span></summary>
+            <div class="acc-body">
+              <p class="cap" id="solveModeCaption" style="margin-top:0;">당사 이익 목표 → 적정 입찰단가 역산 (이분탐색, Excel Goal Seek과 동일 원리)</p>
+              <div class="field-grid">
+                <div class="field"><label for="solveMode">산정 기준</label><div class="iw"><select id="solveMode">
+                  <option value="companyProfit" selected>당사 이익 목표</option>
+                  <option value="irr">목표 IRR</option>
+                </select></div></div>
+                <div class="field" id="companyProfitKindField"><label for="companyProfitKind">당사 이익 구성 기준</label><div class="iw"><select id="companyProfitKind">
+                  <option value="companyProfitPreTax">누적 순이익 (세전)</option>
+                  <option value="companyProfitAfterTax">누적 순이익 (세후)</option>
+                  <option value="companyDividendPlusRecovery">누적 배당+최종회수</option>
+                </select></div></div>
+              </div>
+              <div class="field-grid one" id="companyProfitTargetRow">
+                <div class="field"><label for="targetCompanyProfit">목표 당사 이익</label><div class="iw"><input id="targetCompanyProfit" type="number" value="100" step="1"><span class="unit">억원</span></div></div>
+              </div>
+              <p class="cap" id="crossRefIrr"></p>
+              <div class="field-grid" id="irrTargetRow" style="display:none;">
+                <div class="field"><label for="irrKind">기준 IRR</label><div class="iw"><select id="irrKind"><option value="projectIrr">P-IRR (프로젝트)</option><option value="equityIrr">E-IRR (지분,배당세전)</option><option value="equityIrrAfterInvestorTax">E-IRR (지분,배당세후)</option></select></div></div>
+                <div class="field"><label for="targetIrrPct">목표 IRR</label><div class="iw"><input id="targetIrrPct" type="number" value="8" step="0.1"><span class="unit">%</span></div></div>
+              </div>
+              <p class="cap" id="crossRefProfit" style="display:none;"></p>
+            </div>
+          </details>
+
+          <details class="acc" open>
+            <summary><span class="acc-badge">B</span><span class="acc-title">사업개요</span><span class="acc-chev" aria-hidden="true">▶</span></summary>
+            <div class="acc-body">
+              <div class="field-grid">
+                <div class="field span-2"><label for="projectName">사업명</label><div class="iw"><input id="projectName" type="text" value="ESS 96MW/576MWh 입찰사업"></div></div>
+                <div class="field"><label for="unitCount">배터리 유닛 대수</label><div class="iw"><input id="unitCount" type="number" value="150" step="1"><span class="unit">대</span></div></div>
+                <div class="field"><label for="unitStorageMWh">대당 저장용량</label><div class="iw"><input id="unitStorageMWh" type="number" value="4.883" step="0.001"><span class="unit">MWh/대</span></div></div>
+                <div class="field calc" style="display:none;"><label for="totalStorageMWh">설치 저장용량</label><div class="iw"><input id="totalStorageMWh" disabled><span class="unit">MWh</span></div></div>
+                <div class="field"><label for="pcsUnitCount">PCS 대수</label><div class="iw"><input id="pcsUnitCount" type="number" value="25" step="1"><span class="unit">대</span></div></div>
+                <div class="field"><label for="unitPowerMW">대당 PCS 출력</label><div class="iw"><input id="unitPowerMW" type="number" value="3.99" step="0.01"><span class="unit">MW/대</span></div></div>
+                <div class="field calc" style="display:none;"><label for="totalPowerMW">설치 출력용량 (PCS 정격 합계)</label><div class="iw"><input id="totalPowerMW" disabled><span class="unit">MW</span></div></div>
+                <div class="field calc" style="display:none;"><label for="durationHours">저장시간 (설치 기준)</label><div class="iw"><input id="durationHours" disabled><span class="unit">h</span></div></div>
+                <div class="field"><label for="startYear">사업 시작연도</label><div class="iw"><input id="startYear" type="number" value="2026" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="endYear">사업 종료연도</label><div class="iw"><input id="endYear" type="number" value="2042" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="constructionYears">공사기간</label><div class="iw"><input id="constructionYears" type="number" value="1" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="operationYears">운영기간</label><div class="iw"><input id="operationYears" type="number" value="15" step="1"><span class="unit">년</span></div></div>
+                <div class="field span-2"><label for="codDate">상업운전개시일(COD)</label><div class="iw"><input id="codDate" type="date" value="2027-07-01"></div></div>
+                <div class="field calc" style="display:none;"><label for="developmentYears">개발기간</label><div class="iw"><input id="developmentYears" disabled><span class="unit">년</span></div></div>
+              </div>
+              <p class="hint">위 저장·출력용량은 <strong>설치용량</strong>(장비 스펙 합계)입니다. 매출·정산 기준이 되는 <strong>계약용량(입찰물량)</strong>은 설치용량과 다를 수 있어 C. 발전매출에서 별도로 입력합니다.</p>
+              <div class="warn" role="status" id="calendarWarn"></div>
+              <div class="warn" role="status" id="developmentTimelineWarn"></div>
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary><span class="acc-badge">C</span><span class="acc-title">발전매출</span><span class="flag">제1차 공고 반영</span><span class="acc-chev" aria-hidden="true" style="margin-left:auto;">▶</span></summary>
+            <div class="acc-body">
+              <p class="hint" style="margin-top:0;">전력거래소 공고 제2025-03호(Ⅳ.다)에 따르면 입찰가격은 "공급가능용량 기준 단위 고정비(원/kW-h)"이며, 실제 정산은 급전지시량 대비 미이행률(패널티, Ⅴ.가)과 준공지연 페널티(Ⅴ.나)가 각각 별도로 반영됩니다. <strong>①방전가능용량은 설치용량이 아니라 계약용량 기준</strong>입니다 — 매출은 아래 "계약용량"에 직접 연동됩니다.</p>
+              <div class="field-grid">
+                <div class="field"><label for="contractCapacityMW">계약용량 (입찰물량)</label><div class="iw"><input id="contractCapacityMW" type="number" value="96" step="1" min="1"><span class="unit">MW</span></div></div>
+                <div class="field calc" style="display:none;"><label for="installedCapacityDisplay">설치용량 (참고)</label><div class="iw"><input id="installedCapacityDisplay" disabled><span class="unit">MW</span></div></div>
+                <div class="field calc"><label for="bidPriceDisplay">낙찰(입찰)단가</label><div class="iw"><input id="bidPriceDisplay" disabled><span class="unit">원/kWh</span></div></div>
+              </div>
+              <div class="field-grid three">
+                <div class="field"><label for="year1RatePct">1년차 가동률</label><div class="iw"><input id="year1RatePct" type="number" value="95" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="year2RatePct">2년차 가동률</label><div class="iw"><input id="year2RatePct" type="number" value="96" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="operatingRatePct">기본 (3년차~)</label><div class="iw"><input id="operatingRatePct" type="number" value="97" step="0.1"><span class="unit">%</span></div></div>
+              </div>
+              <p class="hint">공고 Ⅰ.가·Ⅳ.가 기준 계약용량은 10MW 초과~100MW 미만 범위, 1MW 단위로 신고합니다. 계약용량은 설치용량 이내여야 합니다(방전 가능한 실제 출력을 초과할 수 없음).</p>
+              <div class="warn" role="status" id="contractCapacityWarn"></div>
+              <div class="warn" role="status" id="contractCapacityRangeWarn"></div>
+              <div class="subhead subhead-row">
+                <span>운영연차별 가동률 (직접 수정 가능)</span>
+                <button id="applyRateBtn" type="button" class="btn btn-soft">1·2·3년차~ 규칙 일괄 적용</button>
+              </div>
+              <div id="opRateGrid" class="field-grid" style="grid-template-columns:repeat(auto-fill,minmax(88px,1fr));margin-top:0;"></div>
+              <div class="warn" role="status" id="opRateRangeWarn"></div>
+
+              <div class="subhead">공급량 산정 (계약용량 기준 ①~⑤ 단계)</div>
+              <p class="hint" style="margin:0 0 8px;">① 방전가능용량(MWh) = 계약용량(MW) × 6h → ② 일간공급가능량(MWh) = ①÷6h×24h → ③ 가동률(연차별) → ④ 일간공급예상량 = ②×③ → ⑤ 년간공급예상량 = ④×365일(부분연도는 안분)</p>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>연차</th><th>① 방전가능용량<br>(MWh)</th><th>② 일간공급가능량<br>(MWh)</th><th>③ 가동률</th><th>④ 일간공급예상량<br>(MWh)</th><th>⑤ 년간공급예상량<br>(MWh)</th></tr></thead>
+                  <tbody id="supplyTableBody"></tbody>
+                </table>
+              </div>
+
+              <div class="subhead">준공지연 페널티 (공고 Ⅴ.나)</div>
+              <p class="hint" style="margin:0 0 4px;">계약체결일로부터 계획 COD까지 상업운전을 시작하지 못하면 지연일수에 따라 3단계로 적용: <strong>1단계(180일 이하)</strong> 거래기간 15년 유지·계약가격 감액, <strong>2단계(180일 초과~2년)</strong> 거래기간을 지연일수만큼 단축·계약가격 유지, <strong>3단계(2년 초과)</strong> 계약 해지. <span style="color:var(--warn-ink);">⚠ 원문 표의 병합 셀 구조상 1단계 계약가격 감액식은 초안 해석이며 확정 필요.</span></p>
+              <div class="field-grid">
+                <div class="field"><label for="delayDays">계획 대비 준공지연일수</label><div class="iw"><input id="delayDays" type="number" value="0" step="1" min="0"><span class="unit">일</span></div></div>
+                <div class="field calc"><label for="delayStageDisplay">판정 단계</label><div class="iw"><input id="delayStageDisplay" disabled></div></div>
+                <div class="field calc span-2"><label for="delayEffectDisplay">적용 결과</label><div class="iw"><input id="delayEffectDisplay" disabled></div></div>
+              </div>
+
+              <div class="subhead">이행률 패널티 (정산 감액, 공고 Ⅴ.가)</div>
+              <p class="hint" style="margin:0 0 4px;">원문 정산식: 일간계약가격 정산금 × [1 − {미이행량(충전)÷급전지시량(충전)×α + 미이행량(방전)÷급전지시량(방전)×(1−α)}], α=충전지시량÷(충전+방전지시량). 시간대별 급전지시·계량 데이터가 없어 <strong>연평균 미이행률(%)</strong> 하나로 근사해 년간 매출(정산금)에만 일괄 할인 적용합니다(물리적 공급량 자체는 할인하지 않음).</p>
+              <div class="field-grid">
+                <div class="field"><label for="avgNonCompliancePct">연평균 미이행률</label><div class="iw"><input id="avgNonCompliancePct" type="number" value="0" step="0.1" min="0" max="100"><span class="unit">%</span></div></div>
+                <div class="field calc"><label for="settlementFactorDisplay">정산금 적용 배율</label><div class="iw"><input id="settlementFactorDisplay" disabled><span class="unit">배</span></div></div>
+              </div>
+              <div class="warn" role="status" id="nonComplianceRangeWarn"></div>
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary><span class="acc-badge">D</span><span class="acc-title">CAPEX</span><span class="acc-chev" aria-hidden="true" style="margin-left:auto;">▶</span></summary>
+            <div class="acc-body" id="capexBody">
+              <div class="field-grid">
+                <div class="field"><label for="constructionInflationPct">건설비 물가상승률</label><div class="iw"><input id="constructionInflationPct" type="number" value="0" step="0.1"><span class="unit">%/년</span></div></div>
+                <div class="field"><label for="contingencyPct">예비비</label><div class="iw"><input id="contingencyPct" type="number" value="7" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field span-2"><label for="developmentSharePct">개발기간 집행 비중</label><div class="iw"><input id="developmentSharePct" type="number" value="8" step="0.1"><span class="unit">%</span></div></div>
+              </div>
+              <div class="field-grid one">
+                <div class="field"><label for="capexInputMode">CAPEX 입력 방식</label><div class="iw"><select id="capexInputMode">
+                  <option value="itemized">항목별 입력 (13개)</option>
+                  <option value="lumpsum">EPC 총액 직접 입력</option>
+                </select></div></div>
+              </div>
+              <div id="capexItemizedWrap">
+                <p class="hint" style="margin:10px 0 6px;">항목별 금액 (억원, 프로젝트 총액 직접 입력 — 배터리·PCS 대수와는 별개)</p>
+                <div class="group-card"><div id="capexItems"></div></div>
+              </div>
+              <div id="capexLumpSumWrap" class="field-grid one" style="display:none;">
+                <div class="field"><label for="capexLumpSum">EPC 총액 (수기 입력)</label><div class="iw"><input id="capexLumpSum" type="number" value="1005" step="1"><span class="unit">억원</span></div></div>
+              </div>
+              <div class="item-total"><span>CAPEX 합계</span><span id="capexTotal">–</span></div>
+              <div class="warn" role="status" id="capexNegativeWarn"></div>
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary><span class="acc-badge">E</span><span class="acc-title">OPEX</span><span class="acc-chev" aria-hidden="true" style="margin-left:auto;">▶</span></summary>
+            <div class="acc-body" id="opexBody">
+              <div class="field-grid">
+                <div class="field"><label for="variableOMPerMWh">변동 O&amp;M</label><div class="iw"><input id="variableOMPerMWh" type="number" value="2500" step="10"><span class="unit">원/MWh</span></div></div>
+                <div class="field"><label for="powerTradingFeePerKWh">전력거래수수료</label><div class="iw"><input id="powerTradingFeePerKWh" type="number" value="0.1193" step="0.001"><span class="unit">원/kWh</span></div></div>
+                <div class="field"><label for="insurancePct">연간 운영보험료율</label><div class="iw"><input id="insurancePct" type="number" value="0.45" step="0.01"><span class="unit">총투자비%</span></div></div>
+                <div class="field"><label for="communityRevenuePct">주민·지역 기여</label><div class="iw"><input id="communityRevenuePct" type="number" value="0.5" step="0.1"><span class="unit">매출%</span></div></div>
+                <div class="field"><label for="opexEscalationPct">OPEX 물가상승률</label><div class="iw"><input id="opexEscalationPct" type="number" value="2" step="0.1"><span class="unit">%/년</span></div></div>
+                <div class="field"><label for="ltsaStepAfterYear">LTSA 단가 변경 시점</label><div class="iw"><input id="ltsaStepAfterYear" type="number" value="3" step="1"><span class="unit">년차 후</span></div></div>
+                <div class="field span-2"><label for="ltsaStepMultiplierPct">LTSA 변경 후 단가 배율</label><div class="iw"><input id="ltsaStepMultiplierPct" type="number" value="190" step="1"><span class="unit">%</span></div></div>
+              </div>
+              <p class="hint">전력거래수수료는 공고 Ⅴ항의 "실제공급한 방전량 기준 전력거래수수료" 조항에 대응하는 항목으로, 방전량(연간 방전전력량)에 비례해 계산됩니다.</p>
+              <div class="subhead">항목별 고정비 (억원/년, 프로젝트 총액 직접 입력)</div>
+              <div class="group-card"><div id="opexItems"></div></div>
+              <div class="item-total"><span>OPEX 고정비 합계</span><span id="opexTotal">–</span></div>
+              <div class="warn" role="status" id="opexNegativeWarn"></div>
+            </div>
+          </details>
+
+          <details class="acc">
+            <summary><span class="acc-badge">F</span><span class="acc-title">금융·세무</span><span class="acc-chev" aria-hidden="true" style="margin-left:auto;">▶</span></summary>
+            <div class="acc-body">
+              <div class="subhead" style="margin-top:0;">자본구조·대출조건</div>
+              <div class="field-grid">
+                <div class="field"><label for="equityPct">자기자본 비율</label><div class="iw"><input id="equityPct" type="number" value="30" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="residentBondPct">주민참여채권 비율</label><div class="iw"><input id="residentBondPct" type="number" value="5" step="0.1"><span class="unit">총투자비%</span></div></div>
+                <div class="field"><label for="seniorRatePct">선순위 대출금리</label><div class="iw"><input id="seniorRatePct" type="number" value="5.2" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="seniorTermYears">선순위 상환기간</label><div class="iw"><input id="seniorTermYears" type="number" value="10" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="seniorGraceYears">원금 거치기간</label><div class="iw"><input id="seniorGraceYears" type="number" value="1" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="bondRatePct">주민참여채권 금리</label><div class="iw"><input id="bondRatePct" type="number" value="7" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="bondTermYears">주민참여채권 만기</label><div class="iw"><input id="bondTermYears" type="number" value="7" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="financeFeePct">금융부대비용</label><div class="iw"><input id="financeFeePct" type="number" value="1.5" step="0.1"><span class="unit">타인자본%</span></div></div>
+                <div class="field"><label for="constructionRatePct">건설기간 적용금리</label><div class="iw"><input id="constructionRatePct" type="number" value="5.5" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="dsraMonths">DSRA</label><div class="iw"><input id="dsraMonths" type="number" value="6" step="1"><span class="unit">개월</span></div></div>
+              </div>
+              <div class="warn" role="status" id="capitalStructureWarn"></div>
+              <div class="warn" role="status" id="seniorTermWarn"></div>
+              <div class="subhead">지분 구조</div>
+              <div class="field-grid one">
+                <div class="field"><label for="kchSharePct">당사(KCH) 지분율</label><div class="iw"><input id="kchSharePct" type="number" value="20" step="1" min="0" max="100"><span class="unit">보통주 %</span></div></div>
+              </div>
+              <div class="warn" role="status" id="kchShareRangeWarn"></div>
+              <p class="hint">SPC 보통주를 복수 투자자가 나눠 갖는 컨소시엄 구조(예: KCH·전략적투자자·재무적투자자)를 가정합니다. "자기자본 비율"은 SPC 전체 총투자비 대비 비율이고, "당사(KCH) 지분율"은 그 자기자본 중 당사 보통주 지분 비율입니다 — "당사 손익" 절대금액에만 곱해지며 P-IRR·E-IRR 등 수익률 지표는 지분율과 무관합니다.</p>
+              <div class="subhead">세무·배당 프리셋 (읽기 전용)</div>
+              <div class="field-grid">
+                <div class="field"><label for="presetWacc">WACC·할인율</label><div class="iw"><input id="presetWacc" value="4.50 %" disabled></div></div>
+                <div class="field"><label for="presetDep">정액 감가상각 기간</label><div class="iw"><input id="presetDep" value="15 년" disabled></div></div>
+                <div class="field"><label for="presetNol">이월결손금 공제기간</label><div class="iw"><input id="presetNol" value="10 년" disabled></div></div>
+                <div class="field"><label for="presetDscr">연간/누적 DSCR 임계치</label><div class="iw"><input id="presetDscr" value="1.15배 / 1.30배" disabled></div></div>
+                <div class="field"><label for="presetReserve">법정준비금 적립률/상한</label><div class="iw"><input id="presetReserve" value="10% / 자기자본 50%" disabled></div></div>
+                <div class="field"><label for="presetDivTax">투자자 배당세</label><div class="iw"><input id="presetDivTax" value="15.40 %" disabled></div></div>
+              </div>
+            </div>
+          </details>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- ════════════ 우측: 결과 ════════════ -->
+    <div class="col-result">
+      <section class="card hero" aria-label="적정 입찰단가">
+        <div>
+          <div class="k hero-label">적정 입찰단가</div>
+          <div><span class="hero-num" id="heroBidPrice">–</span><span class="hero-unit">원/kWh</span></div>
+          <div class="status-pill" id="solveStatus">계산 중</div>
+        </div>
+        <div class="price-range" id="priceRangeBox">
+          <p class="cap">입찰단가 범위 — 최저단가는 P-IRR 6%·당사 이익 100억(15년 누적) 동시충족 최소 입찰단가(Q1/Q2 로직), 최고단가는 A. 산정 기준으로 구한 현재 적정 입찰단가</p>
+          <div class="bar"><div class="fill"></div></div>
+          <div class="pts">
+            <div class="pt"><span class="l">최저단가 · P-IRR6%·이익100억</span><span class="v" id="priceRangeLow">–</span></div>
+            <div class="pt hi"><span class="l">최고단가 · 현재 산정 결과</span><span class="v" id="priceRangeHigh">–</span></div>
+          </div>
+          <div class="warn" role="status" id="priceFloorWarn"></div>
+        </div>
+      </section>
+
+      <section aria-label="프로젝트 지표">
+        <div class="group-label">프로젝트 지표</div>
+        <div class="cards" id="cards">
+          <div class="card emph"><div class="k">달성 P-IRR</div><div class="v" id="kpiPIrr">–</div></div>
+          <div class="card"><div class="k">달성 E-IRR (배당세전)</div><div class="v" id="kpiEIrr">–</div></div>
+          <div class="card"><div class="k">달성 E-IRR (배당세후)</div><div class="v" id="kpiEIrrAfterTax">–</div></div>
+          <div class="card"><div class="k">NPV</div><div class="v" id="kpiNpv">–</div></div>
+          <div class="card"><div class="k">총투자비</div><div class="v" id="kpiTotalInvestment">–</div></div>
+          <div class="card"><div class="k">연간 매출 (환산)</div><div class="v" id="kpiRevenue">–</div></div>
+          <div class="card"><div class="k">연간 방전전력량 (환산)</div><div class="v" id="kpiGeneration">–</div></div>
+        </div>
+      </section>
+
+      <section aria-label="당사(KCH 지분) 손익">
+        <div class="group-label">당사(KCH 지분) 손익</div>
+        <div class="cards">
+          <div class="card"><div class="k">당사 누적 출자금</div><div class="v" id="kpiEquityInjected">–</div></div>
+          <div class="card"><div class="k">당사 누적 배당+최종회수</div><div class="v" id="kpiEquityReturn">–</div></div>
+          <div class="card emph"><div class="k">당사 누적 순이익 (세전/세후)</div><div class="v" id="kpiCompanyProfit">–</div></div>
+          <div class="card"><div class="k">투자배수 (MOIC)</div><div class="v" id="kpiMoic">–</div></div>
+        </div>
+      </section>
+
+      <aside class="notice" aria-label="ESS 모델링 한계">
+        <strong class="t">⚠ ESS 모델링 한계 — 이 결과에 항상 적용됨</strong>
+        <ul>
+          <li>재무 프리셋(WACC 4.5%·DSCR 1.15/1.30배·세율 구간·가동률 규칙 등)은 실제 프로젝트 파이낸싱 참고자료 기반 <strong>초안값</strong> — KCH 내부 기준 확정 필요</li>
+          <li>CAPEX·OPEX 항목 금액은 예시 규모 <strong>초안값</strong> — 실제 견적으로 교체 필요</li>
+          <li>부채 구조는 고정 비율 방식만 지원 — 목표DSCR 사이즈컬핑·원금불균등상환 <strong>미반영</strong></li>
+          <li>준공지연 1단계 감액식·이행률 패널티는 공고 원문 <strong>초안 해석</strong>/연평균 근사치</li>
+          <li>연간(annual) 단위 모델 — 분기·월별 발전량·가격 곡선 <strong>미반영</strong></li>
+        </ul>
+        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 12개 항목 상세 보기 →</button></p>
+      </aside>
+
+      <section class="panel">
+        <div class="tabs" role="tablist" aria-label="분석 도구">
+          <button type="button" class="tab" role="tab" id="tab-scenario" aria-controls="panel-scenario" data-panel="panel-scenario" aria-selected="true">시나리오 비교</button>
+          <button type="button" class="tab" role="tab" id="tab-sens" aria-controls="panel-sens" data-panel="panel-sens" aria-selected="false">민감도</button>
+          <button type="button" class="tab" role="tab" id="tab-price" aria-controls="panel-price" data-panel="panel-price" aria-selected="false">가격환산</button>
+          <button type="button" class="tab" role="tab" id="tab-kch" aria-controls="panel-kch" data-panel="panel-kch" aria-selected="false">KCH 개발수수료</button>
+          <button type="button" class="tab" role="tab" id="tab-caveats" aria-controls="panel-caveats" data-panel="panel-caveats" aria-selected="false">확정 필요 항목</button>
+        </div>
+
+        <!-- 시나리오 비교 -->
+        <div class="tab-panel" role="tabpanel" id="panel-scenario" aria-labelledby="tab-scenario">
+          <div class="subhead-row" style="margin-bottom:10px;">
+            <span class="tab-lede" style="margin:0;">현재 입력값을 이름 붙여 저장하고 여러 시나리오를 나란히 비교합니다. <span style="color:var(--muted);">(이 브라우저에만 저장 — 다른 기기·브라우저와 공유되지 않음)</span></span>
+            <span class="btn-group">
+              <button id="downloadCsvBtn" type="button" class="btn btn-soft">CSV 다운로드 (Excel에서 열기)</button>
+              <button id="clearScenariosBtn" type="button" class="btn btn-danger">전체 삭제</button>
+            </span>
+          </div>
+          <div id="scenarioPriceChartWrap" class="chart-wrap" style="margin:0 0 14px;">
+            <div class="subhead" style="margin-top:0;">적정 입찰단가 비교 (원/kWh)</div>
+            <div id="scenarioPriceChart"></div>
+            <div id="chartTooltip" class="chart-tooltip" role="presentation"></div>
+          </div>
+          <div class="calc-grid" style="grid-template-columns:minmax(0,1fr) auto;align-items:end;margin-top:0;">
+            <div class="field"><label for="scenarioName">시나리오 이름</label><div class="iw"><input id="scenarioName" type="text" placeholder="예: 안좌 96MW 기본안"></div></div>
+            <button id="saveScenarioBtn" type="button" class="btn btn-primary">현재값 저장</button>
+          </div>
+          <div id="scenarioStorageWarn" class="warn" role="status"></div>
+          <div id="scenarioList" style="margin-top:8px;"></div>
+          <div id="scenarioCompareWrap" style="margin-top:12px;">
+            <div class="table-wrap">
+              <table>
+                <thead><tr id="scenarioCompareHead"></tr></thead>
+                <tbody id="scenarioCompareBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <details class="help" style="margin:14px 0 0;">
+            <summary>다운로드 안내 — JSON · CSV · 서식 적용 엑셀(.xlsx)</summary>
+            <div>
+              <p style="margin:0 0 6px;">"현재값 저장"을 누르면 이 브라우저(localStorage)에 저장됨과 동시에, 그 시나리오의 <b>입력 모델 전체를 담은 <code>.json</code> 파일이 즉시 다운로드</b>됩니다 — 다른 기기·다른 사람과 공유하거나 나중에 정확히 그 시점 값으로 되돌아가고 싶을 때 이 파일을 보관하세요. 저장된 시나리오 목록의 "다운로드" 버튼으로 언제든 같은 파일을 다시 받을 수 있습니다.</p>
+              <p style="margin:0 0 6px;">"CSV 다운로드"는 지금까지 저장한 모든 시나리오를 한 파일로 나란히 비교하기 위한 별도 기능입니다 — <code>.csv</code>(엑셀에서 그대로 열림)이며, <b>1) Assumption(입력값, 계산된 표시값 포함)</b> · <b>2) Summary(핵심 결과지표)</b> · <b>3) Appendix(연도별 현금흐름 상세 — DSCR 게이트·이익준비금 잔여액까지 반영해 저장 시점 값으로 다시 계산)</b> 세 절이 순서대로 들어 있습니다.</p>
+              <p style="margin:0;"><b>서식이 적용된 다중 시트 엑셀(.xlsx)이 필요하면</b> — 이 뷰어는 .xlsx 저장을 허용하지 않으므로, 위에서 받은 시나리오 <code>.json</code> 파일을 프로젝트 폴더의 <code>ESS_엑셀변환.bat</code>에 끌어다 놓으세요. Assumptions·Summary·Funding·IS·Depreciation·DebtSchedule·CashFlow·KCH·가격환산 9개 시트로 된 <code>.xlsx</code>가 같은 폴더에 만들어지고 바로 Excel로 열립니다(수치는 이 화면과 동일하게 계산).</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- 민감도 -->
+        <div class="tab-panel" role="tabpanel" id="panel-sens" aria-labelledby="tab-sens" hidden>
+          <p class="tab-lede">상단의 현재 적정 입찰단가를 고정한 채, 선순위 대출금리를 공통 축으로 두고 OPEX 물가상승률·EPC 총액을 각각 짝지어 변동시켜 달성되는 <strong>E-IRR(지분 IRR, 배당세전)</strong>을 재계산합니다. 두 표 모두 현재 입력값 대비 편차(Δ)로 구성했고, 기준(Δ=0,0) 대비 E-IRR이 같거나 높은 칸은 초록, 기준 칸은 테두리로 표시합니다.</p>
+          <details class="help">
+            <summary>왜 P-IRR 대신 E-IRR인가</summary>
+            <div>대출금리가 원리금 상환액을 통해 직접 반영되는 지표라 E-IRR을 씁니다. 본 모델의 P-IRR은 이자비용의 법인세 절감효과만 반영하고 원리금 상환 자체는 프로젝트 현금흐름에서 빠지는 정의라, 금리가 오히려 P-IRR을 올리는 역설이 있어 대출금리 민감도 표에는 부적합합니다.</div>
+          </details>
+          <div class="subhead" style="margin-top:0;">1) 선순위 대출금리 × OPEX 물가상승률</div>
+          <div class="calc-grid" style="margin:0 0 10px;">
+            <div class="field calc"><label for="sensBaseSeniorRate">기준 선순위 대출금리</label><div class="iw"><input id="sensBaseSeniorRate" disabled><span class="unit">%</span></div></div>
+            <div class="field calc"><label for="sensBaseOpexEsc">기준 OPEX 물가상승률</label><div class="iw"><input id="sensBaseOpexEsc" disabled><span class="unit">%/년</span></div></div>
+            <div class="field calc"><label for="sensBaseIrr">기준(Δ=0,0) 달성 E-IRR</label><div class="iw"><input id="sensBaseIrr" disabled><span class="unit">%</span></div></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr id="macroSensHead"></tr></thead>
+              <tbody id="macroSensBody"></tbody>
+            </table>
+          </div>
+          <p class="hint">입찰단가는 현재 결과값으로 고정하고, 선순위 대출금리·OPEX 물가상승률 외 다른 가정은 모두 현재 입력값 그대로 유지한 채 재계산합니다. 단가산정이 유효한 값을 계산하지 못한 경우(예: 준공지연 3단계) 표가 비어 있습니다.</p>
+
+          <div class="subhead">2) 선순위 대출금리 × EPC 총액</div>
+          <div class="calc-grid" style="margin:0 0 10px;">
+            <div class="field calc"><label for="sensBaseSeniorRate2">기준 선순위 대출금리</label><div class="iw"><input id="sensBaseSeniorRate2" disabled><span class="unit">%</span></div></div>
+            <div class="field calc"><label for="sensBaseEpcTotal">기준 EPC 총액</label><div class="iw"><input id="sensBaseEpcTotal" disabled><span class="unit">억원</span></div></div>
+            <div class="field calc"><label for="sensBaseEpcIrr">기준(Δ=0,0) 달성 E-IRR</label><div class="iw"><input id="sensBaseEpcIrr" disabled><span class="unit">%</span></div></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr id="epcSensHead"></tr></thead>
+              <tbody id="epcSensBody"></tbody>
+            </table>
+          </div>
+          <p class="hint">EPC 총액(D. CAPEX 합계, 항목별 입력이든 총액 직접 입력이든 현재 합계 기준)을 −15%~+15% 범위로 비례 변동시킵니다. 선순위 대출금리·EPC 총액 외 다른 가정은 모두 현재 입력값 그대로입니다.</p>
+        </div>
+
+        <!-- 가격환산 -->
+        <div class="tab-panel" role="tabpanel" id="panel-price" aria-labelledby="tab-price" hidden>
+          <p class="tab-lede">전력거래소 공고 제2025-05호 Ⅲ.5 산식. 입찰가격은 적정 입찰단가 결과값으로 자동 채워지며, 직접 바꿔볼 수도 있습니다.</p>
+          <div class="calc-grid" style="margin-top:0;">
+            <div class="field"><label for="minPrice">최저입찰가격</label><div class="iw"><input id="minPrice" type="number" value="18" step="0.1"><span class="unit">원/kWh</span></div></div>
+            <div class="field"><label for="bidPrice">입찰가격 (평가대상)</label><div class="iw"><input id="bidPrice" type="number" value="20" step="0.1"><span class="unit">원/kWh</span></div></div>
+            <div class="field"><label for="priceCap">가격배점 (만점)</label><div class="iw"><input id="priceCap" type="number" value="50" step="1"><span class="unit">점</span></div></div>
+          </div>
+          <div class="calc-grid">
+            <div class="field calc"><label for="bidPriceBaseDisplay">단가산정 적정 입찰단가 (원값)</label><div class="iw"><input id="bidPriceBaseDisplay" disabled><span class="unit">원/kWh</span></div></div>
+            <div class="field calc"><label for="kchFeeEquivalentDisplay">KCH 수수료 원/kWh 환산 반영분</label><div class="iw"><input id="kchFeeEquivalentDisplay" disabled><span class="unit">원/kWh</span></div></div>
+          </div>
+          <p class="hint" style="margin:8px 0 12px;">입찰가격 기본값 = <b>적정 입찰단가 + KCH 개발수수료 생애주기 누적 총 수취액을 이 프로젝트의 생애주기 총 발전량으로 나눈 원/kWh 환산값</b>(KCH 수수료를 걷으려면 입찰단가에 그만큼을 더 얹어야 한다는 기계적 환산 — SPC 자체의 P-IRR·NPV·당사이익 결과에는 영향 없음). 값을 직접 입력하면 연동이 끊기고 수동 모드로 전환됩니다 (<button id="relinkBtn" type="button" class="link-btn">다시 연동</button>).</p>
+
+          <div class="kpi-row"><span>가격평가점수 = 최저입찰가격 ÷ 입찰가격 × 가격배점</span><span class="v" id="outScore" style="font-size:20px;color:var(--accent);">–</span></div>
+          <div class="kpi-row"><span>방법 A. 한계(미분) 근사값</span><span class="v" id="outA">–</span></div>
+          <div class="kpi-row"><span>방법 B-1. +1점 상승에 필요한 가격 인하폭</span><span class="v" id="outB1">–</span></div>
+          <div class="kpi-row"><span>방법 B-2. −1점 하락을 유발하는 가격 인상폭</span><span class="v" id="outB2">–</span></div>
+          <div class="kpi-row"><span>방법 B 평균값 (권장)</span><span class="v" id="outBavg" style="font-size:17px;color:var(--accent);">–</span></div>
+
+          <div class="table-wrap" style="margin-top:14px;">
+            <table>
+              <thead><tr><th>Δ점</th><th>목표점수</th><th>목표 입찰가격</th><th>가격 변동</th><th>비고</th></tr></thead>
+              <tbody id="sensBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- KCH 개발수수료 -->
+        <div class="tab-panel" role="tabpanel" id="panel-kch" aria-labelledby="tab-kch" hidden>
+          <p class="tab-lede">ESS 프로젝트 자체의 발전매출과는 별개로, KCH가 개발자(Developer)로서 SPC로부터 받는 4개 수수료(① 부지 임대료 ② 사전개발비 ③ 공동접속료 ④ 운영수익)를 <strong>억원 단위 총액</strong>으로 입력받아 <strong>생애주기 누적 총 수취액</strong>을 계산합니다.</p>
+          <details class="help">
+            <summary>산정 방식 설명</summary>
+            <div>기본은 <strong>"총액 직접 입력"</strong> 모드 — 4개 금액을 원하는 값 그대로 입력하면 운영기간·연간 상승률을 반영한 생애주기 누적 총 수취액이 계산되고, ① 버튼 한 번으로 이 총액을 A. 산정 기준의 "목표 당사 이익"에 반영해 적정 입찰단가를 다시 계산하거나, ② "가격환산" 탭의 입찰가격에 이 총액을 <strong>이 프로젝트의 생애주기 총 발전량 기준 원/kWh로 자동 환산해 실시간으로 더해서</strong> 반영합니다(②는 버튼 없이 즉시 갱신 — 단가산정 자체의 P-IRR·NPV·당사이익에는 영향 없음). 예전 방식("목표 IRR 역산" — 기준총액에 공통 가격배율을 곱해 목표 IRR을 만족하는 배율을 이분탐색으로 찾는 <code>ESS_단가산정모델.xlsx</code> 로직)은 레거시 옵션으로 남겨두었습니다. 설비용량·사업기간 등은 ESS 입찰단가 계산부와 별도로 여기서 입력합니다.</div>
+          </details>
+          <div class="subhead" style="margin-top:0;">1. 사업 기본정보</div>
+          <div class="calc-grid" style="margin-top:0;">
+            <div class="field"><label for="kchCapacityMW">설비용량</label><div class="iw"><input id="kchCapacityMW" type="number" value="50" step="1"><span class="unit">MW</span></div></div>
+            <div class="field"><label for="kchStorageMWh">저장용량</label><div class="iw"><input id="kchStorageMWh" type="number" value="200" step="1"><span class="unit">MWh</span></div></div>
+            <div class="field calc"><label for="kchDurationHours">저장시간</label><div class="iw"><input id="kchDurationHours" disabled><span class="unit">h</span></div></div>
+            <div class="field"><label for="kchStartYear">사업 시작연도</label><div class="iw"><input id="kchStartYear" type="number" value="2026" step="1"><span class="unit">년</span></div></div>
+            <div class="field"><label for="kchDevYears">개발기간</label><div class="iw"><input id="kchDevYears" type="number" value="1" step="1"><span class="unit">년</span></div></div>
+            <div class="field"><label for="kchConYears">공사기간</label><div class="iw"><input id="kchConYears" type="number" value="1" step="1"><span class="unit">년</span></div></div>
+            <div class="field"><label for="kchOpYears">운영기간</label><div class="iw"><input id="kchOpYears" type="number" value="15" step="1"><span class="unit">년</span></div></div>
+            <div class="field calc"><label for="kchCodYearDisplay">COD 연도</label><div class="iw"><input id="kchCodYearDisplay" disabled><span class="unit">년</span></div></div>
+          </div>
+
+          <div class="subhead">2. KCH 비용 (현금유출)</div>
+          <div class="calc-grid" style="margin-top:0;">
+            <div class="field"><label for="kchLandCost">용지 매입·옵션 비용</label><div class="iw"><input id="kchLandCost" type="number" value="10" step="0.5"><span class="unit">억원(최초 1회)</span></div></div>
+            <div class="field"><label for="kchDevCostAnnual">개발·인허가비</label><div class="iw"><input id="kchDevCostAnnual" type="number" value="3" step="0.1"><span class="unit">억원/년(개발+공사)</span></div></div>
+            <div class="field"><label for="kchOmCostAnnual">자체 관리비</label><div class="iw"><input id="kchOmCostAnnual" type="number" value="0.5" step="0.1"><span class="unit">억원/년(운영)</span></div></div>
+          </div>
+
+          <div class="subhead subhead-row">
+            <span>3. 수익원 4종 (기준총액, 억원)</span>
+            <div class="iw" style="max-width:240px;flex:1 1 200px;"><select id="kchCalcMode" aria-label="KCH 수수료 산정 방식"><option value="direct">총액 직접 입력 (권장)</option><option value="irrSolve">목표 IRR 역산 (레거시)</option></select></div>
+          </div>
+          <p class="hint" style="margin:0 0 4px;"><b>총액 직접 입력</b>: 아래 4개 금액을 KCH가 실제로 받고자 하는 값 그대로 입력합니다(가격배율 적용 없음). <b>목표 IRR 역산(레거시)</b>: 아래 4개 금액을 "기준"으로 두고, 목표 IRR을 만족하는 공통 가격배율을 자동으로 찾아 곱합니다.</p>
+          <div class="calc-grid">
+            <div class="field"><label for="kchLeaseBase">① 부지 임대료 (연간)</label><div class="iw"><input id="kchLeaseBase" type="number" value="1.5" step="0.1"><span class="unit">억원/년</span></div></div>
+            <div class="field"><label for="kchLeaseEsc">① 연간 상승률</label><div class="iw"><input id="kchLeaseEsc" type="number" value="2" step="0.1"><span class="unit">%</span></div></div>
+            <div class="field"><label for="kchDevFeeBase">② 사전개발비 (COD 1회)</label><div class="iw"><input id="kchDevFeeBase" type="number" value="7.5" step="0.5"><span class="unit">억원</span></div></div>
+            <div class="field"><label for="kchConnMode">③ 공동접속료 발생방식</label><div class="iw"><select id="kchConnMode"><option value="연간">연간</option><option value="일시금">일시금(COD 1회)</option></select></div></div>
+            <div class="field"><label for="kchConnBase">③ 공동접속료 기준총액</label><div class="iw"><input id="kchConnBase" type="number" value="2.5" step="0.1"><span class="unit">억원</span></div></div>
+            <div class="field"><label for="kchConnEsc">③ 연간 상승률(연간 방식)</label><div class="iw"><input id="kchConnEsc" type="number" value="0" step="0.1"><span class="unit">%</span></div></div>
+            <div class="field"><label for="kchOmBase">④ 운영수익 (연간)</label><div class="iw"><input id="kchOmBase" type="number" value="4" step="0.1"><span class="unit">억원/년</span></div></div>
+            <div class="field"><label for="kchOmEsc">④ 연간 상승률</label><div class="iw"><input id="kchOmEsc" type="number" value="1.5" step="0.1"><span class="unit">%</span></div></div>
+          </div>
+
+          <div class="kpi-row" style="margin-top:12px;border-top:1px solid var(--line);">
+            <span>생애주기 누적 총 수취액 (운영기간·연간 상승률 반영 후 4개 수익원 합산)</span>
+            <span class="v" id="kchLifetimeTotal" style="font-size:20px;color:var(--accent);">–</span>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin:8px 0 4px;">
+            <button id="kchPushToTopBtn" type="button" class="btn btn-soft">▶ 이 총액을 "목표 당사 이익"(A. 산정 기준)에 반영</button>
+          </div>
+          <p class="hint" style="margin:2px 0 8px;">클릭하면 A. 산정 기준이 "당사 이익 목표"로 전환되고, 목표 당사 이익이 이 누적 총 수취액으로 채워져 적정 입찰단가가 다시 계산됩니다(예: 임대료 30억+공동접속료 10억+사전개발비 60억+운영수익 0억처럼 4개 금액을 맞춰 넣어 원하는 합계를 만든 뒤 반영). "목표 당사 이익"은 SPC 지분배당 등 <u>프로젝트 자체의 당사 몫 이익</u>이고, 이 탭의 수취액은 <u>KCH가 개발자로서 SPC로부터 받는 별도 수수료</u>라 발생 근거가 다릅니다 — "반영"은 두 수익을 하나의 목표 총액으로 관리하고 싶을 때 쓰는 편의 기능이며, 반영 후에도 언제든 값을 직접 수정할 수 있습니다.</p>
+
+          <div class="subhead" id="kchTargetIrrField" style="display:none;">4. 목표 및 해석 변수 (목표 IRR 역산 모드)</div>
+          <div class="calc-grid" id="kchTargetIrrGrid" style="display:none;">
+            <div class="field"><label for="kchTargetIrrPct">목표 IRR</label><div class="iw"><input id="kchTargetIrrPct" type="number" value="9" step="0.1"><span class="unit">%</span></div></div>
+          </div>
+          <div class="subhead">할인율</div>
+          <div class="calc-grid" style="margin-top:0;">
+            <div class="field"><label for="kchWaccPct">할인율 (WACC, NPV용)</label><div class="iw"><input id="kchWaccPct" type="number" value="7.5" step="0.1"><span class="unit">%</span></div></div>
+          </div>
+
+          <div class="subhead">결과</div>
+          <div class="kpi-row" id="kchScaleFactorRow" style="display:none;"><span>공통 가격배율 (자동 역산)</span><span class="v" id="kchScaleFactor" style="font-size:18px;color:var(--accent);">–</span></div>
+          <div class="kpi-row"><span>달성 IRR (참고)</span><span class="v" id="kchAchievedIrr">–</span></div>
+          <div class="kpi-row"><span>NPV</span><span class="v" id="kchNpv">–</span></div>
+          <div class="kpi-row"><span>총수익 (운영기간 합계)</span><span class="v" id="kchTotalRevenue">–</span></div>
+          <div class="kpi-row"><span>KCH 총비용</span><span class="v" id="kchTotalCost">–</span></div>
+          <div class="status-pill" id="kchSolveStatus">계산 중</div>
+
+          <div class="subhead">실제 적용 금액 (억원 — 총액 직접입력 모드는 입력값과 동일, 목표 IRR 역산 모드는 가격배율 반영 후)</div>
+          <div class="calc-grid" style="margin-top:0;">
+            <div class="field calc"><label for="kchOutLease">① 부지 임대료</label><div class="iw"><input id="kchOutLease" disabled><span class="unit">억원/년</span></div></div>
+            <div class="field calc"><label for="kchOutDevFee">② 사전개발비</label><div class="iw"><input id="kchOutDevFee" disabled><span class="unit">억원</span></div></div>
+            <div class="field calc"><label for="kchOutConn">③ 공동접속료</label><div class="iw"><input id="kchOutConn" disabled><span class="unit">억원</span></div></div>
+            <div class="field calc"><label for="kchOutOm">④ 운영수익</label><div class="iw"><input id="kchOutOm" disabled><span class="unit">억원/년</span></div></div>
+          </div>
+
+          <div class="subhead">민감도표 (가격배율 × 설비용량 → 달성 IRR, 목표 IRR 이상 칸 강조)</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr id="kchSensHead"></tr></thead>
+              <tbody id="kchSensBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 확정 필요 항목 -->
+        <div class="tab-panel" role="tabpanel" id="panel-caveats" aria-labelledby="tab-caveats" hidden>
+          <div id="modelCaveatsFull">
+            <p class="tab-lede">아래 12개 항목은 결과 수치에 영향을 주지만 아직 KCH 내부 기준이나 원문 대조로 확정되지 않은 가정입니다.</p>
+            <ul class="todo-list">
+              <li>KCH 개발수수료 단가산정 — 할인율(7.5%)·4개 수수료 기준총액(억원)은 <code>ESS_단가산정모델.xlsx</code>의 초안 예시값(원/kW 단가 × 예시 설비용량 50MW)을 억원 총액으로 환산해 그대로 옮긴 것 — 실제 KCH 내부 기준으로 교체 필요. 4개 수익원은 원/kW 단가가 아니라 <strong>"현재 설비용량 기준" 총액(억원)</strong>으로 입력받으며, 민감도표에서 다른 설비용량을 비교할 때만 총액을 비례로 스케일링함. 이 탭 자체의 설비용량·기간(1. 사업 기본정보)은 ESS 입찰단가 계산부와 별개의 독립 입력이라(KCH 자체 IRR 역산 계산에만 쓰임), 같은 프로젝트를 다룰 때는 양쪽에 값을 각각 맞춰 입력해야 함 — 다만 <strong>수취액 총액 → 가격환산 입찰가격 원/kWh 환산 자동연결은 반영 완료</strong>(C. 발전매출의 계약용량·가동률·운영기간 기준으로 환산)</li>
+              <li>KCH 개발수수료 "총액 직접 입력" 모드 — ① 부지 임대료·④ 운영수익은 "억원/년"(연간, 상승률 적용) 필드이고 ② 사전개발비·③ 공동접속료(기본 "연간" 방식, "일시금"으로 바꾸면 COD 1회)는 "억원" 필드라, 4개 입력값을 단순히 더한 숫자가 아니라 <strong>"생애주기 누적 총 수취액"</strong>(연간 항목 × 운영기간, 상승률 반영)이 "목표 당사 이익"과 정합성 있게 연결되도록 계산함 — 예: 임대료 30억을 만들려면 상승률을 0%로 두고 연간 2억×15년으로 입력해야 함. "▶ 반영" 버튼은 클릭 시에만 동작하는 명시적 연결이며 자동 동기화는 하지 않음. 레거시 "목표 IRR 역산" 모드로 전환하면 민감도표의 "목표 IRR 이상" 강조 기준은 숨겨진 "목표 IRR" 입력값을 계속 참조함</li>
+              <li>내부 재무모델 참고자료 기준으로 조정한 값 — <strong>DSCR 임계치(1.15/1.30배), 할인율(4.5%), 법인세 4단계 구간(3,000억 초과 26.4% 추가), 가동률 규칙(1년차 95%·2년차 96%·3년차~ 97%), 전력거래수수료(0.1193원/kWh), 당사(KCH) 지분율(20%)</strong> — 모두 실제 프로젝트 파이낸싱 조건을 참고한 값이므로, 본 사업에도 그대로 적용 가능한지 재확인 필요</li>
+              <li>단가산정 — <strong>"당사 이익 목표" 기본값(100억원, 기준 지표=누적 순이익 세전)</strong>은 초안 설정값이며, 당사(KCH) 지분율(기본 20%)만큼만 배분된 금액을 목표로 함. 목표 금액·기준 지표·지분율이 실제 KCH 내부 기준과 맞는지 확인 필요</li>
+              <li>반영하지 않은 구조적 차이 — 참고자료의 선순위차입금은 <strong>목표 DSCR 기반 부채 사이징(사이즈컬핑, 원금불균등 상환)</strong> 방식인데 본 프로토타입은 고정 비율(자기자본/타인자본 %) 방식만 지원함. 또 등록세·신주발행비 등 지분조달비용 세부 항목, Tr.A(변동)/Tr.B(고정) 이원화 금리 구조는 미반영 — 필요 시 다음 이터레이션에서 검토</li>
+              <li>C. 발전매출 — <strong>준공지연 페널티 1단계 계약가격 감액식</strong>: 공고 25p 원문 표가 PDF 추출 과정에서 병합 셀이 뒤섞여, "거래기간 유지 + 계약가격 × (15년×365−지연일수)/(15년×365)"로 초안 해석함. 원문 표(엑셀/한글 원본) 대조 확인 필요</li>
+              <li>C. 발전매출 — <strong>이행률 패널티</strong>: 원문은 일간·충방전별 급전지시량 대비 계량값으로 계산하나, 시간대별 지시 데이터가 없어 "연평균 미이행률(%)" 단일값으로 근사함. 실제 운영 데이터 확보 시 일단위 산식으로 정교화 필요</li>
+              <li>C. 발전매출 — 공급량 산정표(①~⑤)는 가동률만 반영했고, <strong>운전효율 체인(TR·PCS·Cable 효율, DC RTE)과 잔존율(경년열화)</strong>은 아직 미반영 — 반영 필요 여부 확인</li>
+              <li>D·E. CAPEX·OPEX — 실제 장비 대수(배터리 150대·PCS 25대)로 기본값을 바꾸면서 <strong>배터리 유닛 대수·PCS 대수와 CAPEX·OPEX 배수 연동을 끊고 프로젝트 총액 직접 입력 방식으로 전환</strong>함(대수를 그대로 곱하면 총액이 비현실적으로 커지는 문제 해결)</li>
+              <li>D~F. CAPEX·OPEX·금융조건 — 실제 견적/계약 조건으로 교체 (현재는 사업성모델 앱 ESS 프리셋 초안값)</li>
+              <li>목표 IRR — KCH 내부 허들레이트 확인</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <p>사업개요·발전매출·CAPEX·OPEX·금융세무 입력값으로 목표 당사 이익(또는 목표 IRR)을 만족하는 적정 입찰단가(원/kWh)를 역산하고, 그 값이 가격환산계산기의 입찰가격으로 자동 연결되어 가격평가점수까지 한 화면에서 확인합니다.</p>
+    <p>이 프로토타입은 이터레이션 1 범위(ESS 발전원 전용)로 배터리 증설(augmentation)은 단순화(미적용)했고, 이터레이션 2에서 KCH 개발수수료 단가산정 모델을 통합했습니다. 핵심 재무 로직(총투자비 반복수렴, 원리금균등상환, 누진세+이월결손금, DSCR 게이트 배당, 법정준비금)은 <code>js/finance.js</code>와 동일한 알고리즘으로 이식했습니다.</p>
+    <p>참고: <code>변수정의서_초안_이터레이션1.md</code> · <code>PRD_사업성분석_프로토타입.md</code> · <code>ESS_단가산정모델.xlsx</code> · 발전매출 산식 전력거래소 공고 제2025-03호 Ⅳ.다·Ⅴ.가·Ⅴ.나 · 가격환산 산식 공고 제2025-05호 Ⅲ.4·Ⅲ.5 · 작성 서신준(인프라사업2 본부) · 디자인 기준 <code>web-app-blueprint.md</code></p>
+  </footer>
+</div>
+

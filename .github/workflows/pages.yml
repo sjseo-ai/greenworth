@@ -1,0 +1,56 @@
+# GreenWorth 사이트 배포 — master에 반영되면 테스트 후 앱 + 입찰단가 프로토타입(태양광 · 해상풍력 · BESS)을 GitHub Pages로 올린다.
+# 사이트에는 아래에서 복사하는 공개 파일만 들어간다(원본 조각 · 스크립트 · 문서 · 테스트는 올리지 않음).
+name: Deploy site
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Test
+        run: npm test
+      - name: Build prototypes (pages + zip downloads)
+        run: node scripts/build-prototypes.mjs
+      - name: Assemble site
+        run: |
+          mkdir -p _site/styles _site/js _site/prototypes
+          cp index.html _site/
+          cp styles/*.css _site/styles/
+          cp js/app.bundle.js _site/js/
+          cp prototypes/index.html _site/prototypes/
+          for id in solar offshore-wind bess; do
+            mkdir -p "_site/prototypes/$id"
+            cp "prototypes/$id/index.html" "_site/prototypes/$id/"
+          done
+          cp -r prototypes/downloads _site/prototypes/downloads
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

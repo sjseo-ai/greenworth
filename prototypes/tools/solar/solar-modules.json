@@ -1,0 +1,211 @@
+[
+ {
+  "id": "hanwha",
+  "origin": "domestic",
+  "name": "한화큐셀",
+  "model": "Q.TRON XL-G2.3/BFG",
+  "specLabel": "데이터시트",
+  "registered": "한화솔루션(주) · 음성·진천",
+  "dist": "10 · 81 · 123 · 54 (268건)",
+  "price": 400,
+  "gamma": -0.29,
+  "bif": 80,
+  "deg1": 1.5,
+  "degA": 0.33,
+  "products": [
+   {
+    "v": "q-peak-g10",
+    "label": "Q.PEAK DUO XL-G10.7/BFG KR1 495 (음성) · 611.89",
+    "co2": 611.89
+   },
+   {
+    "v": "q-tron-min",
+    "label": "Q.TRON 계열 국내 검증 최저 · 648.47",
+    "co2": 648.47
+   },
+   {
+    "v": "q-tron-med",
+    "label": "Q.TRON 계열 검증 중앙값 · 658.70",
+    "co2": 658.7
+   },
+   {
+    "v": "all-med",
+    "label": "유효 인증 전체 중앙값 · 663.80",
+    "co2": 663.8
+   },
+   {
+    "v": "none",
+    "label": "미검증 제품 사용",
+    "co2": 0
+   }
+  ],
+  "source": "한화큐셀 — Q.TRON XL-G2.3/BFG 데이터시트(2026-02 Rev10): N형 Q.ANTUM NEO 양면, 효율 최대 23.1%, Pmpp 온도계수 −0.29%/K, 양면율 80±5%, 1년차 98.5% 보증 후 연 0.33% 이하(30년 88.93%)"
+ },
+ {
+  "id": "hyundai",
+  "origin": "domestic",
+  "name": "HD현대에너지솔루션",
+  "model": "HiN-T (NI 시리즈)",
+  "specLabel": "판매처 사양",
+  "registered": "에이치디현대에너지솔루션(주) · 음성",
+  "dist": "17 · 40 · 37 · 40 (134건)",
+  "price": 400,
+  "gamma": -0.3,
+  "bif": 80,
+  "deg1": 1,
+  "degA": 0.4,
+  "products": [
+   {
+    "v": "his-s490",
+    "label": "HiS-S490YJ-ON (음성) · 548.76",
+    "co2": 548.76
+   },
+   {
+    "v": "all-med",
+    "label": "유효 인증 전체 중앙값 · 664.50",
+    "co2": 664.5
+   },
+   {
+    "v": "none",
+    "label": "미검증 제품 사용",
+    "co2": 0
+   }
+  ],
+  "source": "HD현대에너지솔루션 — HiN-T N형 TOPCon 양면(판매처 사양 기준): 효율 22.5%, 온도계수 −0.30%/℃, 양면율 80%, 1년차 1% · 이후 연 0.4%(30년 87.4%). 제조사 원문 데이터시트는 확인하지 못함"
+ },
+ {
+  "id": "shinsung",
+  "origin": "domestic",
+  "name": "신성이엔지",
+  "model": "SS-DM550BD 양면",
+  "specLabel": "가정(미확인)",
+  "registered": "(주)신성이엔지 · 김제",
+  "dist": "0 · 1 · 18 · 4 (23건)",
+  "price": 330,
+  "gamma": -0.3,
+  "bif": 80,
+  "deg1": 1,
+  "degA": 0.4,
+  "products": [
+   {
+    "v": "ss-cm610",
+    "label": "SS-CM610TE (김제) · 649.10",
+    "co2": 649.1
+   },
+   {
+    "v": "ss-dm550bl",
+    "label": "SS-DM550BL (김제) · 665.79",
+    "co2": 665.79
+   },
+   {
+    "v": "all-med",
+    "label": "유효 인증 전체 중앙값 · 681.10",
+    "co2": 681.1
+   },
+   {
+    "v": "none",
+    "label": "미검증 제품 사용",
+    "co2": 0
+   }
+  ],
+  "source": "신성이엔지 — 공개 데이터시트 수치를 찾지 못해 N형 TOPCon 양면 일반값(−0.30%/℃ · 80% · 1%/0.4%)으로 가정. 판매처에 SS-DM550BD(M10 132셀 양면) 탄소 2등급 표기, 2023년 N형 TOPCon 양면 모듈 출시 보도 확인"
+ },
+ {
+  "id": "hansol",
+  "origin": "domestic",
+  "name": "한솔테크닉스",
+  "model": "양면 N-TOPCon",
+  "specLabel": "가정(미확인)",
+  "registered": "한솔에너지온 · 오창",
+  "dist": "19 · 23 · 57 · 60 (159건)",
+  "price": 400,
+  "gamma": -0.3,
+  "bif": 80,
+  "deg1": 1,
+  "degA": 0.4,
+  "products": [
+   {
+    "v": "hs505-ghd30",
+    "label": "HS505WE-GHD30 (오창) · 560.18",
+    "co2": 560.18
+   },
+   {
+    "v": "all-med",
+    "label": "유효 인증 전체 중앙값 · 669.00",
+    "co2": 669
+   },
+   {
+    "v": "none",
+    "label": "미검증 제품 사용",
+    "co2": 0
+   }
+  ],
+  "source": "한솔테크닉스 — 공개 데이터시트 수치를 찾지 못해 N형 TOPCon 양면 일반값으로 가정. 오창공장 연 600MW, 양면 N형 TOPCon 제품군 운영, 탄소 1·2등급 제품 보유(2022 보도), 2026년 모듈 사업 자회사 분리"
+ },
+ {
+  "id": "jinko",
+  "origin": "china",
+  "name": "진코솔라",
+  "model": "Tiger Neo 3.0",
+  "specLabel": "공식 페이지",
+  "registered": "국내 검증 등록 없음",
+  "dist": "검증 제품 0건",
+  "price": 205,
+  "gamma": -0.26,
+  "bif": 85,
+  "deg1": 1,
+  "degA": 0.4,
+  "products": [
+   {
+    "v": "none",
+    "label": "국내 탄소검증 등록 제품 없음 (미검증)",
+    "co2": 0
+   }
+  ],
+  "source": "진코솔라 — Tiger Neo 3.0 공식 페이지: 효율 최대 24.8%, 온도계수 −0.26%/℃, 양면율 85±5%. 1년차 1% · 연 0.4%는 검색 요약 기준(원문 미확인). 탄소검증 미적용(무등급) 가정"
+ },
+ {
+  "id": "trina",
+  "origin": "china",
+  "name": "트리나솔라",
+  "model": "Vertex N (NEG21C.20)",
+  "specLabel": "데이터시트",
+  "registered": "국내 검증 등록 없음",
+  "dist": "검증 제품 0건",
+  "price": 205,
+  "gamma": -0.3,
+  "bif": 80,
+  "deg1": 1,
+  "degA": 0.4,
+  "products": [
+   {
+    "v": "none",
+    "label": "국내 탄소검증 등록 제품 없음 (미검증)",
+    "co2": 0
+   }
+  ],
+  "source": "트리나솔라 — Vertex N TSM-NEG21C.20 데이터시트(2023): i-TOPCon 양면 이중유리, 효율 최대 22.4%, 온도계수 −0.30%/℃, 양면율 80±5%, 1년차 1% · 연 0.4%(30년 87.4%). 탄소검증 미적용(무등급) 가정"
+ },
+ {
+  "id": "ja",
+  "origin": "china",
+  "name": "자솔라",
+  "model": "DeepBlue 5.0",
+  "specLabel": "리뷰 페이지",
+  "registered": "국내 검증 등록 없음",
+  "dist": "검증 제품 0건",
+  "price": 205,
+  "gamma": -0.26,
+  "bif": 85,
+  "deg1": 1,
+  "degA": 0.35,
+  "products": [
+   {
+    "v": "none",
+    "label": "국내 탄소검증 등록 제품 없음 (미검증)",
+    "co2": 0
+   }
+  ],
+  "source": "자솔라 — DeepBlue 5.0(리뷰 페이지 기준): Bycium+ 5.0 N형 TOPCon, 온도계수 −0.26%/℃, 1년차 1% · 연 0.35%. 양면율 85%는 검색 요약 기준(원문 미확인). 탄소검증 미적용(무등급) 가정"
+ }
+]

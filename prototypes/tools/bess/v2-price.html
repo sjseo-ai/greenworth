@@ -1,0 +1,40 @@
+
+      <!-- 가격환산 -->
+      <div class="tabpanel" role="tabpanel" id="panel-price" aria-labelledby="tab-price" hidden>
+        <section class="panel">
+          <h2>가격평가점수 — 공고 제2025-05호 Ⅲ.5</h2>
+          <div class="panel-body">
+            <p class="hint-block">입찰가격은 적정 입찰단가 결과값으로 자동 채워지며, 직접 바꿔볼 수도 있습니다.</p>
+            <div class="calc-grid" style="margin-top:0;">
+              <div class="field"><label for="minPrice">최저입찰가격</label><div class="iw"><input id="minPrice" type="number" value="18" step="0.1"><span class="unit">원/kWh</span></div></div>
+              <div class="field"><label for="bidPrice">입찰가격 (평가대상)</label><div class="iw"><input id="bidPrice" type="number" value="20" step="0.1"><span class="unit">원/kWh</span></div></div>
+              <div class="field"><label for="priceCap">가격배점 (만점)</label><div class="iw"><input id="priceCap" type="number" value="50" step="1"><span class="unit">점</span></div></div>
+            </div>
+            <div class="calc-grid">
+              <div class="field calc"><label for="bidPriceBaseDisplay">단가산정 적정 입찰단가 (원값)</label><div class="iw"><input id="bidPriceBaseDisplay" disabled><span class="unit">원/kWh</span></div></div>
+              <div class="field calc"><label for="kchFeeEquivalentDisplay">KCH 수수료 원/kWh 환산 반영분</label><div class="iw"><input id="kchFeeEquivalentDisplay" disabled><span class="unit">원/kWh</span></div></div>
+            </div>
+            <p class="callout-sm" style="margin:12px 0 4px;"><strong>입찰가격 기본값 = 적정 입찰단가 + KCH 개발수수료 원/kWh 환산값. </strong>KCH 개발수수료 생애주기 누적 총 수취액을 이 프로젝트의 생애주기 총 발전량으로 나눈 값입니다(KCH 수수료를 걷으려면 입찰단가에 그만큼을 더 얹어야 한다는 기계적 환산 — SPC 자체의 P-IRR·NPV·당사이익 결과에는 영향 없음). 값을 직접 입력하면 연동이 끊기고 수동 모드로 전환됩니다 (<button id="relinkBtn" type="button" class="link-btn">다시 연동</button>).</p>
+
+            <div class="subtotal strong"><span>점수와 한계 가격</span><span></span></div>
+            <table class="kv">
+              <tbody>
+                <tr class="strong"><th>가격평가점수 <span class="sub">= 최저입찰가격 ÷ 입찰가격 × 가격배점</span></th><td id="outScore">—</td></tr>
+                <tr><th>방법 A. 한계(미분) 근사값</th><td id="outA">—</td></tr>
+                <tr><th>방법 B-1. +1점 상승에 필요한 가격 인하폭</th><td id="outB1">—</td></tr>
+                <tr><th>방법 B-2. −1점 하락을 유발하는 가격 인상폭</th><td id="outB2">—</td></tr>
+                <tr class="strong"><th>방법 B 평균값 (권장)</th><td id="outBavg">—</td></tr>
+              </tbody>
+            </table>
+
+            <div class="subtotal strong"><span>점수 변동별 목표 입찰가격</span><span></span></div>
+            <div class="table-wrap">
+              <table class="compact">
+                <thead><tr><th>Δ점</th><th>목표점수</th><th>목표 입찰가격</th><th>가격 변동</th><th>비고</th></tr></thead>
+                <tbody id="sensBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+

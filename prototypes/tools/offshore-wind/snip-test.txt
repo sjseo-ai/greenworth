@@ -1,0 +1,6 @@
+check("EIASS 협의 사업비 기본값 — 안마 62.2 · 금오도 53.8 · 해울이 70.5 · 해송3 빈 칸(등록 사업비 과소)", (await val("cs-c24_anma-capex")) === "62.2" && (await val("cs-c26_geumo-capex")) === "53.8" && (await val("cs-c26_haeuli2-capex")) === "70.5" && (await val("cs-c26_haesong3-capex")) === "",
+  `${await val("cs-c24_anma-capex")} / ${await val("cs-c26_geumo-capex")} / ${await val("cs-c26_haeuli2-capex")} / ${await val("cs-c26_haesong3-capex")}`);
+check("EIASS 등록 제원 — 금오도 8,601억원·5.56MW×30기 · 안마 결과 표 'EIASS 협의 사업비' · 해송3 '사업비 미공개'", (await ev("document.querySelector('[data-cs-detail=\"c26_geumo\"]').textContent")).includes("8,601억원")
+  && (await ev("document.querySelector('[data-cs-detail=\"c26_geumo\"]').textContent")).includes("5.56MW×30기")
+  && (await ev("document.querySelector('#caseResultBody [data-cs-row=\"c24_anma\"] .sub').textContent")).includes("EIASS 협의 사업비")
+  && (await ev("document.querySelector('#caseResultBody [data-cs-row=\"c26_haesong3\"] .sub').textContent")).includes("사업비 미공개"));
