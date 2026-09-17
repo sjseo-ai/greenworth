@@ -99,6 +99,8 @@ targets), not just notes — several of its exact values are asserted directly b
   holds reference values used to check the model against the original example workbook's numbers.
 - `tests/form-contract.test.mjs` / `tests/results-contract.test.mjs` — assert on rendered form/results DOM shape.
 - `tests/layout-contract.test.mjs` — asserts CSS reserve values and the classic-bundle contract described above.
+  Its last test reads a browser QA harness from `.omo/evidence/` (gitignored), so it **skips** wherever that file is absent
+  — a fresh clone or CI; it only runs on the machine that holds the evidence folder.
 - `tests/docs-methodology-contract.test.mjs` — guards a specific accessible inline term in `index.html`.
 - `tests/static-server.test.mjs` / `tests/static-server-boundaries.test.mjs` — exercise `scripts/serve.mjs` (range
   requests, compression negotiation, path-traversal/method/encoding boundaries) by spawning it as a child process.
