@@ -159,6 +159,12 @@
   .hero-note.bad, .hero-note.bad strong { color: var(--danger); }
   .flag { font-size: 11px; font-weight: 600; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 8px; }
 
+  /* 보증 주체 표시 — 터빈사(TSA/LTSA) · EPC(BOP) · 개발사 */
+  .wg { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; font-size: 10.5px; font-weight: 600; vertical-align: 1px; white-space: nowrap; }
+  .wg-t { background: var(--accent-soft); color: var(--accent); }
+  .wg-e { background: var(--panel-alt); color: var(--ink-2); border: 1px solid var(--line); }
+  .wg-d { background: var(--warn-bg); color: var(--warn-ink); }
+
   /* ═══ 버튼 ═══ */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--panel); color: var(--ink); font-size: 13.5px; font-weight: 600; white-space: nowrap; cursor: pointer; }
   .btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -450,12 +456,14 @@
                 <div class="field calc"><label for="bidPriceDisplay" id="bidPriceDisplayLabel">적정 수령단가</label><div class="iw"><input id="bidPriceDisplay" disabled><span class="unit">원/kWh</span></div></div>
                 <div class="field span-2"><label for="turbineMaker">터빈</label><div class="iw"><select id="turbineMaker"></select></div></div>
                 <div class="field calc"><label for="turbineCountDisplay">터빈 대수</label><div class="iw"><input id="turbineCountDisplay" disabled><span class="unit">기</span></div></div>
-                <div class="field calc"><label for="turbineFactorDisplay">출력곡선 보정 × 가용률</label><div class="iw"><input id="turbineFactorDisplay" disabled></div></div>
+                <div class="field calc"><label for="turbineFactorDisplay">출력곡선 × 가용률 × BOP</label><div class="iw"><input id="turbineFactorDisplay" disabled></div></div>
                 <div class="field"><label for="siteBaseRatePct">부지 총이용률 (기준 터빈)</label><div class="iw"><input id="siteBaseRatePct" type="number" value="40" step="0.1"><span class="unit">%</span></div></div>
-                <div class="field"><label for="wakeLossPct">후류(웨이크) 손실</label><div class="iw"><input id="wakeLossPct" type="number" value="8" step="0.5" min="0" max="50"><span class="unit">%</span></div></div>
-                <div class="field"><label for="electricalLossPct">전기·송전 손실</label><div class="iw"><input id="electricalLossPct" type="number" value="3" step="0.5" min="0" max="30"><span class="unit">%</span></div></div>
+                <div class="field"><label for="powerCurveWarrantyPct">출력곡선 보증 이행률<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="powerCurveWarrantyPct" type="number" value="100" step="0.5" min="0" max="120"><span class="unit">%</span></div></div>
+                <div class="field"><label for="bopAvailPct">BOP·계통 가용률 보증<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="bopAvailPct" type="number" value="99" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+                <div class="field"><label for="wakeLossPct">후류(웨이크) 손실<span class="wg wg-d">개발사</span></label><div class="iw"><input id="wakeLossPct" type="number" value="8" step="0.5" min="0" max="50"><span class="unit">%</span></div></div>
+                <div class="field"><label for="electricalLossPct">전기·송전 손실<span class="wg wg-e">EPC</span></label><div class="iw"><input id="electricalLossPct" type="number" value="3" step="0.5" min="0" max="30"><span class="unit">%</span></div></div>
                 <div class="field"><label for="curtailmentPct">출력제어·계통 제약</label><div class="iw"><input id="curtailmentPct" type="number" value="2" step="0.5" min="0" max="100"><span class="unit">발전량 %</span></div></div>
-                <div class="field"><label for="year1RatePct">1년차 순이용률 (터빈 반영)</label><div class="iw"><input id="year1RatePct" type="number" value="34.38" step="0.01"><span class="unit">%</span></div></div>
+                <div class="field"><label for="year1RatePct">1년차 순이용률 (터빈 반영)</label><div class="iw"><input id="year1RatePct" type="number" value="34.03" step="0.01"><span class="unit">%</span></div></div>
                 <div class="field"><label for="degradationPct">연간 성능저하</label><div class="iw"><input id="degradationPct" type="number" value="0.2" step="0.05"><span class="unit">%/년</span></div></div>
               </div>
               <div class="module-link">
@@ -463,7 +471,13 @@
                 <button type="button" class="link-btn" id="applyTurbineBtn">터빈 값 다시 적용</button>
                 <button type="button" class="link-btn" id="gotoTurbineTab">터빈 비교 보기 →</button>
               </div>
-              <p class="hint" style="margin:2px 0 0;">터빈을 고르면 <strong>터빈 단가(D) · 1년차 순이용률 · 성능저하</strong>가 함께 바뀝니다. 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 가용률 × (1 − 후류 손실) × (1 − 전기 손실). 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup> — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사입니다. 출력제어는 발전량 단계에서 따로 뺍니다.</p>
+              <p class="hint" style="margin:2px 0 0;">터빈을 고르면 <strong>터빈 단가(D) · 1년차 순이용률 · 성능저하</strong>가 함께 바뀝니다. 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실). 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup> — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사입니다. 출력제어는 발전량 단계에서 따로 뺍니다.</p>
+              <div class="subhead subhead-row">
+                <span>발전량 구성 — 보증 주체별</span>
+                <button type="button" class="link-btn" data-goto-tab="tab-warranty">보증 미달·LD 분석 →</button>
+              </div>
+              <p class="hint" style="margin:0 0 6px;">해상풍력은 보통 <strong>터빈 공급·유지보수 계약(TSA/LTSA)</strong>이 출력곡선과 기술적 가용률을, <strong>EPC(BOP) 계약</strong>이 전기·송전 손실과 BOP·계통 가용률(준공 후 O&amp;M 포함)을 보증합니다. 후류 손실과 풍황은 개발사(사업주)가 집니다.</p>
+              <table class="kv"><tbody id="genBuildupBody"></tbody></table>
               <div class="subhead subhead-row">
                 <span>운영연차별 순이용률 (직접 수정 가능)</span>
                 <button id="applyRateBtn" type="button" class="btn btn-soft">1년차·성능저하 규칙 일괄 적용</button>
@@ -719,7 +733,7 @@
           <li>선정평가 비가격 세부 배점은 2025년 상반기 보도 기준 — 2026년 공고문 확인 필요</li>
           <li>CAPEX·OPEX·터빈 단가는 100MW 고정식 <strong>예시값</strong></li>
         </ul>
-        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 14개 항목 상세 보기 →</button></p>
+        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 15개 항목 상세 보기 →</button></p>
       </aside>
 
       <!-- 결과 탭 — 각 탭이 서로 다른 질문에 답한다: 요약(얼마나 버나) · 민감도(무엇이 흔드나) · 시나리오(어느 안이 낫나) -->
@@ -730,6 +744,7 @@
         <button type="button" class="tab" role="tab" id="tab-scenario" aria-controls="panel-scenario" data-panel="panel-scenario" aria-selected="false">시나리오 비교</button>
         <button type="button" class="tab" role="tab" id="tab-price" aria-controls="panel-price" data-panel="panel-price" aria-selected="false">선정평가</button>
         <button type="button" class="tab" role="tab" id="tab-cases" aria-controls="panel-cases" data-panel="panel-cases" aria-selected="false">입찰 사례</button>
+        <button type="button" class="tab" role="tab" id="tab-warranty" aria-controls="panel-warranty" data-panel="panel-warranty" aria-selected="false">보증·LD</button>
         <button type="button" class="tab" role="tab" id="tab-kch" aria-controls="panel-kch" data-panel="panel-kch" aria-selected="false">KCH 개발수수료</button>
         <button type="button" class="tab" role="tab" id="tab-caveats" aria-controls="panel-caveats" data-panel="panel-caveats" aria-selected="false">확정 필요 항목</button>
       </div>
@@ -1027,6 +1042,44 @@
       </div>
 
       <!-- KCH 개발수수료 -->
+      <!-- 보증·LD -->
+      <div class="tabpanel" role="tabpanel" id="panel-warranty" aria-labelledby="tab-warranty" hidden>
+        <section class="panel">
+          <h2>보증 미달 · 지체상금(LD) — 터빈사 / EPC사 구분</h2>
+          <div class="panel-body">
+            <p class="callout-sm"><strong>해상풍력은 보증이 두 계약으로 나뉩니다. </strong><span class="wg wg-t">터빈사</span> TSA/LTSA — 출력곡선(파워커브) 보증과 기술적 가용률 보증, 미달 시 손실 발전량을 기준으로 LD를 물고 보통 <strong>연간 상한(계약금액의 %)</strong>이 붙습니다. <span class="wg wg-e">EPC·O&amp;M</span> BOP 계약 — 전기·송전 손실 보증과 BOP·계통 가용률(해상변전소·해저케이블) 보증, 준공지연·하자에 대한 LD가 별도입니다. 아래에서 실적이 보증에 못 미쳤을 때의 <strong>귀책별 손실과 LD 보전</strong>을 봅니다.</p>
+            <div class="subtotal strong"><span>실적 가정 (보증값과 비교)</span><span class="muted" id="warrantyBaseNote"></span></div>
+            <div class="calc-grid" style="margin-top:0;">
+              <div class="field"><label for="actTurbineAvailPct">기술적 가용률 실적<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="actTurbineAvailPct" type="number" value="94" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+              <div class="field"><label for="actPowerCurvePct">출력곡선 이행률 실적<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="actPowerCurvePct" type="number" value="98" step="0.5" min="0" max="120"><span class="unit">%</span></div></div>
+              <div class="field"><label for="actBopAvailPct">BOP·계통 가용률 실적<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="actBopAvailPct" type="number" value="97" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+              <div class="field"><label for="actElectricalLossPct">전기·송전 손실 실적<span class="wg wg-e">EPC</span></label><div class="iw"><input id="actElectricalLossPct" type="number" value="4" step="0.5" min="0" max="30"><span class="unit">%</span></div></div>
+            </div>
+            <div class="subtotal strong"><span>LD 조건</span><span></span></div>
+            <div class="calc-grid" style="margin-top:0;">
+              <div class="field"><label for="ldTurbinePct">터빈사 보전율</label><div class="iw"><input id="ldTurbinePct" type="number" value="100" step="5" min="0" max="100"><span class="unit">손실매출 %</span></div></div>
+              <div class="field"><label for="ldTurbineCapPct">터빈사 연간 상한</label><div class="iw"><input id="ldTurbineCapPct" type="number" value="10" step="1" min="0" max="100"><span class="unit">터빈 계약금액 %</span></div></div>
+              <div class="field"><label for="ldEpcPct">EPC사 보전율</label><div class="iw"><input id="ldEpcPct" type="number" value="100" step="5" min="0" max="100"><span class="unit">손실매출 %</span></div></div>
+              <div class="field"><label for="ldEpcCapPct">EPC사 연간 상한</label><div class="iw"><input id="ldEpcCapPct" type="number" value="10" step="1" min="0" max="100"><span class="unit">BOP 계약금액 %</span></div></div>
+            </div>
+            <div class="module-link">
+              <button type="button" class="btn btn-soft" id="resetWarrantyAct">실적을 보증값으로 되돌리기</button>
+              <span class="module-state" id="warrantyState">—</span>
+            </div>
+            <div class="subtotal strong"><span>귀책별 손실과 LD 보전 (1년차 · 전체 연도 기준)</span><span></span></div>
+            <table class="kv"><tbody id="warrantyBody"></tbody></table>
+            <div class="subtotal strong"><span>시나리오 비교</span><span></span></div>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">구분</th><th>순이용률</th><th>연간 발전량<br>(GWh)</th><th>연간 발전매출<br>(억원)</th><th>P-IRR<br>(현재 단가)</th><th>적정 수령단가<br>(원/kWh)</th></tr></thead>
+                <tbody id="warrantyTableBody"></tbody>
+              </table>
+            </div>
+            <p class="hint">손실 귀책은 <strong>보증값에서 실적값으로 한 항목씩 바꿔가며</strong> 나눕니다(터빈사: 출력곡선·기술적 가용률 → EPC: BOP 가용률·전기손실). LD 보전액은 손실매출 × 보전율이며 연간 상한(터빈 계약금액 = 터빈 단가 × 용량, BOP 계약금액 = BOS 단가 × 용량)에서 잘립니다. "실적 + LD 보전"은 보전액을 같은 단가로 발전량에 환산해 되돌린 경우입니다 — 실제 계약에서는 현금 보전이라 세무·배당 시점이 다를 수 있습니다. 준공지연 LD(계약금액의 일정 %/일, 총액 상한)와 하자보수 보증은 이 표에 넣지 않았습니다.</p>
+          </div>
+        </section>
+      </div>
+
       <div class="tabpanel" role="tabpanel" id="panel-kch" aria-labelledby="tab-kch" hidden>
         <section class="panel">
           <h2>KCH 개발수수료 — 생애주기 누적 총 수취액</h2>
@@ -1142,6 +1195,7 @@
               <li>KCH 개발수수료 — 4개 수수료 기준총액·할인율은 ESS 예시값 그대로(설비용량만 연동). 100MW 해상풍력 규모에 맞게 교체 필요</li>
               <li>단가산정 목표 — 해상풍력 초안은 기본 산정 기준을 <strong>목표 P-IRR 6%</strong>로 둠(ESS의 "당사 이익 100억원"은 총사업비 9천억원대 사업에서 수익률이 지나치게 낮게 역산됨). 목표 수익률·당사 지분 20%는 KCH 내부 기준 확인 필요</li>
               <li><strong>입찰 사례</strong> — 사업별 낙찰가는 비공개라 상한가 대비 인하율을 가정해 추정(0% = 상한가 입찰 = 최대 사업성). 사례 18건의 사업자·터빈·EPC·공급사·사업비·발전량·입지는 보도·사업자 발표·Renewable Korea 표로 정리하고, 환경영향평가정보지원시스템(EIASS) 사업 검색으로 14건의 사업코드·초안/본협의/변경 협의 완료일을 확인(고창·압해·다대포·한동·평대는 검색되지 않음). 13개 사업은 EIASS 사업 상세 표에서 협의 등록 규모·사업비·사업시행자·평가대행자까지 반영(평가 당시 값이라 입찰 용량·최신 사업비와 다를 수 있음 — 해송은 등록 사업비 4,575억원이 1,008MW에 비해 지나치게 작아 제외). 평가서 본문(발전량·수심·이격거리)은 문서 뷰어 방식이라 읽지 못해 보도 기준. 총사업비는 신안우이·낙월·완도 금일·태안·압해·다대포·한동·평대·서남해·한빛·굴업도, EIASS 협의 사업비(등록 사업비 ÷ 등록 규모)는 안마·반딧불이·금오도·해울이, EPC 역산은 고창·야월, 발전량은 신안우이·낙월·안마·다대포·한빛만 확인. <strong>사업비 발표 시점이 2019~2026년으로 섞여 있어 초기 발표액(압해 MW당 50억, 한동·평대 56억 등)은 인플레이션 이전 값일 수 있음</strong> — 해당 사례의 높은 추정 수익률은 과대 추정 가능성. 2023년 상한가 167.778원은 역산, 2026년 선정 단지는 보도 기준, 금융·일정은 현재 페이지 조건</li>
+              <li>C. 발전매출 — <strong>보증 구조(터빈사 / EPC사)</strong>: 출력곡선 보증 이행률 100% · BOP·계통 가용률 99%는 예시값이며, 기술적 가용률은 터빈 목록의 사별 값(94~97%)을 씁니다. 실제 계약은 보증 기준(시간 기준 가용률 / 발전량 기준 가용률), 측정·검증 방식(파워커브 시험), 보증 기간(하자보수 2~5년 · LTSA 5~15년), LD 산정식과 연간·총액 상한, 초과 성과 공유가 회사·계약마다 다릅니다. "보증·LD" 탭의 LD 보전율 100% · 연간 상한 10%도 예시이며, <strong>준공지연 LD와 하자보수 보증은 반영하지 않았습니다</strong></li>
               <li>엑셀(.xlsx) 회신 변환기(<code>ESS_엑셀변환.bat</code>)는 ESS 전용 — 해상풍력 시나리오 JSON은 변환할 수 없음(CSV로 확인)</li>
             </ul>
           </div>
@@ -2568,7 +2622,7 @@
   let linked = true;
   // 결과 탭 상태 — 마지막 산정 결과(요약 탭이 그린다), 민감도 캐시(지표 전환 시 재계산 없이 다시 그림), 탭별 "다시 그려야 함" 표시.
   let lastSolved = null, sensCache = null, activeTabId = 'tab-summary';
-  const resultsDirty = { summary: true, sens: true };
+  const resultsDirty = { summary: true, sens: true, warranty: true };
   // 재계산 시간을 상단 바에 상시 노출한다(web-app-blueprint.md 5.5 — 성능 회귀를 바로 눈치채기 위함).
   // 계산 로직은 recalcAllCore()에 그대로 두고, 여기서는 시간만 잰다.
   function recalcAll() {
@@ -2579,6 +2633,7 @@
   function recalcAllCore() {
     syncSalesStructure(); syncTurbineState(); syncComboState(); // 입력이 바뀔 때마다 라벨·가중치·경고·터빈·조합 표시를 현재 값에 맞춘다
     syncOperatingRateRows();
+    renderGenerationBuildup(); // 보증 주체별 발전량 구성 표
     syncCdRateRows();
     const model = readModel();
     renderSupplyTable(model);
@@ -2679,16 +2734,116 @@
   // recalcAllCore()는 hero·KPI 카드·가격환산처럼 항상 보이는 값만 즉시 갱신하고, 요약(차트·상세표)·민감도(98회 재계산)는
   // "다시 그려야 함" 표시만 한 뒤 지금 열려 있는 탭 하나만 그린다. 숨은 탭은 열리는 순간 그린다.
   // 내보내기(CSV·JSON)는 이 화면 캐시를 쓰지 않고 captureDetailSnapshot()으로 따로 다시 계산하므로 영향이 없다.
-  function markResultsDirty() { resultsDirty.summary = true; resultsDirty.sens = true; resultsDirty.turbine = true; resultsDirty.entry = true; resultsDirty.cases = true; }
+  function markResultsDirty() { resultsDirty.summary = true; resultsDirty.sens = true; resultsDirty.turbine = true; resultsDirty.entry = true; resultsDirty.cases = true; resultsDirty.warranty = true; }
   function renderActiveTab() {
     if (activeTabId === 'tab-summary' && resultsDirty.summary) { resultsDirty.summary = false; renderSummaryTab(); }
     else if (activeTabId === 'tab-sens' && resultsDirty.sens) { resultsDirty.sens = false; computeSensitivity(); renderSensitivityView(); }
     else if (activeTabId === 'tab-turbine' && resultsDirty.turbine) { resultsDirty.turbine = false; renderTurbineCompare(); }
     else if (activeTabId === 'tab-price' && resultsDirty.entry) { resultsDirty.entry = false; renderEntryConditions(); }
     else if (activeTabId === 'tab-cases' && resultsDirty.cases) { resultsDirty.cases = false; renderCases(); }
+    else if (activeTabId === 'tab-warranty' && resultsDirty.warranty) { resultsDirty.warranty = false; renderWarranty(); }
   }
 
   // ---------- 터빈 비교 탭 — 6개 터빈을 같은 조건에서 각각 역산(탭이 보일 때만) ----------
+  // ---------- 발전량 구성 — 보증 주체별 단계 표 ----------
+  // 해상풍력 계약 구조: 터빈사(TSA/LTSA)가 출력곡선·기술적 가용률을, EPC(BOP)가 전기·송전 손실과
+  // BOP·계통 가용률을 보증한다. 후류 손실·풍황은 개발사 몫이라 보증 대상이 아니다.
+  function renderGenerationBuildup() {
+    const d = turbineDerived($('turbineMaker').value), tb = turbineById($('turbineMaker').value) || {};
+    const base = +$('siteBaseRatePct').value || 0;
+    const pcw = +$('powerCurveWarrantyPct').value || 0, bop = +$('bopAvailPct').value || 0;
+    const wake = +$('wakeLossPct').value || 0, elec = +$('electricalLossPct').value || 0;
+    let acc = base;
+    const step = (label, owner, text, value) => {
+      acc = value;
+      return `<tr><th>${label}${owner} <span class="sub">${text}</span></th><td>${fmt(acc, 2)}%</td></tr>`;
+    };
+    const rows = [
+      `<tr><th>부지 총이용률 <span class="sub">기준 터빈(비출력 ${fmt(+$('refSpecificPower').value || 0, 0)}W/m²) 기준 · 풍황</span></th><td>${fmt(base, 2)}%</td></tr>`,
+      step('출력곡선 보정', '<span class="wg wg-t">터빈사</span>', `× ${fmt(d.curveF, 4)} (비출력 ${fmt(d.specificPower, 0)}W/m²)`, acc * d.curveF),
+      step('출력곡선 보증 이행률', '<span class="wg wg-t">터빈사</span>', `× ${fmt(pcw, 1)}%`, acc * rate(pcw)),
+      step('기술적 가용률 보증', '<span class="wg wg-t">터빈사</span>', `× ${fmt(d.avail, 1)}% (${escapeHtml(tb.maker || '')} ${escapeHtml(tb.model || '')})`, acc * rate(d.avail)),
+      step('BOP·계통 가용률 보증', '<span class="wg wg-e">EPC·O&amp;M</span>', `× ${fmt(bop, 1)}%`, acc * rate(bop)),
+      step('후류(웨이크) 손실', '<span class="wg wg-d">개발사</span>', `× (1 − ${fmt(wake, 1)}%)`, acc * (1 - rate(wake))),
+      step('전기·송전 손실', '<span class="wg wg-e">EPC</span>', `× (1 − ${fmt(elec, 1)}%)`, acc * (1 - rate(elec))),
+    ];
+    rows.push(`<tr class="strong"><th>= 1년차 순이용률 <span class="sub">출력제어·계통 제약 ${fmt(+$('curtailmentPct').value || 0, 1)}%는 발전량 단계에서 따로 차감</span></th><td>${fmt(d.y1, 2)}%</td></tr>`);
+    $('genBuildupBody').innerHTML = rows.join('');
+  }
+
+  // ---------- 보증·LD 탭 — 보증 미달 시 귀책별 손실과 LD 보전(탭이 보일 때만 역산) ----------
+  function renderWarranty() {
+    const model = readModel(), rv = model.revenue;
+    const d = turbineDerived($('turbineMaker').value);
+    const mw = rv.contractCapacityMW || 0, curt = 1 - rate(rv.curtailmentPct || 0);
+    const price = lastSolved && lastSolved.ok ? lastSolved.price : NaN;
+    const base = +$('siteBaseRatePct').value || 0, wake = 1 - rate(+$('wakeLossPct').value || 0);
+    const num = (id) => +$(id).value || 0;
+    // 보증 조합과 실적 조합 — 한 항목씩 바꿔 귀책을 나눈다.
+    const cfOf = (pcw, avail, bop, elecLoss) => base * d.curveF * rate(pcw) * rate(avail) * rate(bop) * wake * (1 - rate(elecLoss));
+    const gEl = num('electricalLossPct'), aEl = num('actElectricalLossPct');
+    const cfGuar = cfOf(num('powerCurveWarrantyPct'), d.avail, num('bopAvailPct'), gEl);
+    const cfTurbine = cfOf(num('actPowerCurvePct'), num('actTurbineAvailPct'), num('bopAvailPct'), gEl); // 터빈 실적만 반영
+    const cfAct = cfOf(num('actPowerCurvePct'), num('actTurbineAvailPct'), num('actBopAvailPct'), aEl); // 터빈 + EPC 실적
+    const genOf = (cf) => mw * 24 * 365 * rate(cf) * curt; // MWh/년
+    const moneyOf = (genMWh) => (Number.isFinite(price) ? (genMWh * 1000 * price) / HUNDRED_MILLION : NaN); // 억원
+    const lossTurbine = moneyOf(genOf(cfGuar) - genOf(cfTurbine));
+    const lossEpc = moneyOf(genOf(cfTurbine) - genOf(cfAct));
+    const turbineContract = d.price * mw, bopContract = (+$('bosUnitPrice').value || 0) * mw; // 억원
+    const capT = (num('ldTurbineCapPct') / 100) * turbineContract, capE = (num('ldEpcCapPct') / 100) * bopContract;
+    const ldT = Math.min(Math.max(0, lossTurbine) * (num('ldTurbinePct') / 100), capT);
+    const ldE = Math.min(Math.max(0, lossEpc) * (num('ldEpcPct') / 100), capE);
+    const lossTotal = lossTurbine + lossEpc, ldTotal = ldT + ldE;
+    const sameAsWarranty = Math.abs(cfAct - cfGuar) < 0.005;
+    $('warrantyBaseNote').textContent = `보증값 — 출력곡선 ${fmt(num('powerCurveWarrantyPct'), 1)}% · 가용률 ${fmt(d.avail, 1)}% · BOP ${fmt(num('bopAvailPct'), 1)}% · 전기손실 ${fmt(gEl, 1)}%`;
+    const st = $('warrantyState');
+    st.textContent = sameAsWarranty ? '● 실적 = 보증값 (손실 없음)' : `○ 실적이 보증 대비 순이용률 ${fmt(cfGuar - cfAct, 2)}%p 낮음`;
+    st.className = sameAsWarranty ? 'module-state on' : 'module-state';
+    const won = (v) => (Number.isFinite(v) ? `${fmt(v, 2)} 억원` : '—');
+    const row = (id, th, sub, text, cls = '') => `<tr><th>${th} <span class="sub">${sub}</span></th><td id="${id}" class="${cls}">${text}</td></tr>`;
+    $('warrantyBody').innerHTML = [
+      row('wrCfGuar', '보증 기준 순이용률 · 발전량', '전체 연도 기준', `${fmt(cfGuar, 2)}% · ${fmt(genOf(cfGuar) / 1000, 1)} GWh`),
+      row('wrCfAct', '실적 기준 순이용률 · 발전량', '터빈 + EPC 실적 반영', `${fmt(cfAct, 2)}% · ${fmt(genOf(cfAct) / 1000, 1)} GWh`, sameAsWarranty ? '' : 'over'),
+      row('wrLossT', '터빈사 귀책 손실매출', '출력곡선 · 기술적 가용률 미달', won(lossTurbine), lossTurbine > 0 ? 'over' : ''),
+      row('wrLossE', 'EPC사 귀책 손실매출', 'BOP·계통 가용률 · 전기손실 초과', won(lossEpc), lossEpc > 0 ? 'over' : ''),
+      row('wrLossTotal', '손실매출 합계', '연간', won(lossTotal), lossTotal > 0 ? 'over' : ''),
+      row('wrLdT', '터빈사 LD 보전', `보전율 ${fmt(num('ldTurbinePct'), 0)}% · 상한 ${won(capT)}(터빈 계약 ${won(turbineContract)}의 ${fmt(num('ldTurbineCapPct'), 0)}%)`, won(ldT), ldT > 0 ? 'best' : ''),
+      row('wrLdE', 'EPC사 LD 보전', `보전율 ${fmt(num('ldEpcPct'), 0)}% · 상한 ${won(capE)}(BOP 계약 ${won(bopContract)}의 ${fmt(num('ldEpcCapPct'), 0)}%)`, won(ldE), ldE > 0 ? 'best' : ''),
+      row('wrNet', 'LD 보전 후 순손실', '손실매출 − LD 보전 · 연간', won(lossTotal - ldTotal), lossTotal - ldTotal > 0 ? 'over' : 'best'),
+    ].join('');
+
+    // 시나리오 비교 — 보증 기준 / 실적 / 실적 + LD 보전(보전액을 같은 단가로 발전량에 환산)
+    const deg = rate(+$('degradationPct').value || 0);
+    const withCf = (cf) => {
+      const m = cloneModel(model);
+      m.revenue.operatingRatesPct = rv.operatingRatesPct.map((_, i) => Math.round(cf * (1 - deg) ** i * 100) / 100);
+      return m;
+    };
+    const cfComp = Number.isFinite(price) && price > 0 && mw > 0
+      ? cfAct + (ldTotal * HUNDRED_MILLION) / (price * 1000 * mw * 24 * 365 * curt) * 100 : cfAct;
+    const scenarios = [
+      { label: '보증 기준', sub: '계약상 보증값 그대로', cf: cfGuar },
+      { label: '실적 (보전 전)', sub: '터빈 + EPC 실적', cf: cfAct },
+      { label: '실적 + LD 보전', sub: '보전액을 발전량으로 환산', cf: cfComp },
+    ];
+    $('warrantyTableBody').innerHTML = scenarios.map((s) => {
+      const solved = solveCurrentModel(withCf(s.cf));
+      const atPrice = withCf(s.cf);
+      atPrice.revenue.bidPricePerKWh = Number.isFinite(price) ? price : 0;
+      const analyzed = analyzeEss(atPrice);
+      const ok = !(analyzed.errors && analyzed.errors.length);
+      return `
+      <tr>
+        <th class="mk-name">${s.label}<span class="sub">${s.sub}</span></th>
+        <td>${fmt(s.cf, 2)}%</td>
+        <td>${fmt(genOf(s.cf) / 1000, 1)}</td>
+        <td>${Number.isFinite(price) ? fmt(moneyOf(genOf(s.cf)), 2) : '—'}</td>
+        <td>${ok ? `${fmt(analyzed.projectIrr * 100, 2)}%` : '산정 불가'}</td>
+        <td>${solved.ok ? fmt(solved.price, 2) : '산정 불가'}</td>
+      </tr>`;
+    }).join('');
+  }
+
   function renderTurbineCompare() {
     const base = readModel(), rv = base.revenue;
     const n = Math.max(1, Math.round(+$('operationYears').value) || 1), mw = rv.contractCapacityMW;
@@ -4009,6 +4164,21 @@
   ['year1RatePct', 'degradationPct'].forEach((id) => $(id).addEventListener('input', () => {
     document.querySelectorAll('#opRateGrid [data-oprate-index]').forEach((el, i) => { el.value = defaultRatePctForYear(i + 1); });
   }));
+  // 보증·LD 탭 입력은 본 모델과 무관해 재계산 없이 그 탭만 다시 그린다.
+  $('panel-warranty').addEventListener('input', (e) => {
+    if (!/^(act|ld)/.test(e.target.id || '')) return;
+    resultsDirty.warranty = true;
+    renderActiveTab();
+  });
+  $('resetWarrantyAct').addEventListener('click', () => {
+    const d = turbineDerived($('turbineMaker').value);
+    $('actTurbineAvailPct').value = String(d.avail);
+    $('actPowerCurvePct').value = $('powerCurveWarrantyPct').value;
+    $('actBopAvailPct').value = $('bopAvailPct').value;
+    $('actElectricalLossPct').value = $('electricalLossPct').value;
+    resultsDirty.warranty = true;
+    renderActiveTab();
+  });
   $('applyRateBtn').addEventListener('click', () => {
     document.querySelectorAll('#opRateGrid [data-oprate-index]').forEach((el, i) => { el.value = defaultRatePctForYear(i + 1); });
     recalcAll();
@@ -4099,13 +4269,15 @@
     return { price: g('price'), mw: g('mw'), rotor: g('rotor'), avail: g('avail'), degA: g('degA'), local: g('local') };
   }
   // 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)^지수 — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사.
-  // 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 가용률 × (1 − 후류 손실) × (1 − 전기 손실)
+  // 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실)
   function turbineDerived(id) {
     const sp = turbineSpec(id);
     const specificPower = sp.rotor > 0 ? sp.mw * 1e6 / (Math.PI * (sp.rotor / 2) ** 2) : 0;
     const curveF = specificPower > 0 ? ((+$('refSpecificPower').value || specificPower) / specificPower) ** (+$('powerCurveExp').value || 0) : 1;
     const losses = (1 - rate(+$('wakeLossPct').value || 0)) * (1 - rate(+$('electricalLossPct').value || 0));
-    const y1 = Math.round((+$('siteBaseRatePct').value || 0) * curveF * rate(sp.avail) * losses * 100) / 100;
+    // 보증 주체별 곱 — 터빈사(출력곡선 보증 이행률 × 기술적 가용률) × EPC·O&M(BOP·계통 가용률)
+    const warranty = rate(+$('powerCurveWarrantyPct').value || 0) * rate(sp.avail) * rate(+$('bopAvailPct').value || 0);
+    const y1 = Math.round((+$('siteBaseRatePct').value || 0) * curveF * warranty * losses * 100) / 100;
     return { ...sp, specificPower, curveF, y1, epc: Math.round((sp.price + (+$('bosUnitPrice').value || 0)) * 10) / 10 };
   }
   // 지금 C·D 입력이 선택 터빈의 파생값과 그대로 일치하는지(= 터빈 값 적용 중). 상태를 따로 저장하지 않아 복원·되돌리기와 자동으로 맞는다.
@@ -4127,7 +4299,7 @@
     const id = $('turbineMaker').value, d = turbineDerived(id), mw = Math.max(0, +$('contractCapacityMW').value || 0);
     turbineLinked = turbineLinkActive();
     $('turbinePriceDisplay').value = fmt(d.price, 1);
-    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × ${fmt(d.avail, 1)}%`;
+    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가용률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%`;
     $('turbineCountDisplay').value = d.mw > 0 ? String(Math.ceil(mw / d.mw - 1e-9)) : '—';
     const el = $('turbineLinkState');
     el.textContent = turbineLinked ? `● ${turbineById(id).maker} ${turbineById(id).model} 값 적용 중` : '○ 사용자 조정 (터빈 값에서 벗어남)';
@@ -4245,7 +4417,7 @@
   $('turbineMaker').addEventListener('input', applyTurbineDerived);
   // 터빈 스펙·보정 기준·BOP 단가·부지 이용률·손실을 고치면, 직전까지 터빈 값이 적용 중이었을 때만 다시 주입한다
   // (사용자가 C·D를 직접 조정한 상태는 덮어쓰지 않는다). 선택하지 않은 터빈의 스펙은 비교 탭에만 영향.
-  const TURBINE_UPSTREAM_IDS = ['siteBaseRatePct', 'wakeLossPct', 'electricalLossPct', 'bosUnitPrice', 'refSpecificPower', 'powerCurveExp'];
+  const TURBINE_UPSTREAM_IDS = ['siteBaseRatePct', 'wakeLossPct', 'electricalLossPct', 'powerCurveWarrantyPct', 'bopAvailPct', 'bosUnitPrice', 'refSpecificPower', 'powerCurveExp'];
   TURBINE_UPSTREAM_IDS.forEach((id) => $(id).addEventListener('input', () => { if (turbineLinked) applyTurbineDerived(); }));
   $('applyTurbineBtn').addEventListener('click', () => { applyTurbineDerived(); recalcAll(); });
   $('gotoTurbineTab').addEventListener('click', () => $('tab-turbine').click());
@@ -4361,7 +4533,7 @@
   });
 
   document.querySelectorAll('.wrap input, .wrap select').forEach((el) => {
-    if (el.id === 'bidPrice' || el.id === 'priceCap' || ['scoreSecurity', 'scoreIndustry', 'scoreProgress', 'scoreOther'].includes(el.id) || el.id === 'sensMetric' || el.id.startsWith('kch') || el.id.startsWith('tb-') || el.id.startsWith('newTb') || el.id.startsWith('cs-') || el.id === 'caseDiscountAll' || el.type === 'file' || el.disabled) return;
+    if (el.id === 'bidPrice' || el.id === 'priceCap' || ['scoreSecurity', 'scoreIndustry', 'scoreProgress', 'scoreOther'].includes(el.id) || el.id === 'sensMetric' || el.id.startsWith('kch') || el.id.startsWith('tb-') || el.id.startsWith('newTb') || el.id.startsWith('cs-') || el.id === 'caseDiscountAll' || /^(act|ld)[A-Z]/.test(el.id) || el.type === 'file' || el.disabled) return;
     // 설비용량은 KCH 탭 설비용량에도 연동되므로 KCH까지 다시 계산(kchRecalc가 끝에서 recalcAll을 부른다)
     el.addEventListener('input', el.id === 'contractCapacityMW' ? kchRecalc : recalcAll);
   });
