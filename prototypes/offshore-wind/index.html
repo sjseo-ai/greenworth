@@ -228,10 +228,24 @@
   #cards-scale { margin-top: -4px; } /* 1줄과 붙여 한 묶음으로 보이게 */
 
   /* 적정 입찰단가 — 이 도구가 답하는 단 하나의 숫자라 카드 2줄보다 위에 크게 둔다 */
-  .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px 24px; align-items: start; padding: 18px 20px; border-color: var(--accent); }
+  .hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px 24px; align-items: start; padding: 18px 20px; border-color: var(--accent); }
   .hero .k { font-size: 13.5px; font-weight: 600; color: var(--ink); }
   .hero-num { font-size: 52px; font-weight: 800; line-height: 1.05; letter-spacing: -.03em; color: var(--accent); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .hero-unit { font-size: 16px; font-weight: 600; color: var(--ink-2); margin-left: 6px; }
+  /* 수령단가(받는 값)와 입찰가격(써내는 값)을 같은 크기로 나란히 — 둘 다 결론이라 한쪽만 키우지 않는다.
+     두 개를 한 줄에 두므로 숫자는 52 → 42px로 줄이고, 아주 좁은 화면에서만 위아래로 쌓는다. */
+  .hero-prices { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 12px 22px; }
+  .hero-price { flex: 1 1 0; min-width: 0; }
+  .hero-price + .hero-price { padding-left: 22px; border-left: 1px solid var(--line); }
+  .hero-prices .hero-num { font-size: 42px; }
+  .hero-num.alt { color: var(--ink); }
+  .hero-num.alt.over { color: var(--danger); }
+  .hero-cap { margin-top: 4px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hero-cap.bad { color: var(--danger); font-weight: 600; }
+  @media (max-width: 560px) {
+    .hero-prices { flex-direction: column; }
+    .hero-price + .hero-price { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); padding-top: 10px; }
+  }
   .status-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; background: var(--panel-alt); color: var(--ink-2); }
   .status-pill.ok { background: var(--accent-soft); color: var(--pos); }
   .status-pill.bad { background: var(--danger-soft); color: var(--danger); }
@@ -765,8 +779,17 @@
     <div class="col-result">
       <section class="card hero" aria-label="적정 입찰가격">
         <div>
-          <div class="k hero-label" id="heroLabel">적정 수령단가 <span style="font-weight:500;color:var(--muted);" id="heroLabelSub">(SMP+REC 합산 고정가)</span></div>
-          <div><span class="hero-num" id="heroBidPrice">–</span><span class="hero-unit">원/kWh</span></div>
+          <div class="hero-prices">
+            <div class="hero-price">
+              <div class="k hero-label" id="heroLabel">적정 수령단가 <span style="font-weight:500;color:var(--muted);" id="heroLabelSub">(받는 값)</span></div>
+              <div><span class="hero-num" id="heroBidPrice">–</span><span class="hero-unit">원/kWh</span></div>
+            </div>
+            <div class="hero-price" id="heroTenderBox">
+              <div class="k hero-label">입찰가격 <span style="font-weight:500;color:var(--muted);">(SMP+1REC · 써내는 값)</span></div>
+              <div><span class="hero-num alt" id="heroTenderPrice">–</span><span class="hero-unit">원/kWh</span></div>
+              <div class="hero-cap" id="heroTenderCap"></div>
+            </div>
+          </div>
           <div class="status-pill" id="solveStatus">계산 중</div>
           <div class="hero-note" id="heroBidNote"></div>
         </div>
@@ -2891,7 +2914,7 @@
     renderSeniorRate(model);
 
     if (model.project.delayStage === 3) {
-      $('heroBidPrice').textContent = '—';
+      $('heroBidPrice').textContent = '—'; $('heroTenderPrice').textContent = '—'; $('heroTenderCap').textContent = '';
       $('solveStatus').className = 'status-pill bad'; $('solveStatus').textContent = '● 준공지연 3단계 — 계약 해지 (매출 없음)';
       lastSolved = { ok: false, reason: '준공지연 3단계 — 계약 해지(매출 없음)로 현금흐름을 계산하지 않습니다.' };
       $('priceRangeLow').textContent = '—'; $('priceRangeHigh').textContent = '—'; $('priceFloorWarn').className = 'warn';
@@ -2912,7 +2935,7 @@
     renderDscrSizing(model); // 역산이 끝나야 사이징 결과가 최신이다
 
     if (!solved.ok) {
-      $('heroBidPrice').textContent = '—';
+      $('heroBidPrice').textContent = '—'; $('heroTenderPrice').textContent = '—'; $('heroTenderCap').textContent = '';
       $('solveStatus').className = 'status-pill bad'; $('solveStatus').textContent = '● ' + solved.reason;
       lastSolved = { ok: false, reason: solved.reason };
       $('priceRangeLow').textContent = '—'; $('priceRangeHigh').textContent = '—'; $('priceFloorWarn').className = 'warn';
@@ -3726,19 +3749,29 @@
     ], val(macro[bi][bj]), metric);
   }
 
-  // 히어로 숫자(수령단가) 아래 한 줄 — 고정가격계약이면 REC 가중치·우대가격으로 환산한 입찰가격과 상한가 여유를, PPA면 계약 조건을 보여준다.
+  // 히어로의 두 번째 큰 숫자(입찰가격)와 그 아래 설명 줄 — 고정가격계약이면 REC 가중치·우대가격으로 환산한
+  // 입찰가격과 상한가 여유를, 기업PPA면 입찰가격 칸을 숨기고 계약 조건만 보여준다.
   function renderHeroPriceNote(model, price) {
-    const rv = model.revenue, el = $('heroBidNote');
+    const rv = model.revenue, el = $('heroBidNote'), box = $('heroTenderBox');
     if (rv.salesStructure !== 'fixed') {
+      box.style.display = 'none';
       const escTxt = rv.contractEscalationPct ? `연 ${fmt(rv.contractEscalationPct, 1)}% 상승` : '정액';
       el.className = 'hero-note';
       el.innerHTML = `기업PPA 단가(전력+REC 합산) · 계약 ${fmt(rv.contractYears, 0)}년 · ${escTxt} — 경쟁입찰 상한가·REC 가중치·우대가격이 적용되지 않습니다.`;
       return;
     }
+    box.style.display = '';
     const bid = bidFromReceived(price, rv), cap = rv.priceCapPerKWh || 0, over = cap > 0 && bid > cap;
+    const num = $('heroTenderPrice'), capEl = $('heroTenderCap');
+    num.textContent = fmt(bid, 2);
+    num.className = over ? 'hero-num alt over' : 'hero-num alt';
+    capEl.className = over ? 'hero-cap bad' : 'hero-cap';
+    capEl.textContent = cap > 0
+      ? (over ? `상한가 ${fmt(cap, 3)} 대비 ${fmt(bid - cap, 2)}원 초과 — 응찰 불가` : `상한가 ${fmt(cap, 3)} 대비 ${fmt(cap - bid, 2)}원 여유`)
+      : '상한가 미입력';
     el.className = over ? 'hero-note bad' : 'hero-note';
-    el.innerHTML = `써낼 입찰가격(SMP+1REC, SPC 기준) = 기준 SMP ${fmt(rv.smpRefPerKWh, 2)} + (수령단가 − 우대 ${fmt(rv.preferentialPerKWh, 2)} − SMP) ÷ 가중치 ${fmt(rv.recWeightApplied, 2)} = <strong>${fmt(bid, 2)} 원/kWh</strong>`
-      + (cap > 0 ? ` · 상한가 ${fmt(cap, 3)} 대비 <strong>${over ? `${fmt(bid - cap, 2)}원 초과 — 응찰 불가 (진입 조건: 선정평가 탭)` : `${fmt(cap - bid, 2)}원 여유`}</strong>` : '');
+    el.innerHTML = `입찰가격 환산 = 기준 SMP ${fmt(rv.smpRefPerKWh, 2)} + (수령단가 − 우대 ${fmt(rv.preferentialPerKWh, 2)} − SMP) ÷ 가중치 ${fmt(rv.recWeightApplied, 2)}`
+      + (over ? ' · <strong>상한가를 넘어 이 조건으로는 응찰할 수 없습니다 (진입 조건: 선정평가 탭)</strong>' : '');
   }
 
   const NON_PRICE_KEYS = ['scoreSecurity', 'scoreIndustry', 'scoreProgress', 'scoreOther'];
@@ -4593,7 +4626,7 @@
     $('contractYearsLabel').textContent = isFixed ? '고정가격 계약기간' : 'PPA 계약기간';
     $('bidPriceDisplayLabel').textContent = isFixed ? '적정 수령단가' : '적정 PPA 단가';
     $('heroLabel').firstChild.textContent = isFixed ? '적정 수령단가 ' : '적정 PPA 단가 ';
-    $('heroLabelSub').textContent = isFixed ? '(SMP+1REC×가중치 + 우대가격)' : '(전력+REC 합산)';
+    $('heroLabelSub').textContent = isFixed ? '(받는 값)' : '(전력+REC 합산)';
     $('salesHint').innerHTML = isFixed
       ? `해상풍력 <strong>고정가격계약 경쟁입찰(${isPublic ? '공공주도형' : '일반형'})</strong>을 가정합니다 — 입찰가격은 SMP+1REC 기준이고, SPC가 실제로 받는 <strong>수령단가</strong>는 REC 몫에 가중치를 곱하고 우대가격을 더한 값입니다. 이 페이지는 수령단가를 역산한 뒤 입찰가격으로 환산합니다. 발전량 = 설비용량 × 8,760h × 연차별 순이용률 × (1 − 출력제어).`
       : '<strong>기업PPA(직접전력거래)</strong>를 가정합니다 — 단가는 전력+REC를 합친 값이고 계약기간은 당사자가 정합니다(경쟁입찰 상한가·REC 가중치·우대가격 미적용). 발전량 = 설비용량 × 8,760h × 연차별 순이용률 × (1 − 출력제어).';
