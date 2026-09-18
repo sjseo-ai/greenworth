@@ -146,6 +146,10 @@
   .module-table tr.is-picked td, .module-table tr.is-picked th.mk-name { background: var(--accent-soft); }
   .module-table td.best { color: var(--pos); font-weight: 700; }
   .module-table td.over { color: var(--danger); font-weight: 700; }
+  /* 터빈사 제공값 직접 입력 칸 — 비어 있으면(자동) 점선, 값이 들어가면 실선 강조 */
+  .module-table input.tb-ov { width: 104px; border-style: dashed; } /* "자동 34.03" 안내 문구가 잘리지 않는 폭 */
+  .module-table input.tb-ov:not(:placeholder-shown) { border-style: solid; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .ov-tag { display: inline-block; margin-left: 5px; padding: 0 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 10.5px; font-weight: 700; vertical-align: 1px; }
   .module-table select.mk-product { width: 270px; text-align: left; }
   table.module-table.carbon-rule { min-width: 0; }
   .carbon-rule td { white-space: nowrap; }
@@ -471,7 +475,25 @@
                 <button type="button" class="link-btn" id="applyTurbineBtn">터빈 값 다시 적용</button>
                 <button type="button" class="link-btn" id="gotoTurbineTab">터빈 비교 보기 →</button>
               </div>
-              <p class="hint" style="margin:2px 0 0;">터빈을 고르면 <strong>터빈 단가(D) · 1년차 순이용률 · 성능저하</strong>가 함께 바뀝니다. 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실). 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup> — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사입니다. 출력제어는 발전량 단계에서 따로 뺍니다.</p>
+              <p class="hint" style="margin:2px 0 0;">터빈을 고르면 <strong>터빈 단가(D) · 1년차 순이용률 · 성능저하</strong>가 함께 바뀝니다. 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실). 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup> — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사입니다. 출력제어는 발전량 단계에서 따로 뺍니다. 터빈사가 제시한 1년차 순이용률이나 EPC사가 제시한 EPC 단가가 따로 있으면 <button type="button" class="link-btn" data-goto-tab="tab-turbine">터빈 비교 탭</button>의 스펙 표에서 터빈별로 직접 넣을 수 있고(비우면 자동 계산), 그 값이 이 칸에 그대로 적용됩니다.</p>
+              <div class="subhead">풍황 확률수준 (P50 · P75 · P90)</div>
+              <p class="hint" style="margin:0 0 6px;">풍황 계측·에너지수율(AEP) 보고서의 <strong>순이용률</strong>을 그대로 넣고 적용할 확률수준을 고르면 1년차 순이용률이 그 값으로 바뀝니다. P50을 채우면 <strong>선택 확률수준 ÷ P50</strong> 비율이 모든 터빈에 같이 적용되어 터빈별 차이가 유지되고, P50이 비어 있으면 지금 고른 터빈의 기준값을 P50으로 봅니다. 셋 다 비우고 "미적용"이면 지금까지처럼 모델 계산값을 씁니다.</p>
+              <div class="field-grid three">
+                <div class="field"><label for="p50RatePct">P50 순이용률</label><div class="iw"><input id="p50RatePct" type="number" step="0.01" min="0" max="100" placeholder="미입력"><span class="unit">%</span></div></div>
+                <div class="field"><label for="p75RatePct">P75 순이용률</label><div class="iw"><input id="p75RatePct" type="number" step="0.01" min="0" max="100" placeholder="미입력"><span class="unit">%</span></div></div>
+                <div class="field"><label for="p90RatePct">P90 순이용률</label><div class="iw"><input id="p90RatePct" type="number" step="0.01" min="0" max="100" placeholder="미입력"><span class="unit">%</span></div></div>
+              </div>
+              <div class="field-grid">
+                <div class="field"><label for="pLevelApplied">적용 확률수준</label><div class="iw"><select id="pLevelApplied">
+                  <option value="none" selected>미적용 (모델 계산값)</option>
+                  <option value="p50">P50 (기대값)</option>
+                  <option value="p75">P75</option>
+                  <option value="p90">P90 (보수적)</option>
+                </select></div></div>
+                <div class="field calc"><label for="pLevelFactorDisplay">적용 계수</label><div class="iw"><input id="pLevelFactorDisplay" disabled></div></div>
+              </div>
+              <div class="warn" role="status" id="pLevelWarn"></div>
+              <p class="hint" style="margin:6px 0 0;">확률수준별 순이용률 · 발전량 · 매출 · P-IRR · 적정 수령단가는 <button type="button" class="link-btn" data-goto-tab="tab-sens">민감도 탭의 확률수준 표</button>에서 나란히 봅니다.</p>
               <div class="subhead subhead-row">
                 <span>발전량 구성 — 보증 주체별</span>
                 <button type="button" class="link-btn" data-goto-tab="tab-warranty">보증 미달·LD 분석 →</button>
@@ -635,6 +657,7 @@
                 <div class="field"><label for="fundingMode">입력 방식</label><div class="iw"><select id="fundingMode">
                   <option value="ratio" selected>비율 (%) — 총사업비 대비</option>
                   <option value="amount">금액 (억원) 직접 입력</option>
+                  <option value="dscr">목표 DSCR 부채 사이징</option>
                 </select></div></div>
               </div>
               <div class="field-grid" id="fundingRatioWrap">
@@ -645,8 +668,22 @@
                 <div class="field"><label for="equityAmount">자기자본 금액</label><div class="iw"><input id="equityAmount" type="number" value="1860" step="0.1"><span class="unit">억원</span></div></div>
                 <div class="field"><label for="bondAmount">주민참여채권 금액</label><div class="iw"><input id="bondAmount" type="number" value="370" step="0.1"><span class="unit">억원</span></div></div>
               </div>
-              <p class="hint" style="margin:8px 0 6px;">선순위 대출 = 총사업비 − 자기자본 − 주민참여채권(자동). 금액 방식으로 바꾸면 지금 비율로 나오는 금액이 채워집니다.</p>
+              <div class="field-grid" id="fundingDscrWrap" style="display:none;">
+                <div class="field"><label for="targetDscrSizing">목표 DSCR (사이징)</label><div class="iw"><input id="targetDscrSizing" type="number" value="1.3" step="0.05" min="1"><span class="unit">배</span></div></div>
+                <div class="field"><label for="dscrSizingBasis">사이징 기준 발전량</label><div class="iw"><select id="dscrSizingBasis">
+                  <option value="current" selected>현재 적용 순이용률</option>
+                  <option value="p50">P50</option>
+                  <option value="p75">P75</option>
+                  <option value="p90">P90 (보수적 · 실무 기본)</option>
+                </select></div></div>
+                <div class="field span-2"><label for="dscrDebtScope">DSCR 원리금 범위</label><div class="iw"><select id="dscrDebtScope">
+                  <option value="senior" selected>선순위 원리금만 (실무 기본)</option>
+                  <option value="all">선순위 + 주민참여채권</option>
+                </select></div></div>
+              </div>
+              <p class="hint" style="margin:8px 0 6px;">선순위 대출 = 총사업비 − 자기자본 − 주민참여채권(자동). 금액 방식으로 바꾸면 지금 비율로 나오는 금액이 채워집니다. <strong>목표 DSCR 부채 사이징</strong>을 고르면 순서가 반대가 되어 <strong>선순위가 먼저 정해지고 자기자본이 나머지</strong>가 됩니다 — 기준 발전량(실무에서는 보통 P90)의 CFADS를 목표 DSCR로 나눈 금액까지만 원리금으로 쓰고, 그 원리금을 감당하는 원금이 선순위 한도입니다. 이때 자기자본 비율 입력은 쓰이지 않고 주민참여채권 비율은 그대로 적용됩니다.</p>
               <table class="kv"><tbody id="fundingBreakdownBody"></tbody></table>
+              <table class="kv" id="dscrSizingTable" style="margin-top:8px;display:none;"><tbody id="dscrSizingBody"></tbody></table>
 
               <div class="subhead">선순위 대출 금리 (고정 + 변동)</div>
               <div class="field-grid" style="margin-top:0;">
@@ -741,7 +778,7 @@
           <li>선정평가 비가격 세부 배점은 2025년 상반기 보도 기준 — 2026년 공고문 확인 필요</li>
           <li>CAPEX·OPEX·터빈 단가는 100MW 고정식 <strong>예시값</strong></li>
         </ul>
-        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 16개 항목 상세 보기 →</button></p>
+        <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 18개 항목 상세 보기 →</button></p>
       </aside>
 
       <!-- 결과 탭 — 각 탭이 서로 다른 질문에 답한다: 요약(얼마나 버나) · 민감도(무엇이 흔드나) · 시나리오(어느 안이 낫나) -->
@@ -794,16 +831,16 @@
               </table>
             </div>
             <div class="warn" role="status" id="turbineCompareWarn"></div>
-            <p class="hint">초록 굵은 글씨 = 같은 열에서 가장 낮은 단가. 입찰가격이 빨간색이면 상한가격을 넘습니다. 가격만 본 비교이므로 실제 선정은 비가격 50점(안보·산업·경제효과 등)에서 국산 터빈이 유리할 수 있습니다 — "선정평가" 탭 참고. "선택"을 누르면 그 터빈이 C·D 입력에 적용됩니다.</p>
+            <p class="hint">초록 굵은 글씨 = 같은 열에서 가장 낮은 단가. 입찰가격이 빨간색이면 상한가격을 넘습니다. 1년차 순이용률·EPC 단가에 <span class="ov-tag">직접</span>이 붙은 값은 아래 스펙 표에서 지정한 터빈사 제공값입니다(그 칸을 비우면 모델 계산값으로 돌아갑니다). 가격만 본 비교이므로 실제 선정은 비가격 50점(안보·산업·경제효과 등)에서 국산 터빈이 유리할 수 있습니다 — "선정평가" 탭 참고. "선택"을 누르면 그 터빈이 C·D 입력에 적용됩니다.</p>
 
-            <div class="subtotal strong"><span>터빈 스펙 · 단가 (직접 수정)</span><span></span></div>
+            <div class="subtotal strong"><span>터빈 스펙 · 단가 (직접 수정)</span><span style="font-weight:400;color:var(--muted);font-size:12px;">오른쪽 두 칸은 비우면 자동 계산</span></div>
             <div class="table-wrap">
               <table class="module-table">
-                <thead><tr><th class="mk-name">터빈</th><th>터빈 단가<br>(억원/MW)</th><th>정격<br>(MW)</th><th>로터 직경<br>(m)</th><th>가용률<br>(%)</th><th>성능저하<br>(%/년)</th><th>국산화율<br>(%, 참고)</th><th></th></tr></thead>
+                <thead><tr><th class="mk-name">터빈</th><th>터빈 단가<br>(억원/MW)</th><th>정격<br>(MW)</th><th>로터 직경<br>(m)</th><th>가용률<br>(%)</th><th>성능저하<br>(%/년)</th><th>국산화율<br>(%, 참고)</th><th>1년차 순이용률<br>(터빈사 제공, %)</th><th>EPC 단가<br>(터빈사 제시, 억원/MW)</th><th></th></tr></thead>
                 <tbody id="turbineSpecBody"></tbody>
               </table>
             </div>
-            <p class="hint">터빈 단가 · 가용률 · 외산 국산화율은 공개 자료가 없어 <strong>예시값</strong>입니다. 운영 실적이 없는 신규 모델(유니슨 U210 등)은 가용률을 보수적으로 두었습니다.</p>
+            <p class="hint">터빈 단가 · 가용률 · 외산 국산화율은 공개 자료가 없어 <strong>예시값</strong>입니다. 운영 실적이 없는 신규 모델(유니슨 U210 등)은 가용률을 보수적으로 두었습니다. <strong>1년차 순이용률(터빈사 제공) · EPC 단가</strong>는 터빈사·EPC사가 제시한 값을 그대로 넣는 칸입니다 — <strong>비워 두면</strong> 왼쪽 스펙과 C. 발전매출의 부지 총이용률·보증·손실로 계산한 값을, <strong>채우면</strong> 그 값을 씁니다(비교표에 <span class="ov-tag">직접</span> 표시). "선택"을 누르면 그 값이 C·D 입력에 그대로 들어가고, 보증·LD 탭의 보증 기준 이용률도 같은 비율로 맞춰집니다.</p>
 
             <div class="subtotal strong"><span>출력곡선 보정 기준</span><span></span></div>
             <div class="calc-grid" style="margin-top:0;">
@@ -841,6 +878,20 @@
       </div>
 
             <div class="tabpanel" role="tabpanel" id="panel-sens" aria-labelledby="tab-sens" hidden>
+        <section class="panel">
+          <h2>풍황 확률수준 — P50 · P75 · P90</h2>
+          <div class="panel-body">
+            <p class="callout-sm"><strong>같은 사업이 확률수준에 따라 얼마나 달라지는지 봅니다. </strong>C. 발전매출에 넣은 P50 · P75 · P90 순이용률을 각각 1년차 순이용률로 두고(성능저하 규칙은 그대로, 다른 가정은 현재 입력값 그대로) 연간 발전량 · 발전매출 · P-IRR · 적정 수령단가를 다시 계산합니다. 값을 넣지 않은 확률수준은 표에 나오지 않습니다.</p>
+            <div class="table-wrap">
+              <table class="module-table">
+                <thead><tr><th class="mk-name">확률수준</th><th>1년차<br>순이용률</th><th>연간 발전량<br>(GWh)</th><th>연간 발전매출<br>(억원)</th><th>P-IRR<br>(현재 단가)</th><th id="pLevelPriceHead">적정<br>수령단가</th></tr></thead>
+                <tbody id="pLevelTableBody"></tbody>
+              </table>
+            </div>
+            <div class="warn" role="status" id="pLevelTableWarn"></div>
+            <p class="hint">P50은 "그 값을 넘을 확률이 50%"(기대값), P90은 "넘을 확률이 90%"(보수적)입니다 — 금융조달에서는 보통 P90(또는 P75) 기준 부채상환능력을 봅니다. 여기 값은 <strong>순이용률 기준</strong>이며, P50 대비 P90 비율(불확실성 폭)은 계측기간 · 모델 불확실성에 따라 사업마다 다릅니다. 현재 적용 중인 확률수준은 초록 배경으로 표시됩니다.</p>
+          </div>
+        </section>
         <section class="panel">
           <h2>민감도 — 입찰단가 고정</h2>
           <div class="panel-body">
@@ -1207,7 +1258,7 @@
               <li>C. 발전매출 — <strong>REC 가중치</strong>: 연계거리·수심 복합가중치(각 2.5 · 2.9 · 3.3 · 3.7, 합산 − 2.5)는 2021년 고시 근사로 경계·상한 확인 필요. RPS 개편안(2026-05 상임위 의결)이 시행되면 REC 가중치가 폐지되고 정부 계약시장으로 바뀌어 환산식이 달라짐 — "가중치 없음(1.0)"으로 민감도 확인 권장</li>
               <li>입찰 기준 — 2026년 상반기 풍력 공고(2026-03-30): 고정식 상한 171.229 · 부유식 175.100원/kWh, 기준 SMP 86.35원/kWh, 물량 공공주도형 400 · 일반 고정식 1,000 · 부유식 400MW, 1단계 사업내역서 50점 + 2단계 입찰가격 50점 합산. <strong>비가격 세부 배점은 2025년 상반기 보도 기준이고 가격 점수 산식은 태양광 공고 산식 준용 가정</strong> — 2026년 공고문 원문 확인 필요</li>
               <li>공공주도형 — 우대가격 기본(공급망·안보 기여) 3,660원/MWh, 정부 R&amp;D 실증 터빈 추가 27,840원/MWh(2025년 상반기 공고), 지분 요건 공공 합동 50% 초과 · 단독 34% 이상(R&amp;D 실증 터빈 20% · 10%). KCH 지분 구조로 요건을 충족하는지와 2026년 우대가격 확인 필요</li>
-              <li><strong>터빈 비교</strong> — 정격·로터는 제조사 사양·보도, 터빈 단가(억원/MW) · 가용률 · 외산 국산화율은 예시값, 출력곡선 보정((320 ÷ 비출력)<sup>0.25</sup>)은 근사. 풍황 계측·터빈별 출력곡선·후류 해석으로 교체 필요. 유니슨 U210은 형식인증 전(실증 중). 기본 목록 기준일 2026-09-14 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가하거나 코드의 TURBINE_CATALOG에 항목을 더하면 됨</li>
+              <li><strong>터빈 비교</strong> — 정격·로터는 제조사 사양·보도, 터빈 단가(억원/MW) · 가용률 · 외산 국산화율은 예시값, 출력곡선 보정((320 ÷ 비출력)<sup>0.25</sup>)은 근사. 풍황 계측·터빈별 출력곡선·후류 해석으로 교체 필요. 유니슨 U210은 형식인증 전(실증 중). 기본 목록 기준일 2026-09-14 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가하거나 코드의 TURBINE_CATALOG에 항목을 더하면 됨. <strong>터빈사·EPC사가 제시한 1년차 순이용률·EPC 단가</strong>는 터빈 비교 탭 스펙 표의 "터빈사 제공" 칸에 직접 넣으면 모델 계산값 대신 쓰이고(비우면 자동), 보증·LD 탭의 보증 기준 이용률도 같은 배율로 맞춰짐 — 제시값의 <strong>보증 기준(시간 기준 / 발전량 기준)·풍황 전제·P50/P90 여부가 모델 전제와 같은지 확인 필요</strong></li>
               <li>이용률·손실 — 부지 총이용률 40% · 후류 손실 8% · 전기 손실 3% · 출력제어 2% · 성능저하 0.2%/년은 예시값. 국내 실측 참고: 한림(두산 5.56MW) 27~29%, 전남1(SGRE 9.6MW급) 30~38%</li>
               <li>D·E. CAPEX·OPEX — 100MW 고정식 예시(EPC 72억원/MW = 터빈 24 + BOP 48, 항목별 합계 7,200억, 간접비 500억, 예비비 5%, O&amp;M 연 150억 · 보험 0.4% → 총사업비 MW당 약 93억). 보도 기준 총사업비 MW당 약 70~90억 — 실제 견적·해역 조건으로 교체 필요</li>
               <li>F. 재무 프리셋 — DSCR 임계치·할인율·법인세 누진구간·감가상각 20년·선순위 15년은 ESS 참고자료 기준을 옮긴 초안. 해상풍력 PF(장기 선순위·공사기간 3년 이자·예비 한도) 조건으로 재확인 필요</li>
@@ -1218,6 +1269,8 @@
               <li>C. 발전매출 — <strong>보증 구조(터빈사 / EPC사)</strong>: 출력곡선 보증 이행률 100% · BOP·계통 가용률 99%는 예시값이며, 기술적 가용률은 터빈 목록의 사별 값(94~97%)을 씁니다. 실제 계약은 보증 기준(시간 기준 가용률 / 발전량 기준 가용률), 측정·검증 방식(파워커브 시험), 보증 기간(하자보수 2~5년 · LTSA 5~15년), LD 산정식과 연간·총액 상한, 초과 성과 공유가 회사·계약마다 다릅니다. "보증·LD" 탭의 LD 보전율 100% · 연간 상한 10%도 예시입니다</li>
               <li>C·E — <strong>준공지연 LD · 하자보수 보증</strong>: 준공지연 8주 · LD 요율 0.2%/주 · 총액 상한 10%(도급액), 하자보수 보증 터빈 5년 15% · BOP 2년 5%(고정 O&amp;M 기준)는 예시값입니다. 지연 손실은 1년차 발전매출 일할로만 보고 <strong>실제 일정 변경(COD 이동)·고정가격계약의 준공기한 위반 효과(계약 해지·가격 조정)는 반영하지 않았습니다</strong>. 하자보수 보증금(이행보증)은 담보라 현금흐름에 넣지 않았고, 보증 범위를 고정 O&amp;M의 일정 비율로 단순화했습니다</li>
               <li>엑셀(.xlsx) 회신 변환기(<code>ESS_엑셀변환.bat</code>)는 ESS 전용 — 해상풍력 시나리오 JSON은 변환할 수 없음(CSV로 확인)</li>
+              <li><strong>풍황 확률수준(P50 · P75 · P90)</strong> — 세 칸은 <strong>수기 입력</strong>이며 기본값이 없다(비우면 모델 계산값 사용). 적용하면 선택 확률수준 ÷ P50 비율을 터빈별 순이용률에 곱하는 방식이라, <strong>보고서의 확률수준 정의(순이용률 기준인지 AEP 기준인지, 손실·가용률 포함 범위, 계측기간·불확실성 전제)</strong>가 이 모델의 1년차 순이용률 정의와 같은지 확인 필요. P50 대비 P90 비율은 사업마다 달라 기본 가정을 두지 않았고, 부채상환능력(DSCR)을 P90 기준으로 따로 사이징하는 금융조건은 미반영</li>
+              <li><strong>목표 DSCR 부채 사이징</strong> — 기준 발전량(보통 P90) CFADS ÷ 목표 DSCR로 연간 원리금 한도를 잡고 원리금균등 기준으로 원금을 되돌려 선순위 한도를 정한다(거치기간은 이자만). DSCR 원리금 범위 기본값은 <strong>선순위 원리금만</strong>(실무의 senior DSCR) — "선순위 + 주민참여채권"을 고르면 <strong>주민참여채권 만기 일시상환이 있는 해 하나가 DSCR을 짓눌러 전체 부채 규모를 지배</strong>하므로(그 해만 1.30배, 나머지는 4~5배) 차환·후순위 처리 전제를 확인하고 쓸 것. <strong>단일 목표 DSCR · 원리금균등 상환 · 단일 트랜치</strong> 가정이라 실제 금융조건의 <strong>연차별 목표 DSCR(스컬프팅) · 원금불균등 상환 · 트랜치별 조건 · LLCR/PLCR · 부채상환 유보계정(cash sweep)</strong> 은 미반영. 목표 DSCR 기본 1.30배와 배당 게이트(연간 1.15 · 누적 1.30배)는 별개 값이며 모두 KCH·대주단 기준으로 확정 필요</li>
             </ul>
           </div>
           </div>
@@ -2095,10 +2148,16 @@
     });
   }
 
-  // 자금조달 — 비율 모드: 총사업비 × 자기자본·주민채권 비율 / 금액 모드: 자기자본·주민채권을 억원으로 고정.
-  // 두 모드 모두 선순위 대출 = 총사업비 − 자기자본 − 주민채권(총사업비가 금융비용 때문에 반복 수렴하는 동안 선순위가 흡수한다).
+  // 자금조달 — 비율 모드: 총사업비 × 자기자본·주민채권 비율 / 금액 모드: 자기자본·주민채권을 억원으로 고정 /
+  // DSCR 모드: 선순위를 목표 DSCR로 먼저 정하고(sizedSeniorAmount) 자기자본이 나머지를 메운다.
+  // 비율·금액 모드에서는 선순위 대출 = 총사업비 − 자기자본 − 주민채권(총사업비가 금융비용 때문에 반복 수렴하는 동안 선순위가 흡수한다).
   function fundingSplit(model, total) {
     const f = model.finance;
+    if (f.fundingMode === 'dscr') {
+      const bond = total * rate(f.residentBondPct);
+      const senior = Math.max(0, Math.min(Math.max(0, total - bond), f.sizedSeniorAmount ?? 0));
+      return { equity: Math.max(0, total - bond - senior), bond };
+    }
     if (f.fundingMode === 'amount') return { equity: Math.max(0, f.equityAmount || 0), bond: Math.max(0, f.bondAmount || 0) };
     return { equity: total * rate(f.equityPct), bond: total * rate(f.residentBondPct) };
   }
@@ -2211,7 +2270,109 @@
     return { after: remaining, lots: active.filter((l) => l.amount > 1e-12) };
   }
 
+  // ---------- 목표 DSCR 기반 선순위 부채 사이징 (project finance debt sizing) ----------
+  // 실무 순서: 보수적 발전량(보통 P90)의 CFADS를 목표 DSCR로 나눈 금액까지만 연간 원리금으로 쓰고,
+  // 그 원리금을 감당할 수 있는 원금이 선순위 한도가 된다. 자기자본은 총사업비에서 선순위·주민채권을 뺀 나머지.
+  // CFADS와 부채는 서로 영향을 주므로(이자 절세 · 금융수수료 · 건설이자 · DSRA가 총사업비를 움직인다) 몇 번 반복해 수렴시킨다.
+  // 원금 1억당 그 해 선순위 원리금 = 거치기간에는 금리, 상환기간에는 원리금균등 계수 — 부분연도는 가동일수로 안분한다.
+  // DSCR 원리금 범위 — 기본은 "선순위 원리금만"(실무의 senior DSCR). 주민참여채권까지 넣으면 만기 일시상환이 있는
+  // 한 해가 DSCR을 짓눌러 그 해 하나가 전체 부채 규모를 지배하므로, 그 기준이 필요할 때만 고르도록 선택지로 두었다.
+  function seniorCapFromDscr(model, detail, target) {
+    const f = model.finance;
+    const scopeAll = f.dscrDebtScope === 'all';
+    const r1 = seniorRateForYear(model, 1);
+    const grace = Math.max(0, Math.round(f.seniorGraceYears) || 0);
+    const term = Math.max(1, Math.round(f.seniorTermYears) || 1);
+    const n = Math.max(1, term - grace);
+    const perUnitRepay = r1 > 0 ? r1 / (1 - (1 + r1) ** -n) : 1 / n;
+    const opRows = detail.filter((d) => d.operatingDays > 0);
+    let cap = Infinity, minSenior = Infinity, minAll = Infinity;
+    opRows.forEach((d, i) => {
+      const seq = i + 1;
+      if (seq > term) return;
+      const frac = d.daysInYear > 0 ? d.operatingDays / d.daysInYear : 1;
+      const room = d.cfads / target - (scopeAll ? d.bondInterest + d.bondPrincipal : 0); // 선순위 원리금으로 쓸 수 있는 금액
+      const perUnit = (seq <= grace ? r1 : perUnitRepay) * frac;
+      if (perUnit <= 1e-12) return;
+      cap = Math.min(cap, room / perUnit);
+      const seniorDs = d.seniorInterest + d.seniorPrincipal;
+      if (seniorDs > 1e-9) minSenior = Math.min(minSenior, d.cfads / seniorDs);
+      if (d.dscr != null) minAll = Math.min(minAll, d.dscr);
+    });
+    const fin = (v) => (Number.isFinite(v) ? v : NaN);
+    return { cap: Number.isFinite(cap) ? Math.max(0, cap) : 0,
+      minDscr: scopeAll ? fin(minAll) : fin(minSenior), minSenior: fin(minSenior), minAll: fin(minAll) };
+  }
+  // 마지막 사이징 결과 — F. 자금조달 표시용(계산에는 쓰지 않는다)
+  let lastDscrSizing = null;
+  function withSizedSenior(model) {
+    const f = model.finance;
+    const target = Math.max(0.01, +f.targetDscrSizing || 1.3);
+    // 사이징 기준 발전량 — 확률수준을 고르면 그 수준의 연차별 순이용률로 CFADS를 본다(기본은 현재 적용값).
+    const probeBase = cloneModel(model);
+    probeBase.finance.sizedSeniorReady = true;
+    if (Array.isArray(f.dscrSizingRates) && f.dscrSizingRates.length) probeBase.revenue.operatingRatesPct = f.dscrSizingRates;
+    // 출발점 — 비율 모드로 구한 선순위(수렴을 빠르게 하기 위한 씨앗값)
+    const seed = cloneModel(probeBase);
+    seed.finance.fundingMode = 'ratio';
+    let senior = Math.max(0, solveInvestment(seed, buildCalendar(seed.project)).seniorPrincipal);
+    let ok = false;
+    for (let i = 0; i < 6; i++) {
+      const probe = cloneModel(probeBase);
+      probe.finance.sizedSeniorAmount = senior;
+      const r = analyzeEss(probe);
+      if (r.errors && r.errors.length) break;
+      ok = true;
+      const next = seniorCapFromDscr(probe, r.detail, target).cap;
+      const done = Math.abs(next - senior) < 0.05;
+      senior = next;
+      if (done) break;
+    }
+    // 확정된 한도로 한 번 더 돌려 실제 최소 DSCR을 확인한다(사이징 기준 DSCR은 목표와 같아야 정상).
+    let minDscr = NaN, minSenior = NaN, minAll = NaN;
+    if (ok) {
+      const verify = cloneModel(probeBase);
+      verify.finance.sizedSeniorAmount = senior;
+      const rv = analyzeEss(verify);
+      if (!(rv.errors && rv.errors.length)) ({ minDscr, minSenior, minAll } = seniorCapFromDscr(verify, rv.detail, target));
+    }
+    lastDscrSizing = { senior, target, minDscr, minSenior, minAll, scopeAll: f.dscrDebtScope === 'all', ok };
+    const sized = cloneModel(model);
+    sized.finance.sizedSeniorAmount = senior;
+    sized.finance.sizedSeniorReady = true;
+    return sized;
+  }
+  // 총사업비를 계산하는 곳은 모두 이 헬퍼를 거친다 — DSCR 모드에서 선순위가 정해져야 금융수수료·건설이자·DSRA가 맞는다.
+  const sizedModel = (model) => (model.finance.fundingMode === 'dscr' && !model.finance.sizedSeniorReady ? withSizedSenior(model) : model);
+
+  // F. 자금조달 아래 사이징 결과 — 값은 analyzeEss가 돌고 난 뒤라야 최신이라 역산 직후에 그린다.
+  function renderDscrSizing(model) {
+    const body = $('dscrSizingBody'), table = $('dscrSizingTable');
+    if (!body || !table) return;
+    if (model.finance.fundingMode !== 'dscr' || !lastDscrSizing) { body.innerHTML = ''; table.style.display = 'none'; return; }
+    table.style.display = '';
+    const el = $('dscrSizingBasis');
+    const basis = el.selectedOptions[0] ? el.selectedOptions[0].textContent.trim() : el.value;
+    const sc = $('dscrDebtScope');
+    const scope = sc.selectedOptions[0] ? sc.selectedOptions[0].textContent.trim() : sc.value;
+    const bae = (v) => (Number.isFinite(v) ? `${fmt(v, 3)} 배` : '—');
+    const rows = [
+      ['목표 DSCR', `${fmt(lastDscrSizing.target, 2)} 배`, `기준 발전량 ${basis} · 원리금 ${scope}`],
+      ['사이징된 선순위 한도', `${fmt(lastDscrSizing.senior, 1)} 억원`, '이 금액이 곧 선순위 대출 — 자기자본은 나머지'],
+      ['기준 발전량 최소 DSCR', bae(lastDscrSizing.minDscr), '사이징 기준 — 목표와 같아야 정상 (상환기간 중 최저)'],
+      ['　참고 · 선순위 원리금만', bae(lastDscrSizing.minSenior), '주민참여채권 제외'],
+      ['　참고 · 주민참여채권 포함', bae(lastDscrSizing.minAll), '만기 일시상환이 있는 해는 크게 낮아진다'],
+    ];
+    body.innerHTML = rows.map(([k, v, s]) => `<tr><th>${k}<span class="sub">${s}</span></th><td>${v}</td></tr>`).join('');
+    const w = $('capitalStructureWarn');
+    if (!(lastDscrSizing.senior > 0)) {
+      w.className = 'warn show';
+      w.textContent = `기준 발전량의 CFADS가 목표 DSCR ${fmt(lastDscrSizing.target, 2)}배를 감당하지 못해 선순위 한도가 0입니다 — 목표 DSCR을 낮추거나 기준 발전량·단가·사업비를 조정해 주세요.`;
+    } else if (w.textContent.startsWith('기준 발전량의 CFADS')) { w.className = 'warn'; w.textContent = ''; }
+  }
+
   function analyzeEss(model) {
+    model = sizedModel(model); // DSCR 모드 — 선순위를 먼저 정한 모델로 바꿔 계산한다(이미 정해졌으면 그대로)
     const cal = buildCalendar(model.project);
     const investment = solveInvestment(model, cal);
     if (!investment.converged) return { errors: ["총투자비 반복계산이 수렴하지 않았습니다."] };
@@ -2410,6 +2571,18 @@
     const contractCapacityMW = Math.max(0, +$('contractCapacityMW').value || 0);
 
     const operatingRatesPct = Array.from(document.querySelectorAll('#opRateGrid [data-oprate-index]')).map((el) => +el.value);
+    // DSCR 사이징 기준 발전량 — 확률수준을 고르면 그 수준의 연차별 순이용률로 CFADS를 본다(현재 적용값이면 null).
+    let dscrSizingRates = null;
+    const dscrBasis = $('dscrSizingBasis').value;
+    if (dscrBasis !== 'current') {
+      const pv = pLevelValue(dscrBasis);
+      if (pv != null) {
+        const dTb = turbineDerived($('turbineMaker').value), pBase = pLevelBase();
+        const cf = pBase > 0 ? Math.round(dTb.y1Base * (pv / pBase) * 100) / 100 : pv;
+        const degR = rate(+$('degradationPct').value || 0);
+        dscrSizingRates = operatingRatesPct.map((_, i) => Math.round(cf * (1 - degR) ** i * 100) / 100);
+      }
+    }
     const opRateWarnEl = $('opRateRangeWarn');
     const outOfRangeYears = operatingRatesPct.map((v, i) => ({ year: i + 1, v })).filter((r) => r.v < 0 || r.v > 100);
     if (outOfRangeYears.length > 0) {
@@ -2438,7 +2611,7 @@
     const equityPctVal = +$('equityPct').value, residentBondPctVal = +$('residentBondPct').value;
     const capitalStructureWarnEl = $('capitalStructureWarn');
     const capitalStructureSum = equityPctVal + residentBondPctVal;
-    if ($('fundingMode').value !== 'amount' && capitalStructureSum > 100) { // 금액 모드 점검은 renderFundingBreakdown()(총사업비가 필요)
+    if ($('fundingMode').value === 'ratio' && capitalStructureSum > 100) { // 금액 모드 점검은 renderFundingBreakdown() · DSCR 모드는 자기자본이 결과값
       capitalStructureWarnEl.className = "warn show";
       capitalStructureWarnEl.textContent = `자기자본 비율(${fmt(equityPctVal, 1)}%)+주민참여채권 비율(${fmt(residentBondPctVal, 1)}%) 합계가 ${fmt(capitalStructureSum, 1)}%로 100%를 초과합니다 — 선순위 대출 비율이 음수가 되어 재무모델이 성립하지 않습니다.`;
     } else capitalStructureWarnEl.className = "warn";
@@ -2468,6 +2641,7 @@
       opex: { items: opexItems, defectWarranty: { turbineYears: +$('defectTurbineYears').value || 0, turbinePct: +$('defectTurbinePct').value || 0, epcYears: +$('defectEpcYears').value || 0, epcPct: +$('defectEpcPct').value || 0 }, variableOMPerMWh: +$('variableOMPerMWh').value, powerTradingFeePerKWh: +$('powerTradingFeePerKWh').value, insurancePct: +$('insurancePct').value, communityRevenuePct: +$('communityRevenuePct').value, escalationPct: +$('opexEscalationPct').value, ltsaStepAfterYear: 0, ltsaStepMultiplierPct: 100 },
       finance: { equityPct: +$('equityPct').value, residentBondPct: +$('residentBondPct').value, seniorRatePct: +$('seniorRatePct').value, seniorTermYears: +$('seniorTermYears').value, seniorGraceYears: +$('seniorGraceYears').value, bondRatePct: +$('bondRatePct').value, bondTermYears: +$('bondTermYears').value, financeFeePct: +$('financeFeePct').value, constructionRatePct: +$('constructionRatePct').value, dsraMonths: +$('dsraMonths').value, kchSharePct: +$('kchSharePct').value,
         fundingMode: $('fundingMode').value, equityAmount: +$('equityAmount').value, bondAmount: +$('bondAmount').value,
+        targetDscrSizing: +$('targetDscrSizing').value, dscrSizingBasis: dscrBasis, dscrDebtScope: $('dscrDebtScope').value, dscrSizingRates,
         seniorFixedSharePct: +$('seniorFixedSharePct').value, seniorSpreadPct: +$('seniorSpreadPct').value, cdBaseRatePct: +$('cdBaseRatePct').value,
         rateResetMonths: +$('rateResetMonths').value, cdRatesPct: Array.from(document.querySelectorAll('#cdRateGrid [data-cd-index]')).map((el) => +el.value) },
       assumptions: { ...ASSUMPTIONS, taxBrackets: TAX_BRACKETS },
@@ -2532,8 +2706,9 @@
     };
   }
   // D. CAPEX 아래 "총사업비 구성" — 총투자비는 입찰단가와 무관하므로(매출이 들어가지 않음) 산정 전에도 바로 보여 준다.
-  function renderCapexBreakdown(model) {
+  function renderCapexBreakdown(rawModel) {
     const body = $('capexBreakdownBody');
+    const model = sizedModel(rawModel); // 총사업비의 금융수수료·건설이자·DSRA는 선순위 규모에 딸려 있다
     const inv = solveInvestment(model, buildCalendar(model.project));
     if (!inv.converged) { body.innerHTML = '<tr><th>총사업비 반복계산이 수렴하지 않았습니다.</th><td>—</td></tr>'; $('capexAccTotal').textContent = ''; return; }
     const c = capexComposition(model.capex.items, inv);
@@ -2554,15 +2729,19 @@
     $('capexAccTotal').textContent = `총 ${fmt(c.total, 0)}억`;
   }
 
+  // 적정 단가 역산의 상한 — 해상풍력 수령단가는 400원/kWh 안팎이라 예전 상한(500원)에서는 목표 IRR을 조금만 올려도
+  // "도달 불가"로 끊겼다. 이분탐색이라 상한을 올려도 비용은 그대로다(60회 반복).
+  const PRICE_SOLVE_MAX = 3000;
+  const IRR_KIND_LABEL = { projectIrr: 'P-IRR', equityIrr: 'E-IRR(배당세전)', equityIrrAfterInvestorTax: 'E-IRR(배당세후)' };
   function solveBidPriceForTarget(model, targetIrr, kind) {
     function irrAt(price) {
       model.revenue.bidPricePerKWh = price;
       const r = analyzeEss(model);
       return r.errors && r.errors.length ? NaN : r[kind];
     }
-    let low = 0, high = 500;
+    let low = 0, high = PRICE_SOLVE_MAX;
     const irrLow = irrAt(low), irrHigh = irrAt(high);
-    if (!Number.isFinite(irrHigh) || irrHigh < targetIrr) return { ok: false, reason: "500원/kWh까지도 목표 IRR에 도달하지 못합니다 (비용이 너무 크거나 목표 IRR이 너무 높음)." };
+    if (!Number.isFinite(irrHigh) || irrHigh < targetIrr) return { ok: false, reason: `역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh에서도 ${IRR_KIND_LABEL[kind] || kind}가 ${Number.isFinite(irrHigh) ? pct(irrHigh) : '산정 불가'}라 목표 ${pct(targetIrr)}에 못 미칩니다 — 목표를 낮추거나 사업비·금융조건·이용률을 조정해 주세요.` };
     for (let i = 0; i < 60; i++) {
       const mid = (low + high) / 2;
       const midIrr = irrAt(mid);
@@ -2582,9 +2761,9 @@
       const r = analyzeEss(model);
       return r.errors && r.errors.length ? NaN : r[kind];
     }
-    let low = 0, high = 500;
+    let low = 0, high = PRICE_SOLVE_MAX;
     const profitHigh = profitAt(high);
-    if (!Number.isFinite(profitHigh) || profitHigh < targetProfit) return { ok: false, reason: "500원/kWh까지도 목표 당사 이익에 도달하지 못합니다 (비용이 너무 크거나 목표 이익이 너무 높음)." };
+    if (!Number.isFinite(profitHigh) || profitHigh < targetProfit) return { ok: false, reason: `역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh에서도 당사 이익이 ${Number.isFinite(profitHigh) ? fmt(profitHigh, 1) + '억원' : '산정 불가'}이라 목표 ${fmt(targetProfit, 1)}억원에 못 미칩니다 — 목표를 낮추거나 사업비·금융조건·이용률을 조정해 주세요.` };
     for (let i = 0; i < 60; i++) {
       const mid = (low + high) / 2;
       const midProfit = profitAt(mid);
@@ -2620,7 +2799,7 @@
     const irrResult = solveBidPriceForTarget(irrModel, 0.06, 'projectIrr');
     const profitModel = readModel();
     const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyProfitPreTax');
-    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: 'P-IRR 6%·당사 이익 100억 모두 500원/kWh까지도 도달하지 못합니다.' };
+    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: `P-IRR 6%·당사 이익 100억 모두 역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh까지도 도달하지 못합니다.` };
     if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '당사이익 100억' };
     if (!profitResult.ok) return { ok: true, price: irrResult.price, binding: 'P-IRR 6%' };
     return irrResult.price >= profitResult.price
@@ -2681,6 +2860,10 @@
     }
 
     const solved = solveCurrentModel(model);
+    // DSCR 모드는 부채 규모가 단가(CFADS)에 딸려 있어 역산 전에는 총사업비·자금조달을 확정할 수 없다 —
+    // 위쪽에서 한 번 그린 두 패널을 역산이 끝난 단가로 다시 그린다(비율·금액 모드는 그대로).
+    if (model.finance.fundingMode === 'dscr') { renderCapexBreakdown(model); renderFundingBreakdown(model); }
+    renderDscrSizing(model); // 역산이 끝나야 사이징 결과가 최신이다
 
     if (!solved.ok) {
       $('heroBidPrice').textContent = '—';
@@ -2761,7 +2944,7 @@
   function markResultsDirty() { resultsDirty.summary = true; resultsDirty.sens = true; resultsDirty.turbine = true; resultsDirty.entry = true; resultsDirty.cases = true; resultsDirty.warranty = true; }
   function renderActiveTab() {
     if (activeTabId === 'tab-summary' && resultsDirty.summary) { resultsDirty.summary = false; renderSummaryTab(); }
-    else if (activeTabId === 'tab-sens' && resultsDirty.sens) { resultsDirty.sens = false; computeSensitivity(); renderSensitivityView(); }
+    else if (activeTabId === 'tab-sens' && resultsDirty.sens) { resultsDirty.sens = false; renderPLevels(); computeSensitivity(); renderSensitivityView(); }
     else if (activeTabId === 'tab-turbine' && resultsDirty.turbine) { resultsDirty.turbine = false; renderTurbineCompare(); }
     else if (activeTabId === 'tab-price' && resultsDirty.entry) { resultsDirty.entry = false; renderEntryConditions(); }
     else if (activeTabId === 'tab-cases' && resultsDirty.cases) { resultsDirty.cases = false; renderCases(); }
@@ -2791,8 +2974,82 @@
       step('후류(웨이크) 손실', '<span class="wg wg-d">개발사</span>', `× (1 − ${fmt(wake, 1)}%)`, acc * (1 - rate(wake))),
       step('전기·송전 손실', '<span class="wg wg-e">EPC</span>', `× (1 − ${fmt(elec, 1)}%)`, acc * (1 - rate(elec))),
     ];
-    rows.push(`<tr class="strong"><th>= 1년차 순이용률 <span class="sub">출력제어·계통 제약 ${fmt(+$('curtailmentPct').value || 0, 1)}%는 발전량 단계에서 따로 차감</span></th><td>${fmt(d.y1, 2)}%</td></tr>`);
+    if (d.y1Ov) rows.push(`<tr><th>모델 계산 1년차 순이용률 <span class="sub">위 단계를 곱한 결과 — 터빈사 제공값이 있어 아래 값으로 대체됩니다</span></th><td>${fmt(d.y1Auto, 2)}%</td></tr>`);
+    if (d.pFactor !== 1) rows.push(`<tr><th>풍황 확률수준 ${$('pLevelApplied').value.toUpperCase()} 적용 <span class="sub">× ${fmt(d.pFactor, 4)} (기준 ${fmt(pLevelBase(), 2)}% → ${fmt(pLevelValue($('pLevelApplied').value) ?? 0, 2)}%)</span></th><td>${fmt(d.y1, 2)}%</td></tr>`);
+    rows.push(`<tr class="strong"><th>= 1년차 순이용률 ${d.y1Ov ? '<span class="wg wg-t">터빈사 제공</span>' : ''}${d.pFactor !== 1 ? `<span class="wg wg-d">${$('pLevelApplied').value.toUpperCase()}</span>` : ''}<span class="sub">${d.y1Ov ? `터빈 비교 탭에서 직접 지정한 값 (모델 계산 대비 ${d.y1Scale >= 1 ? '+' : ''}${fmt(d.y1Scale * 100 - 100, 1)}%) · ` : ''}출력제어·계통 제약 ${fmt(+$('curtailmentPct').value || 0, 1)}%는 발전량 단계에서 따로 차감</span></th><td>${fmt(d.y1, 2)}%</td></tr>`);
     $('genBuildupBody').innerHTML = rows.join('');
+  }
+
+  // 적용 계수 표시와 입력 점검 — 확률수준이 높을수록(P90) 순이용률이 작아야 한다.
+  function syncPLevelState(d) {
+    const mode = $('pLevelApplied').value;
+    const p50 = pLevelValue('p50'), p75 = pLevelValue('p75'), p90 = pLevelValue('p90');
+    $('pLevelFactorDisplay').value = mode === 'none' ? '미적용 (1.0000)'
+      : `${fmt(d.pFactor, 4)} · ${mode.toUpperCase()} 기준 ${fmt(pLevelBase(), 2)}%`;
+    const msgs = [];
+    if (mode !== 'none' && pLevelValue(mode) == null) msgs.push(`${mode.toUpperCase()} 칸이 비어 있어 적용되지 않았습니다 — 값을 넣거나 "미적용"을 고르세요.`);
+    if (p50 != null && p75 != null && p75 > p50) msgs.push('P75가 P50보다 큽니다.');
+    if (p75 != null && p90 != null && p90 > p75) msgs.push('P90이 P75보다 큽니다.');
+    if (p50 != null && p90 != null && p90 > p50) msgs.push('P90이 P50보다 큽니다.');
+    if (msgs.length > 1) msgs.push('확률수준이 높을수록(P50 → P90) 순이용률은 작아져야 합니다 — 입력을 확인해주세요.');
+    const w = $('pLevelWarn');
+    w.className = msgs.length ? 'warn show' : 'warn';
+    w.textContent = msgs.join(' ');
+  }
+
+  // ---------- 확률수준 표 (민감도 탭) — 확률수준마다 1년차 순이용률을 바꿔 다시 역산 ----------
+  function renderPLevels() {
+    const model = readModel(), rv = model.revenue;
+    const d = turbineDerived($('turbineMaker').value);
+    const mw = rv.contractCapacityMW || 0, curt = 1 - rate(rv.curtailmentPct || 0);
+    const price = lastSolved && lastSolved.ok ? lastSolved.price : NaN;
+    const deg = rate(+$('degradationPct').value || 0);
+    const genOf = (cf) => mw * 24 * 365 * rate(cf) * curt; // MWh/년
+    const moneyOf = (genMWh) => (Number.isFinite(price) ? (genMWh * 1000 * price) / HUNDRED_MILLION : NaN); // 억원
+    const withCf = (cf) => {
+      const m = cloneModel(model);
+      m.revenue.operatingRatesPct = rv.operatingRatesPct.map((_, i) => Math.round(cf * (1 - deg) ** i * 100) / 100);
+      return m;
+    };
+    // 보고서 값을 지금 고른 터빈 기준으로 환산한다(= 적용 계수와 같은 규칙) — P50 기준값과 터빈 기준값이 같으면 보고서 값 그대로.
+    const base = pLevelBase();
+    const cfOf = (v) => (base > 0 ? Math.round(d.y1Base * (v / base) * 100) / 100 : v);
+    const applied = $('pLevelApplied').value;
+    const rows = P_LEVELS.map(([key, label]) => ({ key, label, input: pLevelValue(key) })).filter((r) => r.input != null);
+    const warn = $('pLevelTableWarn');
+    if (!rows.length) {
+      $('pLevelTableBody').innerHTML = `<tr><td colspan="6" style="text-align:left;white-space:normal;color:var(--muted);">C. 발전매출의 "풍황 확률수준" 칸에 P50 · P75 · P90 순이용률을 넣으면 여기서 나란히 비교합니다. 지금은 모델 계산 1년차 순이용률 ${fmt(d.y1, 2)}%로 계산 중입니다.</td></tr>`;
+      warn.className = 'warn';
+      return;
+    }
+    $('pLevelTableBody').innerHTML = rows.map((r) => {
+      const cf = cfOf(r.input);
+      const solved = solveCurrentModel(withCf(cf));
+      const atPrice = withCf(cf);
+      atPrice.revenue.bidPricePerKWh = Number.isFinite(price) ? price : 0;
+      const analyzed = analyzeEss(atPrice);
+      const ok = !(analyzed.errors && analyzed.errors.length);
+      const on = applied === r.key;
+      const sub = Math.abs(cf - r.input) < 0.005 ? (on ? '현재 적용 중' : '보고서 입력값')
+        : `보고서 ${fmt(r.input, 2)}% → 현재 터빈 기준 환산${on ? ' · 현재 적용 중' : ''}`;
+      return `
+      <tr${on ? ' class="is-picked"' : ''}>
+        <th class="mk-name">${r.label}<span class="sub">${sub}</span></th>
+        <td>${fmt(cf, 2)}%</td>
+        <td>${fmt(genOf(cf) / 1000, 1)}</td>
+        <td>${Number.isFinite(price) ? fmt(moneyOf(genOf(cf)), 2) : '—'}</td>
+        <td>${ok ? `${fmt(analyzed.projectIrr * 100, 2)}%` : '산정 불가'}</td>
+        <td>${solved.ok ? `${fmt(solved.price, 2)}원` : '산정 불가'}</td>
+      </tr>`;
+    }).join('');
+    const p50 = pLevelValue('p50'), p90 = pLevelValue('p90');
+    if (applied === 'none') {
+      warn.className = 'warn show';
+      warn.textContent = '지금은 "미적용"이라 화면의 적정 수령단가는 모델 계산 순이용률 기준입니다 — C. 발전매출에서 적용 확률수준을 고르면 그 값이 반영됩니다.';
+    } else if (p50 != null && p90 != null && p50 > 0) {
+      warn.className = 'warn show';
+      warn.textContent = `P90 ÷ P50 = ${fmt((p90 / p50) * 100, 1)}% — 불확실성 폭이 계측·모델 근거와 맞는지 확인해주세요.`;
+    } else warn.className = 'warn';
   }
 
   // ---------- 보증·LD 탭 — 보증 미달 시 귀책별 손실과 LD 보전(탭이 보일 때만 역산) ----------
@@ -2804,7 +3061,8 @@
     const base = +$('siteBaseRatePct').value || 0, wake = 1 - rate(+$('wakeLossPct').value || 0);
     const num = (id) => +$(id).value || 0;
     // 보증 조합과 실적 조합 — 한 항목씩 바꿔 귀책을 나눈다.
-    const cfOf = (pcw, avail, bop, elecLoss) => base * d.curveF * rate(pcw) * rate(avail) * rate(bop) * wake * (1 - rate(elecLoss));
+    // 터빈사 제공 1년차 순이용률을 쓰는 경우, 단계 곱만으로는 그 값이 나오지 않으므로 같은 배율(y1Scale)로 맞춘다.
+    const cfOf = (pcw, avail, bop, elecLoss) => base * d.curveF * rate(pcw) * rate(avail) * rate(bop) * wake * (1 - rate(elecLoss)) * (d.y1Scale || 1);
     const gEl = num('electricalLossPct'), aEl = num('actElectricalLossPct');
     const cfGuar = cfOf(num('powerCurveWarrantyPct'), d.avail, num('bopAvailPct'), gEl);
     const cfTurbine = cfOf(num('actPowerCurvePct'), num('actTurbineAvailPct'), num('bopAvailPct'), gEl); // 터빈 실적만 반영
@@ -2928,8 +3186,12 @@
       const id = r.tb.id, sEl = $(`tb-${id}-solve`), bEl = $(`tb-${id}-bid`);
       $(`tb-${id}-rated`).textContent = `${fmt(r.d.mw, 1)}MW × ${r.d.mw > 0 ? Math.ceil(mw / r.d.mw - 1e-9) : '—'}기`;
       $(`tb-${id}-sp`).textContent = fmt(r.d.specificPower, 0);
-      $(`tb-${id}-y1`).textContent = `${fmt(r.d.y1, 2)}%`;
-      $(`tb-${id}-epc`).textContent = fmt(r.d.epc, 1);
+      $(`tb-${id}-y1`).innerHTML = `${fmt(r.d.y1, 2)}%${r.d.y1Ov ? '<span class="ov-tag">직접</span>' : ''}`;
+      $(`tb-${id}-epc`).innerHTML = `${fmt(r.d.epc, 1)}${r.d.epcOv ? '<span class="ov-tag">직접</span>' : ''}`;
+      // 스펙 표의 "터빈사 제공" 칸은 비어 있을 때 지금 조건의 자동 계산값을 안내 문구(placeholder)로 보여준다.
+      const y1Ov = $(`tb-${id}-y1ov`), epcOv = $(`tb-${id}-epcov`);
+      if (y1Ov) { y1Ov.placeholder = `자동 ${fmt(r.d.y1Auto, 2)}`; y1Ov.title = `비우면 자동 계산 ${fmt(r.d.y1Auto, 2)}%`; }
+      if (epcOv) { epcOv.placeholder = `자동 ${fmt(r.d.epcAuto, 1)}`; epcOv.title = `비우면 터빈 단가 ${fmt(r.d.price, 1)} + BOP·시공 단가 = ${fmt(r.d.epcAuto, 1)}억원/MW`; }
       if (!r.ok) { sEl.textContent = '산정 불가'; bEl.textContent = '—'; sEl.className = ''; bEl.className = ''; return; }
       sEl.textContent = `${fmt(r.price, 2)}원`;
       sEl.className = Math.abs(r.price - bestPrice) < 0.005 ? 'best' : '';
@@ -4316,8 +4578,10 @@
         <td><button type="button" class="btn btn-soft" data-tb-pick="${h(t.id)}">선택</button></td>
       </tr>`).join('');
     const cell = (t, fld, step, label) => `<td><input id="tb-${h(t.id)}-${fld}" type="number" value="${h(t[fld])}" step="${step}" aria-label="${h(t.maker)} ${label}"></td>`;
+    // 터빈사 제공값 칸 — 빈 칸이 "자동"이라 value 속성을 두지 않는다(기본값으로 되돌리기가 자동 상태로 돌아간다).
+    const ovCell = (t, fld, step, label) => `<td><input id="tb-${h(t.id)}-${fld}" class="tb-ov" type="number" value="${t[fld] == null ? '' : h(t[fld])}" step="${step}" min="0" placeholder="자동" aria-label="${h(t.maker)} ${label}"></td>`;
     $('turbineSpecBody').innerHTML = list.map((t) => `
-      <tr data-tb-row="${h(t.id)}">${nameCell(t)}${cell(t, 'price', 0.5, '터빈 단가')}${cell(t, 'mw', 0.1, '정격출력')}${cell(t, 'rotor', 1, '로터 직경')}${cell(t, 'avail', 0.5, '가용률')}${cell(t, 'degA', 0.05, '성능저하')}${cell(t, 'local', 5, '국산화율')}
+      <tr data-tb-row="${h(t.id)}">${nameCell(t)}${cell(t, 'price', 0.5, '터빈 단가')}${cell(t, 'mw', 0.1, '정격출력')}${cell(t, 'rotor', 1, '로터 직경')}${cell(t, 'avail', 0.5, '가용률')}${cell(t, 'degA', 0.05, '성능저하')}${cell(t, 'local', 5, '국산화율')}${ovCell(t, 'y1ov', 0.01, '터빈사 제공 1년차 순이용률')}${ovCell(t, 'epcov', 0.5, '터빈사 제시 EPC 단가')}
         <td>${t.custom ? `<button type="button" class="btn" data-tb-del="${h(t.id)}">삭제</button>` : ''}</td>
       </tr>`).join('');
     document.querySelectorAll('#turbineSpecBody input[id^="tb-"]').forEach((el) => { if (keep[el.id] != null) el.value = keep[el.id]; });
@@ -4337,15 +4601,60 @@
   }
   // 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)^지수 — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사.
   // 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실)
-  function turbineDerived(id) {
+  // 터빈사·EPC사가 제시한 값(터빈 비교 탭 스펙 표의 "터빈사 제공" 칸)이 있으면 모델 계산값 대신 그 값을 쓴다.
+  // 빈 칸·0 이하·숫자가 아닌 값은 "자동"으로 본다(칸을 비우면 언제든 모델 계산값으로 돌아온다).
+  function turbineOverride(id, fld) {
+    const el = $(`tb-${id}-${fld}`);
+    if (!el) return null;
+    const raw = String(el.value).trim();
+    if (raw === '') return null;
+    const v = Number(raw);
+    return Number.isFinite(v) && v > 0 ? v : null;
+  }
+  // ---------- 풍황 확률수준(P50 · P75 · P90) ----------
+  // 보고서의 순이용률을 그대로 받아 선택한 확률수준을 1년차 순이용률에 반영한다.
+  // P50을 채우면 (선택값 ÷ P50) 비율을 모든 터빈에 같이 곱해 터빈별 차이를 유지하고,
+  // P50이 비어 있으면 지금 고른 터빈의 기준값(터빈사 제공값 또는 모델 계산값)을 P50으로 본다.
+  const P_LEVELS = [['p50', 'P50'], ['p75', 'P75'], ['p90', 'P90']];
+  const pLevelValue = (key) => {
+    const el = $(`${key}RatePct`);
+    if (!el || String(el.value).trim() === '') return null;
+    const v = Number(el.value);
+    return Number.isFinite(v) && v > 0 ? v : null;
+  };
+  // 확률수준 환산의 기준값 — P50 입력이 있으면 그 값, 없으면 지금 고른 터빈의 기준 순이용률.
+  const pLevelBase = () => pLevelValue('p50') ?? turbineDerivedBase($('turbineMaker').value).y1Base;
+  function pLevelFactor() {
+    const mode = $('pLevelApplied').value;
+    if (mode === 'none') return 1;
+    const pick = pLevelValue(mode);
+    if (pick == null) return 1;
+    const base = pLevelBase();
+    return base > 0 ? pick / base : 1;
+  }
+
+  // 확률수준을 곱하기 전까지의 값 — 모델 계산(y1Model)과 터빈사 제공값(y1Supp), 실제로 쓰는 값(y1Base).
+  function turbineDerivedBase(id) {
     const sp = turbineSpec(id);
     const specificPower = sp.rotor > 0 ? sp.mw * 1e6 / (Math.PI * (sp.rotor / 2) ** 2) : 0;
     const curveF = specificPower > 0 ? ((+$('refSpecificPower').value || specificPower) / specificPower) ** (+$('powerCurveExp').value || 0) : 1;
     const losses = (1 - rate(+$('wakeLossPct').value || 0)) * (1 - rate(+$('electricalLossPct').value || 0));
     // 보증 주체별 곱 — 터빈사(출력곡선 보증 이행률 × 기술적 가용률) × EPC·O&M(BOP·계통 가용률)
     const warranty = rate(+$('powerCurveWarrantyPct').value || 0) * rate(sp.avail) * rate(+$('bopAvailPct').value || 0);
-    const y1 = Math.round((+$('siteBaseRatePct').value || 0) * curveF * warranty * losses * 100) / 100;
-    return { ...sp, specificPower, curveF, y1, epc: Math.round((sp.price + (+$('bosUnitPrice').value || 0)) * 10) / 10 };
+    const y1Model = Math.round((+$('siteBaseRatePct').value || 0) * curveF * warranty * losses * 100) / 100;
+    const epcAuto = Math.round((sp.price + (+$('bosUnitPrice').value || 0)) * 10) / 10;
+    const y1Supp = turbineOverride(id, 'y1ov'), epcSupp = turbineOverride(id, 'epcov');
+    return { ...sp, specificPower, curveF, y1Model, y1Auto: y1Model, y1Supp, y1Base: y1Supp ?? y1Model, epcAuto, epcSupp, epc: epcSupp ?? epcAuto };
+  }
+  // 최종 파생값 = 터빈 기준값 × 확률수준 계수.
+  // y1Scale — 최종값이 모델 계산값의 몇 배인지. 보증·LD 탭이 단계별 분해를 이 배율로 맞춰,
+  // 보증 기준 이용률이 화면의 1년차 순이용률과 어긋나지 않게 한다.
+  function turbineDerived(id) {
+    const b = turbineDerivedBase(id);
+    const pFactor = pLevelFactor();
+    const y1 = Math.round(b.y1Base * pFactor * 100) / 100;
+    return { ...b, pFactor, y1, y1Ov: b.y1Supp != null, epcOv: b.epcSupp != null,
+      y1Scale: b.y1Model > 0 ? y1 / b.y1Model : 1 };
   }
   // 지금 C·D 입력이 선택 터빈의 파생값과 그대로 일치하는지(= 터빈 값 적용 중). 상태를 따로 저장하지 않아 복원·되돌리기와 자동으로 맞는다.
   function turbineLinkActive() {
@@ -4366,7 +4675,8 @@
     const id = $('turbineMaker').value, d = turbineDerived(id), mw = Math.max(0, +$('contractCapacityMW').value || 0);
     turbineLinked = turbineLinkActive();
     $('turbinePriceDisplay').value = fmt(d.price, 1);
-    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가용률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%`;
+    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가용률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%${d.y1Ov ? ' · 터빈사 제공값 적용' : ''}${d.pFactor !== 1 ? ` · ${$('pLevelApplied').value.toUpperCase()} × ${fmt(d.pFactor, 4)}` : ''}`;
+    syncPLevelState(d);
     $('turbineCountDisplay').value = d.mw > 0 ? String(Math.ceil(mw / d.mw - 1e-9)) : '—';
     const el = $('turbineLinkState');
     el.textContent = turbineLinked ? `● ${turbineById(id).maker} ${turbineById(id).model} 값 적용 중` : '○ 사용자 조정 (터빈 값에서 벗어남)';
@@ -4394,9 +4704,10 @@
   }));
   // ---------- 자금조달 구성 · 선순위 금리(고정+변동) ----------
   function syncFundingModeVisibility() {
-    const amount = $('fundingMode').value === 'amount';
-    $('fundingRatioWrap').style.display = amount ? 'none' : '';
-    $('fundingAmountWrap').style.display = amount ? '' : 'none';
+    const mode = $('fundingMode').value;
+    $('fundingRatioWrap').style.display = mode === 'amount' ? 'none' : ''; // DSCR 모드도 주민참여채권 비율을 쓴다
+    $('fundingAmountWrap').style.display = mode === 'amount' ? '' : 'none';
+    $('fundingDscrWrap').style.display = mode === 'dscr' ? '' : 'none';
   }
   // 비율 → 금액 전환: 지금 비율로 나오는 금액(0.1억 단위)을 채워 값이 갑자기 바뀌지 않게 한다.
   // (이 리스너가 공통 recalcAll 리스너보다 먼저 등록되어, 채운 값으로 재계산된다)
@@ -4411,7 +4722,8 @@
     syncFundingModeVisibility();
   });
   // D. CAPEX 아래처럼 F에도 자금조달 구성(금액·비중)을 실시간으로 — 총사업비는 입찰단가와 무관해 바로 계산된다.
-  function renderFundingBreakdown(model) {
+  function renderFundingBreakdown(rawModel) {
+    const model = sizedModel(rawModel);
     const inv = solveInvestment(model, buildCalendar(model.project));
     const t = inv.totalInvestment;
     const share = (v) => (t > 0 ? `총사업비의 ${(v / t * 100).toFixed(1)}%` : '');
@@ -4484,7 +4796,7 @@
   $('turbineMaker').addEventListener('input', applyTurbineDerived);
   // 터빈 스펙·보정 기준·BOP 단가·부지 이용률·손실을 고치면, 직전까지 터빈 값이 적용 중이었을 때만 다시 주입한다
   // (사용자가 C·D를 직접 조정한 상태는 덮어쓰지 않는다). 선택하지 않은 터빈의 스펙은 비교 탭에만 영향.
-  const TURBINE_UPSTREAM_IDS = ['siteBaseRatePct', 'wakeLossPct', 'electricalLossPct', 'powerCurveWarrantyPct', 'bopAvailPct', 'bosUnitPrice', 'refSpecificPower', 'powerCurveExp'];
+  const TURBINE_UPSTREAM_IDS = ['siteBaseRatePct', 'wakeLossPct', 'electricalLossPct', 'powerCurveWarrantyPct', 'bopAvailPct', 'bosUnitPrice', 'refSpecificPower', 'powerCurveExp', 'p50RatePct', 'p75RatePct', 'p90RatePct', 'pLevelApplied'];
   TURBINE_UPSTREAM_IDS.forEach((id) => $(id).addEventListener('input', () => { if (turbineLinked) applyTurbineDerived(); }));
   $('applyTurbineBtn').addEventListener('click', () => { applyTurbineDerived(); recalcAll(); });
   $('gotoTurbineTab').addEventListener('click', () => $('tab-turbine').click());
