@@ -2330,6 +2330,8 @@
   }
   // 마지막 사이징 결과 — F. 자금조달 표시용(계산에는 쓰지 않는다)
   let lastDscrSizing = null;
+  // 직전 사이징 한도 — 다음 사이징의 출발점으로만 쓴다(결과는 늘 아래 반복으로 다시 맞춘다).
+  let dscrSeedSenior = null;
   function withSizedSenior(model) {
     const f = model.finance;
     const target = Math.max(0.01, +f.targetDscrSizing || 1.3);
@@ -2337,30 +2339,35 @@
     const probeBase = cloneModel(model);
     probeBase.finance.sizedSeniorReady = true;
     if (Array.isArray(f.dscrSizingRates) && f.dscrSizingRates.length) probeBase.revenue.operatingRatesPct = f.dscrSizingRates;
-    // 출발점 — 비율 모드로 구한 선순위(수렴을 빠르게 하기 위한 씨앗값)
-    const seed = cloneModel(probeBase);
-    seed.finance.fundingMode = 'ratio';
-    let senior = Math.max(0, solveInvestment(seed, buildCalendar(seed.project)).seniorPrincipal);
-    let ok = false;
+    // 출발점 — 직전 사이징 한도. 역산(이분탐색) 중에는 단가가 조금씩만 변해 1~2회면 수렴한다.
+    // 처음이라 직전 값이 없으면 비율 모드로 구한 선순위에서 시작한다.
+    let senior = Number.isFinite(dscrSeedSenior) && dscrSeedSenior > 0 ? dscrSeedSenior : (() => {
+      const seed = cloneModel(probeBase);
+      seed.finance.fundingMode = 'ratio';
+      return Math.max(0, solveInvestment(seed, buildCalendar(seed.project)).seniorPrincipal);
+    })();
+    let ok = false, converged = false, minDscr = NaN, minSenior = NaN, minAll = NaN;
     for (let i = 0; i < 6; i++) {
       const probe = cloneModel(probeBase);
       probe.finance.sizedSeniorAmount = senior;
       const r = analyzeEss(probe);
       if (r.errors && r.errors.length) break;
       ok = true;
-      const next = seniorCapFromDscr(probe, r.detail, target).cap;
-      const done = Math.abs(next - senior) < 0.05;
-      senior = next;
-      if (done) break;
+      const m = seniorCapFromDscr(probe, r.detail, target);
+      ({ minDscr, minSenior, minAll } = m);
+      converged = Math.abs(m.cap - senior) < 0.05;
+      senior = m.cap;
+      // 수렴했으면 위 최소 DSCR은 확정 한도(오차 0.05억 이내)의 값이라 따로 확인하지 않아도 된다.
+      if (converged) break;
     }
-    // 확정된 한도로 한 번 더 돌려 실제 최소 DSCR을 확인한다(사이징 기준 DSCR은 목표와 같아야 정상).
-    let minDscr = NaN, minSenior = NaN, minAll = NaN;
-    if (ok) {
+    // 반복 안에서 수렴하지 못한 드문 경우에만 확정 한도로 한 번 더 확인한다.
+    if (ok && !converged) {
       const verify = cloneModel(probeBase);
       verify.finance.sizedSeniorAmount = senior;
       const rv = analyzeEss(verify);
       if (!(rv.errors && rv.errors.length)) ({ minDscr, minSenior, minAll } = seniorCapFromDscr(verify, rv.detail, target));
     }
+    dscrSeedSenior = ok ? senior : null;
     lastDscrSizing = { senior, target, minDscr, minSenior, minAll, scopeAll: f.dscrDebtScope === 'all', ok };
     const sized = cloneModel(model);
     sized.finance.sizedSeniorAmount = senior;
@@ -2688,7 +2695,7 @@
     for (let i = 0; i < n; i++) next.push(Number.isFinite(existing[i]) ? existing[i] : defaultRatePctForYear(i + 1));
     grid.innerHTML = next.map((v, i) => `
       <div class="field"><label for="opRate${i}">${i + 1}년차</label><div class="iw"><input id="opRate${i}" data-oprate-index="${i}" type="number" value="${v}" step="0.1"><span class="unit">%</span></div></div>`).join('');
-    grid.querySelectorAll('[data-oprate-index]').forEach((el) => el.addEventListener('input', recalcAll));
+    grid.querySelectorAll('[data-oprate-index]').forEach((el) => el.addEventListener('input', () => scheduleRecalc(false)));
   }
 
   // ---------- 연차별 발전량 표 (물리량 기준이라 입찰가격과 무관) ----------
@@ -2857,6 +2864,19 @@
     const t0 = performance.now();
     try { recalcAllCore(); }
     finally { const t = $('timing'); if (t) t.textContent = `재계산 ${Math.round(performance.now() - t0)}ms`; }
+  }
+  // 입력 중에는 마지막 한 번만 계산한다 — 키를 칠 때마다 전체 재계산이 동기로 돌면(특히 DSCR 부채 사이징 모드)
+  // 타이핑이 그대로 멈춰 보인다. 버튼·목록 선택처럼 값이 한 번에 바뀌는 곳은 예전처럼 즉시 계산한다.
+  const RECALC_DEBOUNCE_MS = 140;
+  let recalcTimer = 0, recalcWantsKch = false;
+  function scheduleRecalc(withKch) {
+    recalcWantsKch = recalcWantsKch || !!withKch;
+    clearTimeout(recalcTimer);
+    recalcTimer = setTimeout(() => {
+      recalcTimer = 0;
+      const wantsKch = recalcWantsKch; recalcWantsKch = false;
+      if (wantsKch) kchRecalc(); else recalcAll();
+    }, RECALC_DEBOUNCE_MS);
   }
   function recalcAllCore() {
     syncSalesStructure(); syncTurbineState(); syncComboState(); // 입력이 바뀔 때마다 라벨·가중치·경고·터빈·조합 표시를 현재 값에 맞춘다
@@ -4794,7 +4814,7 @@
     const next = Array.from({ length: n }, (_, i) => (i < existing.length && Number.isFinite(existing[i]) ? existing[i] : base));
     grid.innerHTML = next.map((v, i) => `
       <div class="field"><label for="cdRate${i}">${i + 1}년차</label><div class="iw"><input id="cdRate${i}" data-cd-index="${i}" type="number" value="${v}" step="0.05"><span class="unit">%</span></div></div>`).join('');
-    grid.querySelectorAll('[data-cd-index]').forEach((el) => el.addEventListener('input', recalcAll));
+    grid.querySelectorAll('[data-cd-index]').forEach((el) => el.addEventListener('input', () => scheduleRecalc(false)));
   }
   $('applyCdBtn').addEventListener('click', () => {
     document.querySelectorAll('#cdRateGrid [data-cd-index]').forEach((el) => { el.value = +$('cdBaseRatePct').value || 0; });
@@ -4834,7 +4854,7 @@
     const c = customTurbines.find((t) => t.id === own);
     if (c) { c[fld] = el.value; saveCustomTurbines(); }
     if (turbineLinked && own === $('turbineMaker').value) applyTurbineDerived();
-    recalcAll();
+    scheduleRecalc(false);
   });
   $('panel-turbine').addEventListener('click', (e) => {
     const pick = e.target.closest('[data-tb-pick]'), del = e.target.closest('[data-tb-del]');
@@ -4939,7 +4959,7 @@
   document.querySelectorAll('.wrap input, .wrap select').forEach((el) => {
     if (el.id === 'bidPrice' || el.id === 'priceCap' || ['scoreSecurity', 'scoreIndustry', 'scoreProgress', 'scoreOther'].includes(el.id) || el.id === 'sensMetric' || el.id.startsWith('kch') || el.id.startsWith('tb-') || el.id.startsWith('newTb') || el.id.startsWith('cs-') || el.id === 'caseDiscountAll' || /^(act|ld)[A-Z]/.test(el.id) || /^delay(Weeks|LdRatePct|LdCapPct)$/.test(el.id) || el.type === 'file' || el.disabled) return;
     // 설비용량은 KCH 탭 설비용량에도 연동되므로 KCH까지 다시 계산(kchRecalc가 끝에서 recalcAll을 부른다)
-    el.addEventListener('input', el.id === 'contractCapacityMW' ? kchRecalc : recalcAll);
+    el.addEventListener('input', () => scheduleRecalc(el.id === 'contractCapacityMW'));
   });
   // 민감도 "표시 지표"는 화면 선택일 뿐이라 재계산 없이 캐시로 다시 그린다(spec 9.8)
   $('sensMetric').addEventListener('input', renderSensitivityView);
