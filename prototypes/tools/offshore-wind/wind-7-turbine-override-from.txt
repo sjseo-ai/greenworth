@@ -1,0 +1,31 @@
+//@@ FROM_BUILDUP_ROW
+    rows.push(`<tr class="strong"><th>= 1년차 순이용률 <span class="sub">출력제어·계통 제약 ${fmt(+$('curtailmentPct').value || 0, 1)}%는 발전량 단계에서 따로 차감</span></th><td>${fmt(d.y1, 2)}%</td></tr>`);
+
+//@@ FROM_WARRANTY_CF
+    const cfOf = (pcw, avail, bop, elecLoss) => base * d.curveF * rate(pcw) * rate(avail) * rate(bop) * wake * (1 - rate(elecLoss));
+
+//@@ FROM_COMPARE_CELLS
+      $(`tb-${id}-y1`).textContent = `${fmt(r.d.y1, 2)}%`;
+      $(`tb-${id}-epc`).textContent = fmt(r.d.epc, 1);
+
+//@@ FROM_UI_ROWS
+    const cell = (t, fld, step, label) => `<td><input id="tb-${h(t.id)}-${fld}" type="number" value="${h(t[fld])}" step="${step}" aria-label="${h(t.maker)} ${label}"></td>`;
+    $('turbineSpecBody').innerHTML = list.map((t) => `
+      <tr data-tb-row="${h(t.id)}">${nameCell(t)}${cell(t, 'price', 0.5, '터빈 단가')}${cell(t, 'mw', 0.1, '정격출력')}${cell(t, 'rotor', 1, '로터 직경')}${cell(t, 'avail', 0.5, '가용률')}${cell(t, 'degA', 0.05, '성능저하')}${cell(t, 'local', 5, '국산화율')}
+        <td>${t.custom ? `<button type="button" class="btn" data-tb-del="${h(t.id)}">삭제</button>` : ''}</td>
+      </tr>`).join('');
+
+//@@ FROM_DERIVED
+  function turbineDerived(id) {
+    const sp = turbineSpec(id);
+    const specificPower = sp.rotor > 0 ? sp.mw * 1e6 / (Math.PI * (sp.rotor / 2) ** 2) : 0;
+    const curveF = specificPower > 0 ? ((+$('refSpecificPower').value || specificPower) / specificPower) ** (+$('powerCurveExp').value || 0) : 1;
+    const losses = (1 - rate(+$('wakeLossPct').value || 0)) * (1 - rate(+$('electricalLossPct').value || 0));
+    // 보증 주체별 곱 — 터빈사(출력곡선 보증 이행률 × 기술적 가용률) × EPC·O&M(BOP·계통 가용률)
+    const warranty = rate(+$('powerCurveWarrantyPct').value || 0) * rate(sp.avail) * rate(+$('bopAvailPct').value || 0);
+    const y1 = Math.round((+$('siteBaseRatePct').value || 0) * curveF * warranty * losses * 100) / 100;
+    return { ...sp, specificPower, curveF, y1, epc: Math.round((sp.price + (+$('bosUnitPrice').value || 0)) * 10) / 10 };
+  }
+
+//@@ FROM_FACTOR_DISPLAY
+    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가용률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%`;

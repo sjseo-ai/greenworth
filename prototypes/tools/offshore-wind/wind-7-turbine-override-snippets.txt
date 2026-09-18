@@ -1,0 +1,80 @@
+//@@ CSS
+  .module-table td.over { color: var(--danger); font-weight: 700; }
+  /* 터빈사 제공값 직접 입력 칸 — 비어 있으면(자동) 점선, 값이 들어가면 실선 강조 */
+  .module-table input.tb-ov { width: 104px; border-style: dashed; } /* "자동 34.03" 안내 문구가 잘리지 않는 폭 */
+  .module-table input.tb-ov:not(:placeholder-shown) { border-style: solid; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .ov-tag { display: inline-block; margin-left: 5px; padding: 0 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 10.5px; font-weight: 700; vertical-align: 1px; }
+
+//@@ SPEC_HEAD
+<th>국산화율<br>(%, 참고)</th><th>1년차 순이용률<br>(터빈사 제공, %)</th><th>EPC 단가<br>(터빈사 제시, 억원/MW)</th><th></th></tr></thead>
+
+//@@ SPEC_TITLE
+            <div class="subtotal strong"><span>터빈 스펙 · 단가 (직접 수정)</span><span style="font-weight:400;color:var(--muted);font-size:12px;">오른쪽 두 칸은 비우면 자동 계산</span></div>
+
+//@@ SPEC_HINT
+            <p class="hint">터빈 단가 · 가용률 · 외산 국산화율은 공개 자료가 없어 <strong>예시값</strong>입니다. 운영 실적이 없는 신규 모델(유니슨 U210 등)은 가용률을 보수적으로 두었습니다. <strong>1년차 순이용률(터빈사 제공) · EPC 단가</strong>는 터빈사·EPC사가 제시한 값을 그대로 넣는 칸입니다 — <strong>비워 두면</strong> 왼쪽 스펙과 C. 발전매출의 부지 총이용률·보증·손실로 계산한 값을, <strong>채우면</strong> 그 값을 씁니다(비교표에 <span class="ov-tag">직접</span> 표시). "선택"을 누르면 그 값이 C·D 입력에 그대로 들어가고, 보증·LD 탭의 보증 기준 이용률도 같은 비율로 맞춰집니다.</p>
+
+//@@ COMPARE_HINT
+            <p class="hint">초록 굵은 글씨 = 같은 열에서 가장 낮은 단가. 입찰가격이 빨간색이면 상한가격을 넘습니다. 1년차 순이용률·EPC 단가에 <span class="ov-tag">직접</span>이 붙은 값은 아래 스펙 표에서 지정한 터빈사 제공값입니다(그 칸을 비우면 모델 계산값으로 돌아갑니다). 가격만 본 비교이므로 실제 선정은 비가격 50점(안보·산업·경제효과 등)에서 국산 터빈이 유리할 수 있습니다 — "선정평가" 탭 참고. "선택"을 누르면 그 터빈이 C·D 입력에 적용됩니다.</p>
+
+//@@ UI_ROWS
+    const cell = (t, fld, step, label) => `<td><input id="tb-${h(t.id)}-${fld}" type="number" value="${h(t[fld])}" step="${step}" aria-label="${h(t.maker)} ${label}"></td>`;
+    // 터빈사 제공값 칸 — 빈 칸이 "자동"이라 value 속성을 두지 않는다(기본값으로 되돌리기가 자동 상태로 돌아간다).
+    const ovCell = (t, fld, step, label) => `<td><input id="tb-${h(t.id)}-${fld}" class="tb-ov" type="number" value="${t[fld] == null ? '' : h(t[fld])}" step="${step}" min="0" placeholder="자동" aria-label="${h(t.maker)} ${label}"></td>`;
+    $('turbineSpecBody').innerHTML = list.map((t) => `
+      <tr data-tb-row="${h(t.id)}">${nameCell(t)}${cell(t, 'price', 0.5, '터빈 단가')}${cell(t, 'mw', 0.1, '정격출력')}${cell(t, 'rotor', 1, '로터 직경')}${cell(t, 'avail', 0.5, '가용률')}${cell(t, 'degA', 0.05, '성능저하')}${cell(t, 'local', 5, '국산화율')}${ovCell(t, 'y1ov', 0.01, '터빈사 제공 1년차 순이용률')}${ovCell(t, 'epcov', 0.5, '터빈사 제시 EPC 단가')}
+        <td>${t.custom ? `<button type="button" class="btn" data-tb-del="${h(t.id)}">삭제</button>` : ''}</td>
+      </tr>`).join('');
+
+//@@ DERIVED
+  // 터빈사·EPC사가 제시한 값(터빈 비교 탭 스펙 표의 "터빈사 제공" 칸)이 있으면 모델 계산값 대신 그 값을 쓴다.
+  // 빈 칸·0 이하·숫자가 아닌 값은 "자동"으로 본다(칸을 비우면 언제든 모델 계산값으로 돌아온다).
+  function turbineOverride(id, fld) {
+    const el = $(`tb-${id}-${fld}`);
+    if (!el) return null;
+    const raw = String(el.value).trim();
+    if (raw === '') return null;
+    const v = Number(raw);
+    return Number.isFinite(v) && v > 0 ? v : null;
+  }
+  function turbineDerived(id) {
+    const sp = turbineSpec(id);
+    const specificPower = sp.rotor > 0 ? sp.mw * 1e6 / (Math.PI * (sp.rotor / 2) ** 2) : 0;
+    const curveF = specificPower > 0 ? ((+$('refSpecificPower').value || specificPower) / specificPower) ** (+$('powerCurveExp').value || 0) : 1;
+    const losses = (1 - rate(+$('wakeLossPct').value || 0)) * (1 - rate(+$('electricalLossPct').value || 0));
+    // 보증 주체별 곱 — 터빈사(출력곡선 보증 이행률 × 기술적 가용률) × EPC·O&M(BOP·계통 가용률)
+    const warranty = rate(+$('powerCurveWarrantyPct').value || 0) * rate(sp.avail) * rate(+$('bopAvailPct').value || 0);
+    const y1Auto = Math.round((+$('siteBaseRatePct').value || 0) * curveF * warranty * losses * 100) / 100;
+    const epcAuto = Math.round((sp.price + (+$('bosUnitPrice').value || 0)) * 10) / 10;
+    const y1Ov = turbineOverride(id, 'y1ov'), epcOv = turbineOverride(id, 'epcov');
+    const y1 = y1Ov ?? y1Auto, epc = epcOv ?? epcAuto;
+    // y1Scale — 터빈사 제공값이 모델 계산값의 몇 배인지. 보증·LD 탭이 단계별 분해를 이 배율로 맞춰,
+    // 보증 기준 이용률이 화면의 1년차 순이용률과 어긋나지 않게 한다.
+    return { ...sp, specificPower, curveF, y1, y1Auto, y1Ov: y1Ov != null, epc, epcAuto, epcOv: epcOv != null,
+      y1Scale: y1Auto > 0 ? y1 / y1Auto : 1 };
+  }
+
+//@@ COMPARE_CELLS
+      $(`tb-${id}-y1`).innerHTML = `${fmt(r.d.y1, 2)}%${r.d.y1Ov ? '<span class="ov-tag">직접</span>' : ''}`;
+      $(`tb-${id}-epc`).innerHTML = `${fmt(r.d.epc, 1)}${r.d.epcOv ? '<span class="ov-tag">직접</span>' : ''}`;
+      // 스펙 표의 "터빈사 제공" 칸은 비어 있을 때 지금 조건의 자동 계산값을 안내 문구(placeholder)로 보여준다.
+      const y1Ov = $(`tb-${id}-y1ov`), epcOv = $(`tb-${id}-epcov`);
+      if (y1Ov) { y1Ov.placeholder = `자동 ${fmt(r.d.y1Auto, 2)}`; y1Ov.title = `비우면 자동 계산 ${fmt(r.d.y1Auto, 2)}%`; }
+      if (epcOv) { epcOv.placeholder = `자동 ${fmt(r.d.epcAuto, 1)}`; epcOv.title = `비우면 터빈 단가 ${fmt(r.d.price, 1)} + BOP·시공 단가 = ${fmt(r.d.epcAuto, 1)}억원/MW`; }
+
+//@@ BUILDUP_ROW
+    if (d.y1Ov) rows.push(`<tr><th>모델 계산 1년차 순이용률 <span class="sub">위 단계를 곱한 결과 — 터빈사 제공값이 있어 아래 값으로 대체됩니다</span></th><td>${fmt(d.y1Auto, 2)}%</td></tr>`);
+    rows.push(`<tr class="strong"><th>= 1년차 순이용률 ${d.y1Ov ? '<span class="wg wg-t">터빈사 제공</span>' : ''}<span class="sub">${d.y1Ov ? `터빈 비교 탭에서 직접 지정한 값 (모델 계산 대비 ${d.y1Scale >= 1 ? '+' : ''}${fmt(d.y1Scale * 100 - 100, 1)}%) · ` : ''}출력제어·계통 제약 ${fmt(+$('curtailmentPct').value || 0, 1)}%는 발전량 단계에서 따로 차감</span></th><td>${fmt(d.y1, 2)}%</td></tr>`);
+
+//@@ WARRANTY_CF
+    // 터빈사 제공 1년차 순이용률을 쓰는 경우, 단계 곱만으로는 그 값이 나오지 않으므로 같은 배율(y1Scale)로 맞춘다.
+    const cfOf = (pcw, avail, bop, elecLoss) => base * d.curveF * rate(pcw) * rate(avail) * rate(bop) * wake * (1 - rate(elecLoss)) * (d.y1Scale || 1);
+
+//@@ FACTOR_DISPLAY
+    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가용률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%${d.y1Ov ? ' · 터빈사 제공값 적용' : ''}`;
+
+//@@ REVENUE_HINT
+출력제어는 발전량 단계에서 따로 뺍니다. 터빈사가 제시한 1년차 순이용률이나 EPC사가 제시한 EPC 단가가 따로 있으면 <button type="button" class="link-btn" data-goto-tab="tab-turbine">터빈 비교 탭</button>의 스펙 표에서 터빈별로 직접 넣을 수 있고(비우면 자동 계산), 그 값이 이 칸에 그대로 적용됩니다.</p>
+
+//@@ CAVEAT
+기본 목록 기준일 2026-09-14 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가하거나 코드의 TURBINE_CATALOG에 항목을 더하면 됨. <strong>터빈사·EPC사가 제시한 1년차 순이용률·EPC 단가</strong>는 터빈 비교 탭 스펙 표의 "터빈사 제공" 칸에 직접 넣으면 모델 계산값 대신 쓰이고(비우면 자동), 보증·LD 탭의 보증 기준 이용률도 같은 배율로 맞춰짐 — 제시값의 <strong>보증 기준(시간 기준 / 발전량 기준)·풍황 전제·P50/P90 여부가 모델 전제와 같은지 확인 필요</strong></li>

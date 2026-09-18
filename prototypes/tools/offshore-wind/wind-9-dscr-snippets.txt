@@ -1,0 +1,200 @@
+//@@ HTML_MODE_OPTION
+                  <option value="amount">금액 (억원) 직접 입력</option>
+                  <option value="dscr">목표 DSCR 부채 사이징</option>
+
+//@@ HTML_DSCR_WRAP
+              <div class="field-grid" id="fundingDscrWrap" style="display:none;">
+                <div class="field"><label for="targetDscrSizing">목표 DSCR (사이징)</label><div class="iw"><input id="targetDscrSizing" type="number" value="1.3" step="0.05" min="1"><span class="unit">배</span></div></div>
+                <div class="field"><label for="dscrSizingBasis">사이징 기준 발전량</label><div class="iw"><select id="dscrSizingBasis">
+                  <option value="current" selected>현재 적용 순이용률</option>
+                  <option value="p50">P50</option>
+                  <option value="p75">P75</option>
+                  <option value="p90">P90 (보수적 · 실무 기본)</option>
+                </select></div></div>
+                <div class="field span-2"><label for="dscrDebtScope">DSCR 원리금 범위</label><div class="iw"><select id="dscrDebtScope">
+                  <option value="senior" selected>선순위 원리금만 (실무 기본)</option>
+                  <option value="all">선순위 + 주민참여채권</option>
+                </select></div></div>
+              </div>
+
+//@@ HTML_HINT_KV
+              <p class="hint" style="margin:8px 0 6px;">선순위 대출 = 총사업비 − 자기자본 − 주민참여채권(자동). 금액 방식으로 바꾸면 지금 비율로 나오는 금액이 채워집니다. <strong>목표 DSCR 부채 사이징</strong>을 고르면 순서가 반대가 되어 <strong>선순위가 먼저 정해지고 자기자본이 나머지</strong>가 됩니다 — 기준 발전량(실무에서는 보통 P90)의 CFADS를 목표 DSCR로 나눈 금액까지만 원리금으로 쓰고, 그 원리금을 감당하는 원금이 선순위 한도입니다. 이때 자기자본 비율 입력은 쓰이지 않고 주민참여채권 비율은 그대로 적용됩니다.</p>
+              <table class="kv"><tbody id="fundingBreakdownBody"></tbody></table>
+              <table class="kv" id="dscrSizingTable" style="margin-top:8px;display:none;"><tbody id="dscrSizingBody"></tbody></table>
+
+//@@ JS_FUNDING_SPLIT
+  // 자금조달 — 비율 모드: 총사업비 × 자기자본·주민채권 비율 / 금액 모드: 자기자본·주민채권을 억원으로 고정 /
+  // DSCR 모드: 선순위를 목표 DSCR로 먼저 정하고(sizedSeniorAmount) 자기자본이 나머지를 메운다.
+  // 비율·금액 모드에서는 선순위 대출 = 총사업비 − 자기자본 − 주민채권(총사업비가 금융비용 때문에 반복 수렴하는 동안 선순위가 흡수한다).
+  function fundingSplit(model, total) {
+    const f = model.finance;
+    if (f.fundingMode === 'dscr') {
+      const bond = total * rate(f.residentBondPct);
+      const senior = Math.max(0, Math.min(Math.max(0, total - bond), f.sizedSeniorAmount ?? 0));
+      return { equity: Math.max(0, total - bond - senior), bond };
+    }
+    if (f.fundingMode === 'amount') return { equity: Math.max(0, f.equityAmount || 0), bond: Math.max(0, f.bondAmount || 0) };
+    return { equity: total * rate(f.equityPct), bond: total * rate(f.residentBondPct) };
+  }
+
+//@@ JS_SIZING
+  // ---------- 목표 DSCR 기반 선순위 부채 사이징 (project finance debt sizing) ----------
+  // 실무 순서: 보수적 발전량(보통 P90)의 CFADS를 목표 DSCR로 나눈 금액까지만 연간 원리금으로 쓰고,
+  // 그 원리금을 감당할 수 있는 원금이 선순위 한도가 된다. 자기자본은 총사업비에서 선순위·주민채권을 뺀 나머지.
+  // CFADS와 부채는 서로 영향을 주므로(이자 절세 · 금융수수료 · 건설이자 · DSRA가 총사업비를 움직인다) 몇 번 반복해 수렴시킨다.
+  // 원금 1억당 그 해 선순위 원리금 = 거치기간에는 금리, 상환기간에는 원리금균등 계수 — 부분연도는 가동일수로 안분한다.
+  // DSCR 원리금 범위 — 기본은 "선순위 원리금만"(실무의 senior DSCR). 주민참여채권까지 넣으면 만기 일시상환이 있는
+  // 한 해가 DSCR을 짓눌러 그 해 하나가 전체 부채 규모를 지배하므로, 그 기준이 필요할 때만 고르도록 선택지로 두었다.
+  function seniorCapFromDscr(model, detail, target) {
+    const f = model.finance;
+    const scopeAll = f.dscrDebtScope === 'all';
+    const r1 = seniorRateForYear(model, 1);
+    const grace = Math.max(0, Math.round(f.seniorGraceYears) || 0);
+    const term = Math.max(1, Math.round(f.seniorTermYears) || 1);
+    const n = Math.max(1, term - grace);
+    const perUnitRepay = r1 > 0 ? r1 / (1 - (1 + r1) ** -n) : 1 / n;
+    const opRows = detail.filter((d) => d.operatingDays > 0);
+    let cap = Infinity, minSenior = Infinity, minAll = Infinity;
+    opRows.forEach((d, i) => {
+      const seq = i + 1;
+      if (seq > term) return;
+      const frac = d.daysInYear > 0 ? d.operatingDays / d.daysInYear : 1;
+      const room = d.cfads / target - (scopeAll ? d.bondInterest + d.bondPrincipal : 0); // 선순위 원리금으로 쓸 수 있는 금액
+      const perUnit = (seq <= grace ? r1 : perUnitRepay) * frac;
+      if (perUnit <= 1e-12) return;
+      cap = Math.min(cap, room / perUnit);
+      const seniorDs = d.seniorInterest + d.seniorPrincipal;
+      if (seniorDs > 1e-9) minSenior = Math.min(minSenior, d.cfads / seniorDs);
+      if (d.dscr != null) minAll = Math.min(minAll, d.dscr);
+    });
+    const fin = (v) => (Number.isFinite(v) ? v : NaN);
+    return { cap: Number.isFinite(cap) ? Math.max(0, cap) : 0,
+      minDscr: scopeAll ? fin(minAll) : fin(minSenior), minSenior: fin(minSenior), minAll: fin(minAll) };
+  }
+  // 마지막 사이징 결과 — F. 자금조달 표시용(계산에는 쓰지 않는다)
+  let lastDscrSizing = null;
+  function withSizedSenior(model) {
+    const f = model.finance;
+    const target = Math.max(0.01, +f.targetDscrSizing || 1.3);
+    // 사이징 기준 발전량 — 확률수준을 고르면 그 수준의 연차별 순이용률로 CFADS를 본다(기본은 현재 적용값).
+    const probeBase = cloneModel(model);
+    probeBase.finance.sizedSeniorReady = true;
+    if (Array.isArray(f.dscrSizingRates) && f.dscrSizingRates.length) probeBase.revenue.operatingRatesPct = f.dscrSizingRates;
+    // 출발점 — 비율 모드로 구한 선순위(수렴을 빠르게 하기 위한 씨앗값)
+    const seed = cloneModel(probeBase);
+    seed.finance.fundingMode = 'ratio';
+    let senior = Math.max(0, solveInvestment(seed, buildCalendar(seed.project)).seniorPrincipal);
+    let ok = false;
+    for (let i = 0; i < 6; i++) {
+      const probe = cloneModel(probeBase);
+      probe.finance.sizedSeniorAmount = senior;
+      const r = analyzeEss(probe);
+      if (r.errors && r.errors.length) break;
+      ok = true;
+      const next = seniorCapFromDscr(probe, r.detail, target).cap;
+      const done = Math.abs(next - senior) < 0.05;
+      senior = next;
+      if (done) break;
+    }
+    // 확정된 한도로 한 번 더 돌려 실제 최소 DSCR을 확인한다(사이징 기준 DSCR은 목표와 같아야 정상).
+    let minDscr = NaN, minSenior = NaN, minAll = NaN;
+    if (ok) {
+      const verify = cloneModel(probeBase);
+      verify.finance.sizedSeniorAmount = senior;
+      const rv = analyzeEss(verify);
+      if (!(rv.errors && rv.errors.length)) ({ minDscr, minSenior, minAll } = seniorCapFromDscr(verify, rv.detail, target));
+    }
+    lastDscrSizing = { senior, target, minDscr, minSenior, minAll, scopeAll: f.dscrDebtScope === 'all', ok };
+    const sized = cloneModel(model);
+    sized.finance.sizedSeniorAmount = senior;
+    sized.finance.sizedSeniorReady = true;
+    return sized;
+  }
+  // 총사업비를 계산하는 곳은 모두 이 헬퍼를 거친다 — DSCR 모드에서 선순위가 정해져야 금융수수료·건설이자·DSRA가 맞는다.
+  const sizedModel = (model) => (model.finance.fundingMode === 'dscr' && !model.finance.sizedSeniorReady ? withSizedSenior(model) : model);
+
+  // F. 자금조달 아래 사이징 결과 — 값은 analyzeEss가 돌고 난 뒤라야 최신이라 역산 직후에 그린다.
+  function renderDscrSizing(model) {
+    const body = $('dscrSizingBody'), table = $('dscrSizingTable');
+    if (!body || !table) return;
+    if (model.finance.fundingMode !== 'dscr' || !lastDscrSizing) { body.innerHTML = ''; table.style.display = 'none'; return; }
+    table.style.display = '';
+    const el = $('dscrSizingBasis');
+    const basis = el.selectedOptions[0] ? el.selectedOptions[0].textContent.trim() : el.value;
+    const sc = $('dscrDebtScope');
+    const scope = sc.selectedOptions[0] ? sc.selectedOptions[0].textContent.trim() : sc.value;
+    const bae = (v) => (Number.isFinite(v) ? `${fmt(v, 3)} 배` : '—');
+    const rows = [
+      ['목표 DSCR', `${fmt(lastDscrSizing.target, 2)} 배`, `기준 발전량 ${basis} · 원리금 ${scope}`],
+      ['사이징된 선순위 한도', `${fmt(lastDscrSizing.senior, 1)} 억원`, '이 금액이 곧 선순위 대출 — 자기자본은 나머지'],
+      ['기준 발전량 최소 DSCR', bae(lastDscrSizing.minDscr), '사이징 기준 — 목표와 같아야 정상 (상환기간 중 최저)'],
+      ['　참고 · 선순위 원리금만', bae(lastDscrSizing.minSenior), '주민참여채권 제외'],
+      ['　참고 · 주민참여채권 포함', bae(lastDscrSizing.minAll), '만기 일시상환이 있는 해는 크게 낮아진다'],
+    ];
+    body.innerHTML = rows.map(([k, v, s]) => `<tr><th>${k}<span class="sub">${s}</span></th><td>${v}</td></tr>`).join('');
+    const w = $('capitalStructureWarn');
+    if (!(lastDscrSizing.senior > 0)) {
+      w.className = 'warn show';
+      w.textContent = `기준 발전량의 CFADS가 목표 DSCR ${fmt(lastDscrSizing.target, 2)}배를 감당하지 못해 선순위 한도가 0입니다 — 목표 DSCR을 낮추거나 기준 발전량·단가·사업비를 조정해 주세요.`;
+    } else if (w.textContent.startsWith('기준 발전량의 CFADS')) { w.className = 'warn'; w.textContent = ''; }
+  }
+
+//@@ JS_ANALYZE_HEAD
+  function analyzeEss(model) {
+    model = sizedModel(model); // DSCR 모드 — 선순위를 먼저 정한 모델로 바꿔 계산한다(이미 정해졌으면 그대로)
+    const cal = buildCalendar(model.project);
+    const investment = solveInvestment(model, cal);
+
+//@@ JS_CAPEX_HEAD
+  function renderCapexBreakdown(rawModel) {
+    const body = $('capexBreakdownBody');
+    const model = sizedModel(rawModel); // 총사업비의 금융수수료·건설이자·DSRA는 선순위 규모에 딸려 있다
+    const inv = solveInvestment(model, buildCalendar(model.project));
+
+//@@ JS_FUND_HEAD
+  function renderFundingBreakdown(rawModel) {
+    const model = sizedModel(rawModel);
+    const inv = solveInvestment(model, buildCalendar(model.project));
+
+//@@ JS_READMODEL_RATES
+    const operatingRatesPct = Array.from(document.querySelectorAll('#opRateGrid [data-oprate-index]')).map((el) => +el.value);
+    // DSCR 사이징 기준 발전량 — 확률수준을 고르면 그 수준의 연차별 순이용률로 CFADS를 본다(현재 적용값이면 null).
+    let dscrSizingRates = null;
+    const dscrBasis = $('dscrSizingBasis').value;
+    if (dscrBasis !== 'current') {
+      const pv = pLevelValue(dscrBasis);
+      if (pv != null) {
+        const dTb = turbineDerived($('turbineMaker').value), pBase = pLevelBase();
+        const cf = pBase > 0 ? Math.round(dTb.y1Base * (pv / pBase) * 100) / 100 : pv;
+        const degR = rate(+$('degradationPct').value || 0);
+        dscrSizingRates = operatingRatesPct.map((_, i) => Math.round(cf * (1 - degR) ** i * 100) / 100);
+      }
+    }
+
+//@@ JS_FINANCE_OBJ
+        fundingMode: $('fundingMode').value, equityAmount: +$('equityAmount').value, bondAmount: +$('bondAmount').value,
+        targetDscrSizing: +$('targetDscrSizing').value, dscrSizingBasis: dscrBasis, dscrDebtScope: $('dscrDebtScope').value, dscrSizingRates,
+
+//@@ JS_SYNC_VIS
+  function syncFundingModeVisibility() {
+    const mode = $('fundingMode').value;
+    $('fundingRatioWrap').style.display = mode === 'amount' ? 'none' : ''; // DSCR 모드도 주민참여채권 비율을 쓴다
+    $('fundingAmountWrap').style.display = mode === 'amount' ? '' : 'none';
+    $('fundingDscrWrap').style.display = mode === 'dscr' ? '' : 'none';
+
+//@@ JS_WARN_COND
+    if ($('fundingMode').value === 'ratio' && capitalStructureSum > 100) { // 금액 모드 점검은 renderFundingBreakdown() · DSCR 모드는 자기자본이 결과값
+
+//@@ JS_RECALC_CALL
+    const solved = solveCurrentModel(model);
+    // DSCR 모드는 부채 규모가 단가(CFADS)에 딸려 있어 역산 전에는 총사업비·자금조달을 확정할 수 없다 —
+    // 위쪽에서 한 번 그린 두 패널을 역산이 끝난 단가로 다시 그린다(비율·금액 모드는 그대로).
+    if (model.finance.fundingMode === 'dscr') { renderCapexBreakdown(model); renderFundingBreakdown(model); }
+    renderDscrSizing(model); // 역산이 끝나야 사이징 결과가 최신이다
+
+//@@ CAVEAT
+              <li><strong>목표 DSCR 부채 사이징</strong> — 기준 발전량(보통 P90) CFADS ÷ 목표 DSCR로 연간 원리금 한도를 잡고 원리금균등 기준으로 원금을 되돌려 선순위 한도를 정한다(거치기간은 이자만). DSCR 원리금 범위 기본값은 <strong>선순위 원리금만</strong>(실무의 senior DSCR) — "선순위 + 주민참여채권"을 고르면 <strong>주민참여채권 만기 일시상환이 있는 해 하나가 DSCR을 짓눌러 전체 부채 규모를 지배</strong>하므로(그 해만 1.30배, 나머지는 4~5배) 차환·후순위 처리 전제를 확인하고 쓸 것. <strong>단일 목표 DSCR · 원리금균등 상환 · 단일 트랜치</strong> 가정이라 실제 금융조건의 <strong>연차별 목표 DSCR(스컬프팅) · 원금불균등 상환 · 트랜치별 조건 · LLCR/PLCR · 부채상환 유보계정(cash sweep)</strong> 은 미반영. 목표 DSCR 기본 1.30배와 배당 게이트(연간 1.15 · 누적 1.30배)는 별개 값이며 모두 KCH·대주단 기준으로 확정 필요</li>
+            </ul>
+
+//@@ CAVEAT_COUNT
+전체 18개 항목 상세 보기 →
