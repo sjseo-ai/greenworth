@@ -1937,7 +1937,8 @@
   function loadCustomTurbines() {
     try {
       const v = JSON.parse(localStorage.getItem(CUSTOM_TURBINE_KEY) || '[]');
-      return Array.isArray(v) ? v.filter((t) => validTurbine(t) && /^[A-Za-z0-9_]+$/.test(String(t.id))) : [];
+      // String(undefined)이 "undefined"라 정규식을 통과해 버리므로 문자열인지 먼저 본다(id가 어긋나면 스펙 칸을 못 찾는다).
+      return Array.isArray(v) ? v.filter((t) => validTurbine(t) && typeof t.id === 'string' && /^[A-Za-z0-9_]+$/.test(t.id)) : [];
     } catch { return []; }
   }
   function saveCustomTurbines() {
@@ -4584,7 +4585,9 @@
   // ---------- 터빈 목록(카탈로그 + 사용자 추가) → 선택 목록 · 비교표 · 스펙표 · 근거 목록 ----------
   // 이미 있던 스펙 칸의 값(이번 세션에 고친 값)과 선택 터빈은 유지한다. 칸의 HTML value는 정의값이라 "기본값으로 되돌리기"가 그 값으로 돌아간다.
   function renderTurbineUI() {
-    const list = allTurbines(), keep = {};
+    let list = allTurbines();
+    if (!list.length) list = TURBINE_CATALOG.slice(); // 선택 목록이 빈 채로 남지 않게(정상 경로에서는 일어나지 않는다)
+    const keep = {};
     document.querySelectorAll('#turbineSpecBody input[id^="tb-"]').forEach((el) => { keep[el.id] = el.value; });
     const sel = $('turbineMaker'), prevSel = sel.value, h = escapeHtml;
     const opt = (t) => `<option value="${h(t.id)}"${t.id === 'doosan10' ? ' selected' : ''}>${h(t.maker)} · ${h(t.model)}${t.custom ? ' (사용자 추가)' : ''}</option>`;
@@ -4615,8 +4618,15 @@
     resultsDirty.turbine = true;
   }
   // ---------- 터빈 → 순이용률·성능저하·터빈 단가 ----------
+  // 스펙 칸(터빈 비교 탭 표)은 표를 그린 뒤에만 있다. 표가 아직 없거나 목록에서 사라진 터빈이면
+  // 칸 대신 카탈로그·사용자 정의 값을 쓴다 — 예전에는 여기서 예외가 나 화면 전체 계산이 멈췄다.
   function turbineSpec(id) {
-    const g = (fld) => +$(`tb-${id}-${fld}`).value || 0;
+    const def = turbineById(id) || {};
+    const g = (fld) => {
+      const el = $(`tb-${id}-${fld}`);
+      const v = el ? +el.value : +def[fld];
+      return Number.isFinite(v) ? v : 0;
+    };
     return { price: g('price'), mw: g('mw'), rotor: g('rotor'), avail: g('avail'), degA: g('degA'), local: g('local') };
   }
   // 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)^지수 — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사.
