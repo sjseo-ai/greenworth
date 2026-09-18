@@ -460,10 +460,10 @@
                 <div class="field calc"><label for="bidPriceDisplay" id="bidPriceDisplayLabel">적정 수령단가</label><div class="iw"><input id="bidPriceDisplay" disabled><span class="unit">원/kWh</span></div></div>
                 <div class="field span-2"><label for="turbineMaker">터빈</label><div class="iw"><select id="turbineMaker"></select></div></div>
                 <div class="field calc"><label for="turbineCountDisplay">터빈 대수</label><div class="iw"><input id="turbineCountDisplay" disabled><span class="unit">기</span></div></div>
-                <div class="field calc"><label for="turbineFactorDisplay">출력곡선 × 가용률 × BOP</label><div class="iw"><input id="turbineFactorDisplay" disabled></div></div>
+                <div class="field calc"><label for="turbineFactorDisplay">출력곡선 × 가동률 × BOP</label><div class="iw"><input id="turbineFactorDisplay" disabled></div></div>
                 <div class="field"><label for="siteBaseRatePct">부지 총이용률 (기준 터빈)</label><div class="iw"><input id="siteBaseRatePct" type="number" value="40" step="0.1"><span class="unit">%</span></div></div>
                 <div class="field"><label for="powerCurveWarrantyPct">출력곡선 보증 이행률<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="powerCurveWarrantyPct" type="number" value="100" step="0.5" min="0" max="120"><span class="unit">%</span></div></div>
-                <div class="field"><label for="bopAvailPct">BOP·계통 가용률 보증<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="bopAvailPct" type="number" value="99" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+                <div class="field"><label for="bopAvailPct">BOP·계통 가동률 보증<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="bopAvailPct" type="number" value="99" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
                 <div class="field"><label for="wakeLossPct">후류(웨이크) 손실<span class="wg wg-d">개발사</span></label><div class="iw"><input id="wakeLossPct" type="number" value="8" step="0.5" min="0" max="50"><span class="unit">%</span></div></div>
                 <div class="field"><label for="electricalLossPct">전기·송전 손실<span class="wg wg-e">EPC</span></label><div class="iw"><input id="electricalLossPct" type="number" value="3" step="0.5" min="0" max="30"><span class="unit">%</span></div></div>
                 <div class="field"><label for="curtailmentPct">출력제어·계통 제약</label><div class="iw"><input id="curtailmentPct" type="number" value="2" step="0.5" min="0" max="100"><span class="unit">발전량 %</span></div></div>
@@ -475,7 +475,7 @@
                 <button type="button" class="link-btn" id="applyTurbineBtn">터빈 값 다시 적용</button>
                 <button type="button" class="link-btn" id="gotoTurbineTab">터빈 비교 보기 →</button>
               </div>
-              <p class="hint" style="margin:2px 0 0;">터빈을 고르면 <strong>터빈 단가(D) · 1년차 순이용률 · 성능저하</strong>가 함께 바뀝니다. 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실). 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup> — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사입니다. 출력제어는 발전량 단계에서 따로 뺍니다. 터빈사가 제시한 1년차 순이용률이나 EPC사가 제시한 EPC 단가가 따로 있으면 <button type="button" class="link-btn" data-goto-tab="tab-turbine">터빈 비교 탭</button>의 스펙 표에서 터빈별로 직접 넣을 수 있고(비우면 자동 계산), 그 값이 이 칸에 그대로 적용됩니다.</p>
+              <p class="hint" style="margin:2px 0 0;">터빈을 고르면 <strong>터빈 단가(D) · 1년차 순이용률 · 성능저하</strong>가 함께 바뀝니다. 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가동률(터빈사 보증) × BOP·계통 가동률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실). 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup> — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사입니다. 출력제어는 발전량 단계에서 따로 뺍니다. 터빈사가 제시한 1년차 순이용률이나 EPC사가 제시한 EPC 단가가 따로 있으면 <button type="button" class="link-btn" data-goto-tab="tab-turbine">터빈 비교 탭</button>의 스펙 표에서 터빈별로 직접 넣을 수 있고(비우면 자동 계산), 그 값이 이 칸에 그대로 적용됩니다.</p>
               <div class="subhead">풍황 확률수준 (P50 · P75 · P90)</div>
               <p class="hint" style="margin:0 0 6px;">풍황 계측·에너지수율(AEP) 보고서의 <strong>순이용률</strong>을 그대로 넣고 적용할 확률수준을 고르면 1년차 순이용률이 그 값으로 바뀝니다. P50을 채우면 <strong>선택 확률수준 ÷ P50</strong> 비율이 모든 터빈에 같이 적용되어 터빈별 차이가 유지되고, P50이 비어 있으면 지금 고른 터빈의 기준값을 P50으로 봅니다. 셋 다 비우고 "미적용"이면 지금까지처럼 모델 계산값을 씁니다.</p>
               <div class="field-grid three">
@@ -498,7 +498,7 @@
                 <span>발전량 구성 — 보증 주체별</span>
                 <button type="button" class="link-btn" data-goto-tab="tab-warranty">보증 미달·LD 분석 →</button>
               </div>
-              <p class="hint" style="margin:0 0 6px;">해상풍력은 보통 <strong>터빈 공급·유지보수 계약(TSA/LTSA)</strong>이 출력곡선과 기술적 가용률을, <strong>EPC(BOP) 계약</strong>이 전기·송전 손실과 BOP·계통 가용률(준공 후 O&amp;M 포함)을 보증합니다. 후류 손실과 풍황은 개발사(사업주)가 집니다.</p>
+              <p class="hint" style="margin:0 0 6px;">해상풍력은 보통 <strong>터빈 공급·유지보수 계약(TSA/LTSA)</strong>이 출력곡선과 기술적 가동률을, <strong>EPC(BOP) 계약</strong>이 전기·송전 손실과 BOP·계통 가동률(준공 후 O&amp;M 포함)을 보증합니다. 후류 손실과 풍황은 개발사(사업주)가 집니다.</p>
               <table class="kv"><tbody id="genBuildupBody"></tbody></table>
               <div class="subhead subhead-row">
                 <span>운영연차별 순이용률 (직접 수정 가능)</span>
@@ -773,7 +773,7 @@
         <strong class="t">⚠ 해상풍력 초안 — 이 결과에 항상 적용되는 한계</strong>
         <ul>
           <li>ESS·태양광 프로토타입의 재무 엔진에 발전매출·터빈만 해상풍력으로 바꾼 <strong>1차 초안</strong> — 해상 시공·해저케이블 리스크, 해체 충당금 미반영</li>
-          <li>이용률은 부지 총이용률 × 출력곡선·가용률·손실 보정의 연 단위 근사 — 풍황 계측·후류 해석 <strong>미반영</strong></li>
+          <li>이용률은 부지 총이용률 × 출력곡선·가동률·손실 보정의 연 단위 근사 — 풍황 계측·후류 해석 <strong>미반영</strong></li>
           <li>계약단가는 "SMP+1REC×가중치 + 우대가격" 근사 — <strong>RPS 개편 시 가중치 폐지</strong>로 달라짐</li>
           <li>선정평가 비가격 세부 배점은 2025년 상반기 보도 기준 — 2026년 공고문 확인 필요</li>
           <li>CAPEX·OPEX·터빈 단가는 100MW 고정식 <strong>예시값</strong></li>
@@ -836,11 +836,11 @@
             <div class="subtotal strong"><span>터빈 스펙 · 단가 (직접 수정)</span><span style="font-weight:400;color:var(--muted);font-size:12px;">오른쪽 두 칸은 비우면 자동 계산</span></div>
             <div class="table-wrap">
               <table class="module-table">
-                <thead><tr><th class="mk-name">터빈</th><th>터빈 단가<br>(억원/MW)</th><th>정격<br>(MW)</th><th>로터 직경<br>(m)</th><th>가용률<br>(%)</th><th>성능저하<br>(%/년)</th><th>국산화율<br>(%, 참고)</th><th>1년차 순이용률<br>(터빈사 제공, %)</th><th>EPC 단가<br>(터빈사 제시, 억원/MW)</th><th></th></tr></thead>
+                <thead><tr><th class="mk-name">터빈</th><th>터빈 단가<br>(억원/MW)</th><th>정격<br>(MW)</th><th>로터 직경<br>(m)</th><th>가동률<br>(%)</th><th>성능저하<br>(%/년)</th><th>국산화율<br>(%, 참고)</th><th>1년차 순이용률<br>(터빈사 제공, %)</th><th>EPC 단가<br>(터빈사 제시, 억원/MW)</th><th></th></tr></thead>
                 <tbody id="turbineSpecBody"></tbody>
               </table>
             </div>
-            <p class="hint">터빈 단가 · 가용률 · 외산 국산화율은 공개 자료가 없어 <strong>예시값</strong>입니다. 운영 실적이 없는 신규 모델(유니슨 U210 등)은 가용률을 보수적으로 두었습니다. <strong>1년차 순이용률(터빈사 제공) · EPC 단가</strong>는 터빈사·EPC사가 제시한 값을 그대로 넣는 칸입니다 — <strong>비워 두면</strong> 왼쪽 스펙과 C. 발전매출의 부지 총이용률·보증·손실로 계산한 값을, <strong>채우면</strong> 그 값을 씁니다(비교표에 <span class="ov-tag">직접</span> 표시). "선택"을 누르면 그 값이 C·D 입력에 그대로 들어가고, 보증·LD 탭의 보증 기준 이용률도 같은 비율로 맞춰집니다.</p>
+            <p class="hint">터빈 단가 · 가동률 · 외산 국산화율은 공개 자료가 없어 <strong>예시값</strong>입니다. 운영 실적이 없는 신규 모델(유니슨 U210 등)은 가동률을 보수적으로 두었습니다. <strong>1년차 순이용률(터빈사 제공) · EPC 단가</strong>는 터빈사·EPC사가 제시한 값을 그대로 넣는 칸입니다 — <strong>비워 두면</strong> 왼쪽 스펙과 C. 발전매출의 부지 총이용률·보증·손실로 계산한 값을, <strong>채우면</strong> 그 값을 씁니다(비교표에 <span class="ov-tag">직접</span> 표시). "선택"을 누르면 그 값이 C·D 입력에 그대로 들어가고, 보증·LD 탭의 보증 기준 이용률도 같은 비율로 맞춰집니다.</p>
 
             <div class="subtotal strong"><span>출력곡선 보정 기준</span><span></span></div>
             <div class="calc-grid" style="margin-top:0;">
@@ -858,7 +858,7 @@
               <div class="field"><label for="newTbMw">정격출력</label><div class="iw"><input id="newTbMw" type="number" value="15" step="0.1" min="0"><span class="unit">MW</span></div></div>
               <div class="field"><label for="newTbRotor">로터 직경</label><div class="iw"><input id="newTbRotor" type="number" value="236" step="1" min="0"><span class="unit">m</span></div></div>
               <div class="field"><label for="newTbPrice">터빈 단가</label><div class="iw"><input id="newTbPrice" type="number" value="28" step="0.5" min="0"><span class="unit">억원/MW</span></div></div>
-              <div class="field"><label for="newTbAvail">가용률</label><div class="iw"><input id="newTbAvail" type="number" value="96" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+              <div class="field"><label for="newTbAvail">가동률</label><div class="iw"><input id="newTbAvail" type="number" value="96" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
               <div class="field"><label for="newTbDegA">성능저하</label><div class="iw"><input id="newTbDegA" type="number" value="0.2" step="0.05" min="0"><span class="unit">%/년</span></div></div>
               <div class="field"><label for="newTbLocal">국산화율 (참고)</label><div class="iw"><input id="newTbLocal" type="number" value="20" step="5" min="0" max="100"><span class="unit">%</span></div></div>
               <div class="field"><label for="newTbSource">근거 · 확인 수준</label><div class="iw"><input id="newTbSource" type="text" placeholder="예) 제조사 발표(2026-10), 형식인증 전"></div></div>
@@ -1106,12 +1106,12 @@
         <section class="panel">
           <h2>보증 미달 · 지체상금(LD) — 터빈사 / EPC사 구분</h2>
           <div class="panel-body">
-            <p class="callout-sm"><strong>해상풍력은 보증이 두 계약으로 나뉩니다. </strong><span class="wg wg-t">터빈사</span> TSA/LTSA — 출력곡선(파워커브) 보증과 기술적 가용률 보증, 미달 시 손실 발전량을 기준으로 LD를 물고 보통 <strong>연간 상한(계약금액의 %)</strong>이 붙습니다. <span class="wg wg-e">EPC·O&amp;M</span> BOP 계약 — 전기·송전 손실 보증과 BOP·계통 가용률(해상변전소·해저케이블) 보증, 준공지연·하자에 대한 LD가 별도입니다. 아래에서 실적이 보증에 못 미쳤을 때의 <strong>귀책별 손실과 LD 보전</strong>을 봅니다.</p>
+            <p class="callout-sm"><strong>해상풍력은 보증이 두 계약으로 나뉩니다. </strong><span class="wg wg-t">터빈사</span> TSA/LTSA — 출력곡선(파워커브) 보증과 기술적 가동률 보증, 미달 시 손실 발전량을 기준으로 LD를 물고 보통 <strong>연간 상한(계약금액의 %)</strong>이 붙습니다. <span class="wg wg-e">EPC·O&amp;M</span> BOP 계약 — 전기·송전 손실 보증과 BOP·계통 가동률(해상변전소·해저케이블) 보증, 준공지연·하자에 대한 LD가 별도입니다. 아래에서 실적이 보증에 못 미쳤을 때의 <strong>귀책별 손실과 LD 보전</strong>을 봅니다.</p>
             <div class="subtotal strong"><span>실적 가정 (보증값과 비교)</span><span class="muted" id="warrantyBaseNote"></span></div>
             <div class="calc-grid" style="margin-top:0;">
-              <div class="field"><label for="actTurbineAvailPct">기술적 가용률 실적<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="actTurbineAvailPct" type="number" value="94" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+              <div class="field"><label for="actTurbineAvailPct">기술적 가동률 실적<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="actTurbineAvailPct" type="number" value="94" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
               <div class="field"><label for="actPowerCurvePct">출력곡선 이행률 실적<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="actPowerCurvePct" type="number" value="98" step="0.5" min="0" max="120"><span class="unit">%</span></div></div>
-              <div class="field"><label for="actBopAvailPct">BOP·계통 가용률 실적<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="actBopAvailPct" type="number" value="97" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
+              <div class="field"><label for="actBopAvailPct">BOP·계통 가동률 실적<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="actBopAvailPct" type="number" value="97" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
               <div class="field"><label for="actElectricalLossPct">전기·송전 손실 실적<span class="wg wg-e">EPC</span></label><div class="iw"><input id="actElectricalLossPct" type="number" value="4" step="0.5" min="0" max="30"><span class="unit">%</span></div></div>
             </div>
             <div class="subtotal strong"><span>LD 조건</span><span></span></div>
@@ -1146,7 +1146,7 @@
                 <tbody id="warrantyTableBody"></tbody>
               </table>
             </div>
-            <p class="hint">손실 귀책은 <strong>보증값에서 실적값으로 한 항목씩 바꿔가며</strong> 나눕니다(터빈사: 출력곡선·기술적 가용률 → EPC: BOP 가용률·전기손실). LD 보전액은 손실매출 × 보전율이며 연간 상한(터빈 계약금액 = 터빈 단가 × 용량, BOP 계약금액 = BOS 단가 × 용량)에서 잘립니다. "실적 + LD 보전"은 보전액을 같은 단가로 발전량에 환산해 되돌린 경우입니다 — 실제 계약에서는 현금 보전이라 세무·배당 시점이 다를 수 있습니다. 준공지연 LD와 하자보수 보증은 아래 블록에서 따로 봅니다.</p>
+            <p class="hint">손실 귀책은 <strong>보증값에서 실적값으로 한 항목씩 바꿔가며</strong> 나눕니다(터빈사: 출력곡선·기술적 가동률 → EPC: BOP 가동률·전기손실). LD 보전액은 손실매출 × 보전율이며 연간 상한(터빈 계약금액 = 터빈 단가 × 용량, BOP 계약금액 = BOS 단가 × 용량)에서 잘립니다. "실적 + LD 보전"은 보전액을 같은 단가로 발전량에 환산해 되돌린 경우입니다 — 실제 계약에서는 현금 보전이라 세무·배당 시점이 다를 수 있습니다. 준공지연 LD와 하자보수 보증은 아래 블록에서 따로 봅니다.</p>
           </div>
         </section>
       </div>
@@ -1258,7 +1258,7 @@
               <li>C. 발전매출 — <strong>REC 가중치</strong>: 연계거리·수심 복합가중치(각 2.5 · 2.9 · 3.3 · 3.7, 합산 − 2.5)는 2021년 고시 근사로 경계·상한 확인 필요. RPS 개편안(2026-05 상임위 의결)이 시행되면 REC 가중치가 폐지되고 정부 계약시장으로 바뀌어 환산식이 달라짐 — "가중치 없음(1.0)"으로 민감도 확인 권장</li>
               <li>입찰 기준 — 2026년 상반기 풍력 공고(2026-03-30): 고정식 상한 171.229 · 부유식 175.100원/kWh, 기준 SMP 86.35원/kWh, 물량 공공주도형 400 · 일반 고정식 1,000 · 부유식 400MW, 1단계 사업내역서 50점 + 2단계 입찰가격 50점 합산. <strong>비가격 세부 배점은 2025년 상반기 보도 기준이고 가격 점수 산식은 태양광 공고 산식 준용 가정</strong> — 2026년 공고문 원문 확인 필요</li>
               <li>공공주도형 — 우대가격 기본(공급망·안보 기여) 3,660원/MWh, 정부 R&amp;D 실증 터빈 추가 27,840원/MWh(2025년 상반기 공고), 지분 요건 공공 합동 50% 초과 · 단독 34% 이상(R&amp;D 실증 터빈 20% · 10%). KCH 지분 구조로 요건을 충족하는지와 2026년 우대가격 확인 필요</li>
-              <li><strong>터빈 비교</strong> — 정격·로터는 제조사 사양·보도, 터빈 단가(억원/MW) · 가용률 · 외산 국산화율은 예시값, 출력곡선 보정((320 ÷ 비출력)<sup>0.25</sup>)은 근사. 풍황 계측·터빈별 출력곡선·후류 해석으로 교체 필요. 유니슨 U210은 형식인증 전(실증 중). 기본 목록 기준일 2026-09-14 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가하거나 코드의 TURBINE_CATALOG에 항목을 더하면 됨. <strong>터빈사·EPC사가 제시한 1년차 순이용률·EPC 단가</strong>는 터빈 비교 탭 스펙 표의 "터빈사 제공" 칸에 직접 넣으면 모델 계산값 대신 쓰이고(비우면 자동), 보증·LD 탭의 보증 기준 이용률도 같은 배율로 맞춰짐 — 제시값의 <strong>보증 기준(시간 기준 / 발전량 기준)·풍황 전제·P50/P90 여부가 모델 전제와 같은지 확인 필요</strong></li>
+              <li><strong>터빈 비교</strong> — 정격·로터는 제조사 사양·보도, 터빈 단가(억원/MW) · 가동률 · 외산 국산화율은 예시값, 출력곡선 보정((320 ÷ 비출력)<sup>0.25</sup>)은 근사. 풍황 계측·터빈별 출력곡선·후류 해석으로 교체 필요. 유니슨 U210은 형식인증 전(실증 중). 기본 목록 기준일 2026-09-14 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가하거나 코드의 TURBINE_CATALOG에 항목을 더하면 됨. <strong>터빈사·EPC사가 제시한 1년차 순이용률·EPC 단가</strong>는 터빈 비교 탭 스펙 표의 "터빈사 제공" 칸에 직접 넣으면 모델 계산값 대신 쓰이고(비우면 자동), 보증·LD 탭의 보증 기준 이용률도 같은 배율로 맞춰짐 — 제시값의 <strong>보증 기준(시간 기준 / 발전량 기준)·풍황 전제·P50/P90 여부가 모델 전제와 같은지 확인 필요</strong></li>
               <li>이용률·손실 — 부지 총이용률 40% · 후류 손실 8% · 전기 손실 3% · 출력제어 2% · 성능저하 0.2%/년은 예시값. 국내 실측 참고: 한림(두산 5.56MW) 27~29%, 전남1(SGRE 9.6MW급) 30~38%</li>
               <li>D·E. CAPEX·OPEX — 100MW 고정식 예시(EPC 72억원/MW = 터빈 24 + BOP 48, 항목별 합계 7,200억, 간접비 500억, 예비비 5%, O&amp;M 연 150억 · 보험 0.4% → 총사업비 MW당 약 93억). 보도 기준 총사업비 MW당 약 70~90억 — 실제 견적·해역 조건으로 교체 필요</li>
               <li>F. 재무 프리셋 — DSCR 임계치·할인율·법인세 누진구간·감가상각 20년·선순위 15년은 ESS 참고자료 기준을 옮긴 초안. 해상풍력 PF(장기 선순위·공사기간 3년 이자·예비 한도) 조건으로 재확인 필요</li>
@@ -1266,10 +1266,10 @@
               <li>KCH 개발수수료 — 4개 수수료 기준총액·할인율은 ESS 예시값 그대로(설비용량만 연동). 100MW 해상풍력 규모에 맞게 교체 필요</li>
               <li>단가산정 목표 — 해상풍력 초안은 기본 산정 기준을 <strong>목표 P-IRR 6%</strong>로 둠(ESS의 "당사 이익 100억원"은 총사업비 9천억원대 사업에서 수익률이 지나치게 낮게 역산됨). 목표 수익률·당사 지분 20%는 KCH 내부 기준 확인 필요</li>
               <li><strong>입찰 사례</strong> — 사업별 낙찰가는 비공개라 상한가 대비 인하율을 가정해 추정(0% = 상한가 입찰 = 최대 사업성). 사례 18건의 사업자·터빈·EPC·공급사·사업비·발전량·입지는 보도·사업자 발표·Renewable Korea 표로 정리하고, 환경영향평가정보지원시스템(EIASS) 사업 검색으로 14건의 사업코드·초안/본협의/변경 협의 완료일을 확인(고창·압해·다대포·한동·평대는 검색되지 않음). 13개 사업은 EIASS 사업 상세 표에서 협의 등록 규모·사업비·사업시행자·평가대행자까지 반영(평가 당시 값이라 입찰 용량·최신 사업비와 다를 수 있음 — 해송은 등록 사업비 4,575억원이 1,008MW에 비해 지나치게 작아 제외). 평가서 본문(발전량·수심·이격거리)은 문서 뷰어 방식이라 읽지 못해 보도 기준. 총사업비는 신안우이·낙월·완도 금일·태안·압해·다대포·한동·평대·서남해·한빛·굴업도, EIASS 협의 사업비(등록 사업비 ÷ 등록 규모)는 안마·반딧불이·금오도·해울이, EPC 역산은 고창·야월, 발전량은 신안우이·낙월·안마·다대포·한빛만 확인. <strong>사업비 발표 시점이 2019~2026년으로 섞여 있어 초기 발표액(압해 MW당 50억, 한동·평대 56억 등)은 인플레이션 이전 값일 수 있음</strong> — 해당 사례의 높은 추정 수익률은 과대 추정 가능성. 2023년 상한가 167.778원은 역산, 2026년 선정 단지는 보도 기준, 금융·일정은 현재 페이지 조건</li>
-              <li>C. 발전매출 — <strong>보증 구조(터빈사 / EPC사)</strong>: 출력곡선 보증 이행률 100% · BOP·계통 가용률 99%는 예시값이며, 기술적 가용률은 터빈 목록의 사별 값(94~97%)을 씁니다. 실제 계약은 보증 기준(시간 기준 가용률 / 발전량 기준 가용률), 측정·검증 방식(파워커브 시험), 보증 기간(하자보수 2~5년 · LTSA 5~15년), LD 산정식과 연간·총액 상한, 초과 성과 공유가 회사·계약마다 다릅니다. "보증·LD" 탭의 LD 보전율 100% · 연간 상한 10%도 예시입니다</li>
+              <li>C. 발전매출 — <strong>보증 구조(터빈사 / EPC사)</strong>: 출력곡선 보증 이행률 100% · BOP·계통 가동률 99%는 예시값이며, 기술적 가동률은 터빈 목록의 사별 값(94~97%)을 씁니다. 실제 계약은 보증 기준(시간 기준 가동률 / 발전량 기준 가동률), 측정·검증 방식(파워커브 시험), 보증 기간(하자보수 2~5년 · LTSA 5~15년), LD 산정식과 연간·총액 상한, 초과 성과 공유가 회사·계약마다 다릅니다. "보증·LD" 탭의 LD 보전율 100% · 연간 상한 10%도 예시입니다</li>
               <li>C·E — <strong>준공지연 LD · 하자보수 보증</strong>: 준공지연 8주 · LD 요율 0.2%/주 · 총액 상한 10%(도급액), 하자보수 보증 터빈 5년 15% · BOP 2년 5%(고정 O&amp;M 기준)는 예시값입니다. 지연 손실은 1년차 발전매출 일할로만 보고 <strong>실제 일정 변경(COD 이동)·고정가격계약의 준공기한 위반 효과(계약 해지·가격 조정)는 반영하지 않았습니다</strong>. 하자보수 보증금(이행보증)은 담보라 현금흐름에 넣지 않았고, 보증 범위를 고정 O&amp;M의 일정 비율로 단순화했습니다</li>
               <li>엑셀(.xlsx) 회신 변환기(<code>ESS_엑셀변환.bat</code>)는 ESS 전용 — 해상풍력 시나리오 JSON은 변환할 수 없음(CSV로 확인)</li>
-              <li><strong>풍황 확률수준(P50 · P75 · P90)</strong> — 세 칸은 <strong>수기 입력</strong>이며 기본값이 없다(비우면 모델 계산값 사용). 적용하면 선택 확률수준 ÷ P50 비율을 터빈별 순이용률에 곱하는 방식이라, <strong>보고서의 확률수준 정의(순이용률 기준인지 AEP 기준인지, 손실·가용률 포함 범위, 계측기간·불확실성 전제)</strong>가 이 모델의 1년차 순이용률 정의와 같은지 확인 필요. P50 대비 P90 비율은 사업마다 달라 기본 가정을 두지 않았고, 부채상환능력(DSCR)을 P90 기준으로 따로 사이징하는 금융조건은 미반영</li>
+              <li><strong>풍황 확률수준(P50 · P75 · P90)</strong> — 세 칸은 <strong>수기 입력</strong>이며 기본값이 없다(비우면 모델 계산값 사용). 적용하면 선택 확률수준 ÷ P50 비율을 터빈별 순이용률에 곱하는 방식이라, <strong>보고서의 확률수준 정의(순이용률 기준인지 AEP 기준인지, 손실·가동률 포함 범위, 계측기간·불확실성 전제)</strong>가 이 모델의 1년차 순이용률 정의와 같은지 확인 필요. P50 대비 P90 비율은 사업마다 달라 기본 가정을 두지 않았고, 부채상환능력(DSCR)을 P90 기준으로 따로 사이징하는 금융조건은 미반영</li>
               <li><strong>목표 DSCR 부채 사이징</strong> — 기준 발전량(보통 P90) CFADS ÷ 목표 DSCR로 연간 원리금 한도를 잡고 원리금균등 기준으로 원금을 되돌려 선순위 한도를 정한다(거치기간은 이자만). DSCR 원리금 범위 기본값은 <strong>선순위 원리금만</strong>(실무의 senior DSCR) — "선순위 + 주민참여채권"을 고르면 <strong>주민참여채권 만기 일시상환이 있는 해 하나가 DSCR을 짓눌러 전체 부채 규모를 지배</strong>하므로(그 해만 1.30배, 나머지는 4~5배) 차환·후순위 처리 전제를 확인하고 쓸 것. <strong>단일 목표 DSCR · 원리금균등 상환 · 단일 트랜치</strong> 가정이라 실제 금융조건의 <strong>연차별 목표 DSCR(스컬프팅) · 원금불균등 상환 · 트랜치별 조건 · LLCR/PLCR · 부채상환 유보계정(cash sweep)</strong> 은 미반영. 목표 DSCR 기본 1.30배와 배당 게이트(연간 1.15 · 누적 1.30배)는 별개 값이며 모두 KCH·대주단 기준으로 확정 필요</li>
             </ul>
           </div>
@@ -1333,7 +1333,7 @@
   // ---------- 터빈 · 입찰 트랙 · 조합 ----------
   // 터빈 카탈로그 — 새 터빈은 여기에 항목 하나를 더하면 선택 목록·비교표·스펙표·근거 목록에 자동 반영된다.
   // 필드: id(영문·숫자·_ 고유값) · origin('domestic' | 'foreign') · maker · model · mw(정격 MW) · rotor(로터 직경 m)
-  //       price(터빈 단가 억원/MW, 예시) · avail(가용률 %) · degA(연간 성능저하 %/년) · local(국산화율 %, 참고)
+  //       price(터빈 단가 억원/MW, 예시) · avail(가동률 %) · degA(연간 성능저하 %/년) · local(국산화율 %, 참고)
   //       specLabel(확인 수준, 짧게) · source(근거 문장). 화면의 "새 터빈 등록"으로 추가한 터빈도 같은 모양으로 저장·내보낸다.
   const TURBINE_CATALOG_UPDATED = '2026-09-14';
   const TURBINE_CATALOG = [
@@ -1363,7 +1363,7 @@
       "price": 23,
       "local": 60,
       "specLabel": "설계인증·실증 중",
-      "source": "유니슨 U210-10MW — 로터 210m, 기어박스 없는 직접구동, 설계 수명 30년. 에너지기술평가원 설계인증 완료, 2026년 상반기 형식인증 목표(실증 중). 상업 운전 실적이 없어 가용률을 보수적으로 가정."
+      "source": "유니슨 U210-10MW — 로터 210m, 기어박스 없는 직접구동, 설계 수명 30년. 에너지기술평가원 설계인증 완료, 2026년 상반기 형식인증 목표(실증 중). 상업 운전 실적이 없어 가동률을 보수적으로 가정."
     },
     {
       "id": "vestas15",
@@ -2648,8 +2648,8 @@
     };
   }
 
-  // ---------- 운영연차별 가동률 입력 그리드 (연도 수는 운영기간에 연동, 값은 편집 시 보존) ----------
-  // 신규 행을 채울 때 쓰는 연차별 기본 가동률 규칙 — 1년차/2년차는 별도값, 3년차부터는 "기본 가동률"
+  // ---------- 운영연차별 순이용률 입력 그리드 (연도 수는 운영기간에 연동, 값은 편집 시 보존) ----------
+  // 신규 행을 채울 때 쓰는 연차별 기본 순이용률 규칙 — 1년차/2년차는 별도값, 3년차부터는 "기본 순이용률"
   function defaultRatePctForYear(seq) {
     const y1 = +$('year1RatePct').value || 0, d = rate(+$('degradationPct').value || 0);
     return Math.round(y1 * (1 - d) ** (seq - 1) * 100) / 100;
@@ -2953,8 +2953,8 @@
 
   // ---------- 터빈 비교 탭 — 6개 터빈을 같은 조건에서 각각 역산(탭이 보일 때만) ----------
   // ---------- 발전량 구성 — 보증 주체별 단계 표 ----------
-  // 해상풍력 계약 구조: 터빈사(TSA/LTSA)가 출력곡선·기술적 가용률을, EPC(BOP)가 전기·송전 손실과
-  // BOP·계통 가용률을 보증한다. 후류 손실·풍황은 개발사 몫이라 보증 대상이 아니다.
+  // 해상풍력 계약 구조: 터빈사(TSA/LTSA)가 출력곡선·기술적 가동률을, EPC(BOP)가 전기·송전 손실과
+  // BOP·계통 가동률을 보증한다. 후류 손실·풍황은 개발사 몫이라 보증 대상이 아니다.
   function renderGenerationBuildup() {
     const d = turbineDerived($('turbineMaker').value), tb = turbineById($('turbineMaker').value) || {};
     const base = +$('siteBaseRatePct').value || 0;
@@ -2969,8 +2969,8 @@
       `<tr><th>부지 총이용률 <span class="sub">기준 터빈(비출력 ${fmt(+$('refSpecificPower').value || 0, 0)}W/m²) 기준 · 풍황</span></th><td>${fmt(base, 2)}%</td></tr>`,
       step('출력곡선 보정', '<span class="wg wg-t">터빈사</span>', `× ${fmt(d.curveF, 4)} (비출력 ${fmt(d.specificPower, 0)}W/m²)`, acc * d.curveF),
       step('출력곡선 보증 이행률', '<span class="wg wg-t">터빈사</span>', `× ${fmt(pcw, 1)}%`, acc * rate(pcw)),
-      step('기술적 가용률 보증', '<span class="wg wg-t">터빈사</span>', `× ${fmt(d.avail, 1)}% (${escapeHtml(tb.maker || '')} ${escapeHtml(tb.model || '')})`, acc * rate(d.avail)),
-      step('BOP·계통 가용률 보증', '<span class="wg wg-e">EPC·O&amp;M</span>', `× ${fmt(bop, 1)}%`, acc * rate(bop)),
+      step('기술적 가동률 보증', '<span class="wg wg-t">터빈사</span>', `× ${fmt(d.avail, 1)}% (${escapeHtml(tb.maker || '')} ${escapeHtml(tb.model || '')})`, acc * rate(d.avail)),
+      step('BOP·계통 가동률 보증', '<span class="wg wg-e">EPC·O&amp;M</span>', `× ${fmt(bop, 1)}%`, acc * rate(bop)),
       step('후류(웨이크) 손실', '<span class="wg wg-d">개발사</span>', `× (1 − ${fmt(wake, 1)}%)`, acc * (1 - rate(wake))),
       step('전기·송전 손실', '<span class="wg wg-e">EPC</span>', `× (1 − ${fmt(elec, 1)}%)`, acc * (1 - rate(elec))),
     ];
@@ -3077,7 +3077,7 @@
     const ldE = Math.min(Math.max(0, lossEpc) * (num('ldEpcPct') / 100), capE);
     const lossTotal = lossTurbine + lossEpc, ldTotal = ldT + ldE;
     const sameAsWarranty = Math.abs(cfAct - cfGuar) < 0.005;
-    $('warrantyBaseNote').textContent = `보증값 — 출력곡선 ${fmt(num('powerCurveWarrantyPct'), 1)}% · 가용률 ${fmt(d.avail, 1)}% · BOP ${fmt(num('bopAvailPct'), 1)}% · 전기손실 ${fmt(gEl, 1)}%`;
+    $('warrantyBaseNote').textContent = `보증값 — 출력곡선 ${fmt(num('powerCurveWarrantyPct'), 1)}% · 가동률 ${fmt(d.avail, 1)}% · BOP ${fmt(num('bopAvailPct'), 1)}% · 전기손실 ${fmt(gEl, 1)}%`;
     const st = $('warrantyState');
     st.textContent = sameAsWarranty ? '● 실적 = 보증값 (손실 없음)' : `○ 실적이 보증 대비 순이용률 ${fmt(cfGuar - cfAct, 2)}%p 낮음`;
     st.className = sameAsWarranty ? 'module-state on' : 'module-state';
@@ -3086,8 +3086,8 @@
     $('warrantyBody').innerHTML = [
       row('wrCfGuar', '보증 기준 순이용률 · 발전량', '전체 연도 기준', `${fmt(cfGuar, 2)}% · ${fmt(genOf(cfGuar) / 1000, 1)} GWh`),
       row('wrCfAct', '실적 기준 순이용률 · 발전량', '터빈 + EPC 실적 반영', `${fmt(cfAct, 2)}% · ${fmt(genOf(cfAct) / 1000, 1)} GWh`, sameAsWarranty ? '' : 'over'),
-      row('wrLossT', '터빈사 귀책 손실매출', '출력곡선 · 기술적 가용률 미달', won(lossTurbine), lossTurbine > 0 ? 'over' : ''),
-      row('wrLossE', 'EPC사 귀책 손실매출', 'BOP·계통 가용률 · 전기손실 초과', won(lossEpc), lossEpc > 0 ? 'over' : ''),
+      row('wrLossT', '터빈사 귀책 손실매출', '출력곡선 · 기술적 가동률 미달', won(lossTurbine), lossTurbine > 0 ? 'over' : ''),
+      row('wrLossE', 'EPC사 귀책 손실매출', 'BOP·계통 가동률 · 전기손실 초과', won(lossEpc), lossEpc > 0 ? 'over' : ''),
       row('wrLossTotal', '손실매출 합계', '연간', won(lossTotal), lossTotal > 0 ? 'over' : ''),
       row('wrLdT', '터빈사 LD 보전', `보전율 ${fmt(num('ldTurbinePct'), 0)}% · 상한 ${won(capT)}(터빈 계약 ${won(turbineContract)}의 ${fmt(num('ldTurbineCapPct'), 0)}%)`, won(ldT), ldT > 0 ? 'best' : ''),
       row('wrLdE', 'EPC사 LD 보전', `보전율 ${fmt(num('ldEpcPct'), 0)}% · 상한 ${won(capE)}(BOP 계약 ${won(bopContract)}의 ${fmt(num('ldEpcCapPct'), 0)}%)`, won(ldE), ldE > 0 ? 'best' : ''),
@@ -3456,7 +3456,7 @@
   const SUMMARY_DETAIL_COLS = [
     { h: '연도', v: (d) => d.calendarYear, text: true },
     { h: '단계', v: (d) => d.phase, text: true },
-    { h: '가동률', v: (d) => d.ratePct, f: (v) => (v == null ? '—' : fmt(v, 1) + '%') },
+    { h: '순이용률', v: (d) => d.ratePct, f: (v) => (v == null ? '—' : fmt(v, 1) + '%') },
     { h: '발전량 (MWh)', v: (d) => d.generationMWh, dp: 0 },
     { h: '매출', v: (d) => d.revenue },
     { h: 'OPEX', v: (d) => d.opex },
@@ -3949,7 +3949,7 @@
     return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
-  // 모든 편집 가능 입력(id 기반) + 동적 행(CAPEX/OPEX 항목, 운영연차별 가동률)을 스냅샷으로 캡처
+  // 모든 편집 가능 입력(id 기반) + 동적 행(CAPEX/OPEX 항목, 운영연차별 순이용률)을 스냅샷으로 캡처
   function captureScenarioState() {
     const state = { fields: {}, capexItems: [], opexItems: [], opRates: [] };
     document.querySelectorAll('.wrap input, .wrap select').forEach((el) => {
@@ -4034,7 +4034,7 @@
       const el = $(id);
       if (el && !el.disabled) el.value = val;
     });
-    // 운영연차별 가동률 그리드: 방금 복원된 operationYears 기준으로 강제 재생성한 뒤 저장된 값을 정확히 채운다.
+    // 운영연차별 순이용률 그리드: 방금 복원된 operationYears 기준으로 강제 재생성한 뒤 저장된 값을 정확히 채운다.
     $('opRateGrid').innerHTML = '';
     syncOperatingRateRows();
     document.querySelectorAll('#opRateGrid [data-oprate-index]').forEach((el, i) => {
@@ -4285,7 +4285,7 @@
     ['단계', (r) => r.phase],
     ['가동일수', (r) => r.operatingDays],
     ['연간일수', (r) => r.daysInYear],
-    ['가동률(%)', (r) => r.ratePct == null ? '' : fmt(r.ratePct, 2)],
+    ['순이용률(%)', (r) => r.ratePct == null ? '' : fmt(r.ratePct, 2)],
     ['발전량(MWh)', (r) => fmt(r.generationMWh, 1)],
     ['매출(억원)', (r) => fmt(r.revenue, 3)],
     ['OPEX(억원)', (r) => fmt(r.opex, 3)],
@@ -4388,7 +4388,7 @@
       table.push([item.label, ...cols.map((s) => s.assumption && s.assumption.opexItems ? s.assumption.opexItems[i] : '')]);
     });
 
-    blank(); table.push(['[운영연차별 가동률(%)]']);
+    blank(); table.push(['[운영연차별 순이용률(%)]']);
     const maxOpRateYears = Math.max(0, ...cols.map((s) => (s.assumption && s.assumption.opRates ? s.assumption.opRates.length : 0)));
     for (let i = 0; i < maxOpRateYears; i++) {
       table.push([`${i + 1}년차`, ...cols.map((s) => s.assumption && s.assumption.opRates && s.assumption.opRates[i] !== undefined ? s.assumption.opRates[i] : '')]);
@@ -4581,7 +4581,7 @@
     // 터빈사 제공값 칸 — 빈 칸이 "자동"이라 value 속성을 두지 않는다(기본값으로 되돌리기가 자동 상태로 돌아간다).
     const ovCell = (t, fld, step, label) => `<td><input id="tb-${h(t.id)}-${fld}" class="tb-ov" type="number" value="${t[fld] == null ? '' : h(t[fld])}" step="${step}" min="0" placeholder="자동" aria-label="${h(t.maker)} ${label}"></td>`;
     $('turbineSpecBody').innerHTML = list.map((t) => `
-      <tr data-tb-row="${h(t.id)}">${nameCell(t)}${cell(t, 'price', 0.5, '터빈 단가')}${cell(t, 'mw', 0.1, '정격출력')}${cell(t, 'rotor', 1, '로터 직경')}${cell(t, 'avail', 0.5, '가용률')}${cell(t, 'degA', 0.05, '성능저하')}${cell(t, 'local', 5, '국산화율')}${ovCell(t, 'y1ov', 0.01, '터빈사 제공 1년차 순이용률')}${ovCell(t, 'epcov', 0.5, '터빈사 제시 EPC 단가')}
+      <tr data-tb-row="${h(t.id)}">${nameCell(t)}${cell(t, 'price', 0.5, '터빈 단가')}${cell(t, 'mw', 0.1, '정격출력')}${cell(t, 'rotor', 1, '로터 직경')}${cell(t, 'avail', 0.5, '가동률')}${cell(t, 'degA', 0.05, '성능저하')}${cell(t, 'local', 5, '국산화율')}${ovCell(t, 'y1ov', 0.01, '터빈사 제공 1년차 순이용률')}${ovCell(t, 'epcov', 0.5, '터빈사 제시 EPC 단가')}
         <td>${t.custom ? `<button type="button" class="btn" data-tb-del="${h(t.id)}">삭제</button>` : ''}</td>
       </tr>`).join('');
     document.querySelectorAll('#turbineSpecBody input[id^="tb-"]').forEach((el) => { if (keep[el.id] != null) el.value = keep[el.id]; });
@@ -4600,7 +4600,7 @@
     return { price: g('price'), mw: g('mw'), rotor: g('rotor'), avail: g('avail'), degA: g('degA'), local: g('local') };
   }
   // 출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)^지수 — 같은 풍황이면 로터가 클수록(비출력이 낮을수록) 이용률이 높다는 근사.
-  // 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가용률(터빈사 보증) × BOP·계통 가용률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실)
+  // 1년차 순이용률 = 부지 총이용률 × 출력곡선 보정 × 출력곡선 보증 이행률 × 기술적 가동률(터빈사 보증) × BOP·계통 가동률(EPC 보증) × (1 − 후류 손실) × (1 − 전기 손실)
   // 터빈사·EPC사가 제시한 값(터빈 비교 탭 스펙 표의 "터빈사 제공" 칸)이 있으면 모델 계산값 대신 그 값을 쓴다.
   // 빈 칸·0 이하·숫자가 아닌 값은 "자동"으로 본다(칸을 비우면 언제든 모델 계산값으로 돌아온다).
   function turbineOverride(id, fld) {
@@ -4639,7 +4639,7 @@
     const specificPower = sp.rotor > 0 ? sp.mw * 1e6 / (Math.PI * (sp.rotor / 2) ** 2) : 0;
     const curveF = specificPower > 0 ? ((+$('refSpecificPower').value || specificPower) / specificPower) ** (+$('powerCurveExp').value || 0) : 1;
     const losses = (1 - rate(+$('wakeLossPct').value || 0)) * (1 - rate(+$('electricalLossPct').value || 0));
-    // 보증 주체별 곱 — 터빈사(출력곡선 보증 이행률 × 기술적 가용률) × EPC·O&M(BOP·계통 가용률)
+    // 보증 주체별 곱 — 터빈사(출력곡선 보증 이행률 × 기술적 가동률) × EPC·O&M(BOP·계통 가동률)
     const warranty = rate(+$('powerCurveWarrantyPct').value || 0) * rate(sp.avail) * rate(+$('bopAvailPct').value || 0);
     const y1Model = Math.round((+$('siteBaseRatePct').value || 0) * curveF * warranty * losses * 100) / 100;
     const epcAuto = Math.round((sp.price + (+$('bosUnitPrice').value || 0)) * 10) / 10;
@@ -4675,7 +4675,7 @@
     const id = $('turbineMaker').value, d = turbineDerived(id), mw = Math.max(0, +$('contractCapacityMW').value || 0);
     turbineLinked = turbineLinkActive();
     $('turbinePriceDisplay').value = fmt(d.price, 1);
-    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가용률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%${d.y1Ov ? ' · 터빈사 제공값 적용' : ''}${d.pFactor !== 1 ? ` · ${$('pLevelApplied').value.toUpperCase()} × ${fmt(d.pFactor, 4)}` : ''}`;
+    $('turbineFactorDisplay').value = `${fmt(d.curveF, 4)} × 가동률 ${fmt(d.avail, 1)}% × BOP ${fmt(+$('bopAvailPct').value || 0, 1)}%${d.y1Ov ? ' · 터빈사 제공값 적용' : ''}${d.pFactor !== 1 ? ` · ${$('pLevelApplied').value.toUpperCase()} × ${fmt(d.pFactor, 4)}` : ''}`;
     syncPLevelState(d);
     $('turbineCountDisplay').value = d.mw > 0 ? String(Math.ceil(mw / d.mw - 1e-9)) : '—';
     const el = $('turbineLinkState');
@@ -4845,7 +4845,7 @@
       source: g('newTbSource') ? `${g('newTbMaker')} ${g('newTbModel')} — ${g('newTbSource')}` : '', addedAt: new Date().toISOString().slice(0, 10) };
     if (!t.maker || !t.model) return turbineMsg('제조사와 모델명을 입력해 주세요.', true);
     if (!(+t.mw > 0) || !(+t.rotor > 0)) return turbineMsg('정격출력(MW)과 로터 직경(m)은 0보다 커야 합니다.', true);
-    if (!(+t.price >= 0) || !(+t.avail > 0 && +t.avail <= 100)) return turbineMsg('터빈 단가는 0 이상, 가용률은 0~100%로 입력해 주세요.', true);
+    if (!(+t.price >= 0) || !(+t.avail > 0 && +t.avail <= 100)) return turbineMsg('터빈 단가는 0 이상, 가동률은 0~100%로 입력해 주세요.', true);
     if (allTurbines().some((x) => x.maker === t.maker && x.model === t.model)) return turbineMsg(`${t.maker} ${t.model}은(는) 이미 목록에 있습니다 — 스펙 표에서 값을 고쳐 주세요.`, true);
     customTurbines.push(t);
     const saved = saveCustomTurbines();
