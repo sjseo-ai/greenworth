@@ -14,6 +14,7 @@
 | `common/` | `check-ids.mjs`(HTML id 참조 누락 · 깨진 글자 점검), `site-smoke.mjs`(사이트 목록 → 세 페이지 로드 · 다운로드 대체 · 375px), `app-header-check.mjs`(앱 헤더 링크) |
 | `solar/` | 태양광 파이프라인 · 점검 |
 | `offshore-wind/` | 해상풍력 파이프라인 · 점검 |
+| `onshore-wind/` | 육상풍력 파생 — `onshore-1-derive.mjs`가 `prototypes/src/offshore-wind.html`을 읽어 `onshore-wind.html`을 만든다(스니펫 `onshore-1-snippets.txt`). **이 폴더만은 지금도 쓰는 도구**다(육상 페이지를 다시 만들 때 실행) |
 | `bess/` | BESS(ESS) 화면 개편 조각 · 점검 · 엑셀 회신 검증 |
 | `research-eiass/` | 환경영향평가정보지원시스템(EIASS) 사업 검색 · 상세 조회 스크립트와 결과 JSON |
 

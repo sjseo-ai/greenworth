@@ -4649,5 +4649,37 @@
   renderScenarioList();
 })();
 </script>
+<script>
+  (function () {
+    if (window.parent === window) return;
+    var ID = "solar";
+    function text(key) {
+      var el = document.getElementById(key);
+      if (!el) return "";
+      return String(el.tagName === "INPUT" || el.tagName === "SELECT" ? el.value : el.textContent).replace(/\s+/g, " ").trim();
+    }
+    var last = "", timer = 0;
+    function send() {
+      var p = { type: "greenworth-result", id: ID, label: text("heroLabel"), price: text("heroBidPrice"),
+        tender: text("heroTenderPrice"), tenderCap: text("heroTenderCap"), note: text("heroBidNote"), status: text("solveStatus"),
+        tenderHidden: !!(document.getElementById("heroTenderBox") && document.getElementById("heroTenderBox").style.display === "none"),
+        pirr: text("kpiPIrr"), eirr: text("kpiEIrr"), profit: text("kpiCompanyProfit"), invest: text("kpiTotalInvestment"),
+        revenue: text("kpiRevenue"), generation: text("kpiGeneration"), capacity: text("contractCapacityMW"), cap: text("priceCapPerKWh") };
+      var s = JSON.stringify(p);
+      if (s !== last) { last = s; window.parent.postMessage(p, "*"); }
+    }
+    function soon() { clearTimeout(timer); timer = setTimeout(send, 300); }
+    function start() {
+      var nav = document.querySelector(".gw-site-nav");
+      if (nav) nav.remove();
+      new MutationObserver(soon).observe(document.body, { subtree: true, childList: true, characterData: true });
+      soon();
+    }
+    window.addEventListener("message", function (e) {
+      if (e.source === window.parent && e.data && e.data.type === "greenworth-ping") { last = ""; send(); }
+    });
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+  })();
+</script>
 </body>
 </html>

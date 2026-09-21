@@ -42,13 +42,19 @@ matches the sources — that's on you to keep true by hand.
 
 ### Bid-price prototypes (`prototypes/`) — generated pages, keep in sync
 
-Three standalone bid-price prototype pages (solar, offshore wind, BESS) live next to the app and are linked from the
-app header. They are **not** built from `js/*.js`; each one comes from a Claude Artifact HTML fragment:
+Four standalone bid-price prototype pages (solar, onshore wind, offshore wind, BESS) live next to the app and are linked
+from the app header. They are **not** built from `js/*.js`; each one comes from a Claude Artifact HTML fragment:
 
 - `prototypes/src/{solar,offshore-wind,bess}.html` — the source of truth (the exact fragment published as an Artifact).
+- `prototypes/src/onshore-wind.html` is **generated** from `offshore-wind.html` by
+  `node prototypes/tools/onshore-wind/onshore-1-derive.mjs` (onshore REC 1.2, turbines, 40MW CAPEX/OPEX, cap, cases, text,
+  own localStorage keys). Don't hand-edit it — change the derive script/snippets and rerun (it fails loudly if an anchor
+  moved or any unintended "해상" text survives). Rerun it after changing the offshore fragment if onshore should follow.
 - `scripts/build-prototypes.mjs` (`npm run build:prototypes`) wraps each fragment into a full document
   (`prototypes/{id}/index.html`, committed), adds a "← 프로토타입 목록" link, swaps the Artifact-only `downloads`
-  capability for a browser-download fallback, writes the hub `prototypes/index.html` (committed), and writes one zip per
+  capability for a browser-download fallback, injects a small result bridge (site pages only — it posts the hero/KPI
+  numbers to a parent frame and does nothing when opened on its own), writes the hub `prototypes/index.html` and the
+  integrated analysis shell `prototypes/analysis/index.html` (both committed), and writes one zip per
   technology to `prototypes/downloads/` (committed; entry timestamps are fixed and line endings normalized, so the same
   fragment always produces byte-identical zips).
 - **Whenever you edit a fragment, rerun the build.** `tests/prototypes-build.test.mjs` fails when a committed page, the
@@ -58,8 +64,12 @@ app header. They are **not** built from `js/*.js`; each one comes from a Claude 
   scripts still point `SP` at the original session scratch folder (see `prototypes/tools/README.md`).
 - `ESS_엑셀변환.bat` / `ess-bidprice-xlsx.mjs` (+ `.check.mjs`, `ess-xlsx-lite.mjs`) at the repo root are the BESS
   scenario-JSON → Excel reply converter (spec: `excel-export-spec.md`); only its `.xlsx`/log outputs stay ignored.
+- `prototypes/analysis/index.html` — "발전원 통합 사업성분석": tabs for a comparison view plus one iframe per prototype.
+  It accepts `greenworth-result` messages only from its own iframes (`e.source === frame.contentWindow` and matching id).
+  Adding a prototype to `PROTOTYPES` adds its tab, frame and comparison row automatically.
 - `.github/workflows/pages.yml` runs `npm test`, the build, and deploys `index.html`, `styles/`, `js/app.bundle.js`,
-  the prototype pages and zips to GitHub Pages on every push to `master`. Nothing else is copied to the site.
+  the prototype pages (its copy loop lists each page folder — add new ids there too) and zips to GitHub Pages on every
+  push to `master`. Nothing else is copied to the site.
 
 ### Module responsibilities
 

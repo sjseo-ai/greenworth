@@ -34,9 +34,12 @@
   <main class="wrap">
     <div class="top">
       <h1>GreenWorth 입찰단가 프로토타입</h1>
-      <a class="btn" href="../index.html">GreenWorth 사업성 분석 앱 →</a>
+      <div class="actions" style="margin-top:0;padding-top:0;">
+        <a class="btn primary" href="analysis/index.html">발전원 통합 사업성분석 →</a>
+        <a class="btn" href="../index.html">GreenWorth 사업성 분석 앱 →</a>
+      </div>
     </div>
-    <p class="lead">발전원별 경쟁입찰 조건으로 목표 수익을 만족하는 적정 입찰가격을 역산하는 사전 검토용 모델입니다. 각 페이지는 인터넷 연결 없이도 동작하며, 압축 파일을 받아 index.html을 더블클릭해 열 수 있습니다.</p>
+    <p class="lead">발전원별 경쟁입찰 조건으로 목표 수익을 만족하는 적정 입찰가격을 역산하는 사전 검토용 모델입니다. <strong>발전원 통합 사업성분석</strong>에서는 네 발전원을 한 화면의 탭으로 오가며 핵심 결과를 나란히 비교할 수 있습니다. 각 페이지는 인터넷 연결 없이도 동작하며, 압축 파일을 받아 index.html을 더블클릭해 열 수 있습니다.</p>
     <section class="grid" aria-label="프로토타입 목록">
       <article class="card">
         <p class="tag">고정가격계약 경쟁입찰 · 기업PPA</p>
@@ -52,6 +55,21 @@
         <div class="actions">
           <a class="btn primary" href="solar/index.html">열기</a>
           <a class="btn" href="downloads/greenworth-solar-bid-price.zip" download>압축 파일 받기</a>
+        </div>
+      </article>
+      <article class="card">
+        <p class="tag">육상풍력 고정가격계약 경쟁입찰</p>
+        <h2>육상풍력 적정 입찰가격</h2>
+        <ul>
+          <li>국산(유니슨 U151 · U136) · 외산(Vestas · Siemens Gamesa · Nordex) 터빈 6종 비교, 터빈사 제공 순이용률 · EPC 단가 직접 지정</li>
+          <li>REC 가중치 1.2 · 상한가 163.846원(2025년 하반기) · 40MW 기준 CAPEX · OPEX(에너지경제연구원 2024년 조사값)</li>
+          <li>풍황 확률수준 P50 · P75 · P90, 목표 DSCR 부채 사이징, 보증 구조(터빈사 / EPC) · 준공지연 LD · 하자보수 보증</li>
+          <li>입찰 사례 — 2023 · 2024 · 2025 하반기 육상풍력 경쟁입찰 선정 사업 13건과 회차별 공고 · 입찰 · 선정 물량</li>
+          <li>해상풍력 페이지에서 변환 스크립트로 파생(prototypes/tools/onshore-wind) — 재무 엔진 · 화면 구성 동일</li>
+        </ul>
+        <div class="actions">
+          <a class="btn primary" href="onshore-wind/index.html">열기</a>
+          <a class="btn" href="downloads/greenworth-onshore-wind-bid-price.zip" download>압축 파일 받기</a>
         </div>
       </article>
       <article class="card">

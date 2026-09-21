@@ -38,7 +38,9 @@ const PRELOAD_PATHS = [
 // 첫 요청 때 압축해 캐시한다(시작 시간을 앱 파일 기준으로 유지).
 const ON_DEMAND_PATHS = [
   "prototypes/index.html",
+  "prototypes/analysis/index.html",
   "prototypes/solar/index.html",
+  "prototypes/onshore-wind/index.html",
   "prototypes/offshore-wind/index.html",
   "prototypes/bess/index.html",
 ];
