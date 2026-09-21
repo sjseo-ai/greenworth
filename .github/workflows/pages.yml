@@ -35,7 +35,7 @@ jobs:
           cp styles/*.css _site/styles/
           cp js/app.bundle.js _site/js/
           cp prototypes/index.html _site/prototypes/
-          for id in solar offshore-wind bess; do
+          for id in analysis solar onshore-wind offshore-wind bess; do
             mkdir -p "_site/prototypes/$id"
             cp "prototypes/$id/index.html" "_site/prototypes/$id/"
           done

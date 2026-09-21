@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- 생성 파일 — prototypes/src/offshore-wind.html을 scripts/build-prototypes.mjs로 변환했습니다. 이 파일을 직접 고치지 마세요. -->
+<!-- 생성 파일 — prototypes/src/onshore-wind.html을 scripts/build-prototypes.mjs로 변환했습니다. 이 파일을 직접 고치지 마세요. -->
 <html lang="ko">
 <head>
 <meta charset="utf-8">
@@ -22,7 +22,7 @@
 </script>
 </head>
 <body>
-<title>해상풍력 적정 입찰가격 프로토타입</title>
+<title>육상풍력 적정 입찰가격 프로토타입</title>
 <style>
   /* ═══ 토큰 — web-app-blueprint.md 6장 + result-tabs-design-spec.md 8장(:root 토큰 우선) ═══
      잠그는 것: 44px 터치 타깃, 1180px·760px 브레이크포인트, 넓은 콘텐츠의 자체 가로 스크롤, minmax(0, 1fr).
@@ -416,8 +416,8 @@
   <nav class="gw-site-nav" style="display:flex;align-items:center;min-height:44px;padding:0 16px;font-size:13px;background:var(--panel-alt);border-bottom:1px solid var(--line);"><a href="../index.html" style="color:var(--accent);font-weight:600;text-decoration:none;">← 프로토타입 목록</a><span style="margin-left:8px;color:var(--muted);">GreenWorth</span></nav>
   <header class="topbar">
     <div class="brand">
-      <h1>해상풍력 적정 입찰가격</h1>
-      <span class="brand-sub">KCH그룹 · 초안 · 풍력 고정가격계약 (공공주도형 / 일반형)</span>
+      <h1>육상풍력 적정 입찰가격</h1>
+      <span class="brand-sub">KCH그룹 · 초안 · 육상풍력 고정가격계약 경쟁입찰</span>
     </div>
     <div class="spacer"></div>
     <span id="timing" class="timing"></span>
@@ -433,16 +433,16 @@
           <div class="combo-card">
             <div class="combo-head"><span>사업 구성 조합</span><span class="combo-now" id="comboActive">—</span></div>
             <div class="combo-btns">
-              <button type="button" class="combo-btn" data-combo="public">
-                <span class="cb-t">① 공공주도형 + 국산 터빈</span>
-                <span class="cb-s">두산에너빌리티 · 유니슨 — 안보 8점 · 우대가격 3.66원/kWh(정부 R&amp;D 실증 터빈 +27.84원) · 공공 지분 요건</span>
+              <button type="button" class="combo-btn" data-combo="domestic">
+                <span class="cb-t">① 국산 터빈 (유니슨)</span>
+                <span class="cb-s">유니슨 U151-4.3MW(저풍속용) · U136-4.2MW — 산업·경제효과 가점 기대 · 국내 A/S 거점 · 운영 실적은 짧음</span>
               </button>
-              <button type="button" class="combo-btn" data-combo="general">
-                <span class="cb-t">② 일반형 + 외산 터빈</span>
-                <span class="cb-s">Vestas · Siemens Gamesa · GE Vernova · Mingyang — 안보 6점 · 우대가격 없음 · 산업·경제효과 26점</span>
+              <button type="button" class="combo-btn" data-combo="foreign">
+                <span class="cb-t">② 외산 터빈 (Vestas 등)</span>
+                <span class="cb-s">Vestas V150 · V162 · Siemens Gamesa · Nordex — 운영 실적·가동률 우위 · 산업·경제효과 점수는 낮음</span>
               </button>
             </div>
-            <p class="hint" style="margin:8px 0 0;">버튼을 누르면 <strong>입찰 트랙 · 우대가격 · 비가격 예상 점수</strong>와 해당 원산지 터빈(기본 두산 DS205-10MW / Vestas V236)의 <strong>터빈 단가 · 이용률</strong>이 한 번에 적용됩니다. 같은 원산지 안에서 터빈을 바꾸려면 C. 발전매출의 "터빈"을 고르세요. 이후 개별 입력을 고치면 "사용자 조정"으로 표시됩니다.</p>
+            <p class="hint" style="margin:8px 0 0;">버튼을 누르면 <strong>비가격 예상 점수</strong>와 해당 원산지 터빈(기본 유니슨 U151 / Vestas V150)의 <strong>터빈 단가 · 이용률</strong>이 한 번에 적용됩니다. 육상풍력은 <strong>공공주도형 트랙·우대가격이 없어</strong> 조합은 터빈 원산지로만 나뉩니다. 같은 원산지 안에서 터빈을 바꾸려면 C. 발전매출의 "터빈"을 고르세요. 이후 개별 입력을 고치면 "사용자 조정"으로 표시됩니다.</p>
           </div>
 
           <details class="acc" open>
@@ -476,12 +476,12 @@
             <summary><span class="acc-badge">B</span><span class="acc-title">사업개요</span><span class="acc-chev" aria-hidden="true">▶</span></summary>
             <div class="acc-body">
               <div class="field-grid">
-                <div class="field span-2"><label for="projectName">사업명</label><div class="iw"><input id="projectName" type="text" value="해상풍력 100MW 입찰사업 (고정식)"></div></div>
+                <div class="field span-2"><label for="projectName">사업명</label><div class="iw"><input id="projectName" type="text" value="육상풍력 40MW 입찰사업"></div></div>
                 <div class="field"><label for="startYear">사업 시작연도</label><div class="iw"><input id="startYear" type="number" value="2026" step="1"><span class="unit">년</span></div></div>
-                <div class="field"><label for="endYear">사업 종료연도</label><div class="iw"><input id="endYear" type="number" value="2050" step="1"><span class="unit">년</span></div></div>
-                <div class="field"><label for="constructionYears">공사기간</label><div class="iw"><input id="constructionYears" type="number" value="3" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="endYear">사업 종료연도</label><div class="iw"><input id="endYear" type="number" value="2048" step="1"><span class="unit">년</span></div></div>
+                <div class="field"><label for="constructionYears">공사기간</label><div class="iw"><input id="constructionYears" type="number" value="2" step="1"><span class="unit">년</span></div></div>
                 <div class="field"><label for="operationYears">운영기간</label><div class="iw"><input id="operationYears" type="number" value="20" step="1"><span class="unit">년</span></div></div>
-                <div class="field span-2"><label for="codDate">상업운전개시일(COD)</label><div class="iw"><input id="codDate" type="date" value="2030-07-01"></div></div>
+                <div class="field span-2"><label for="codDate">상업운전개시일(COD)</label><div class="iw"><input id="codDate" type="date" value="2028-07-01"></div></div>
                 <div class="field calc" style="display:none;"><label for="developmentYears">개발기간</label><div class="iw"><input id="developmentYears" disabled><span class="unit">년</span></div></div>
               </div>
               <p class="hint">설비용량·이용률·판매 조건은 C. 발전매출에서 입력합니다.</p>
@@ -495,19 +495,19 @@
             <div class="acc-body">
               <p class="hint" style="margin-top:0;" id="salesHint"></p>
               <div class="field-grid">
-                <div class="field"><label for="contractCapacityMW">설비용량</label><div class="iw"><input id="contractCapacityMW" type="number" value="100" step="1" min="0"><span class="unit">MW</span></div></div>
+                <div class="field"><label for="contractCapacityMW">설비용량</label><div class="iw"><input id="contractCapacityMW" type="number" value="40" step="1" min="0"><span class="unit">MW</span></div></div>
                 <div class="field calc"><label for="bidPriceDisplay" id="bidPriceDisplayLabel">적정 수령단가</label><div class="iw"><input id="bidPriceDisplay" disabled><span class="unit">원/kWh</span></div></div>
                 <div class="field span-2"><label for="turbineMaker">터빈</label><div class="iw"><select id="turbineMaker"></select></div></div>
                 <div class="field calc"><label for="turbineCountDisplay">터빈 대수</label><div class="iw"><input id="turbineCountDisplay" disabled><span class="unit">기</span></div></div>
                 <div class="field calc"><label for="turbineFactorDisplay">출력곡선 × 가동률 × BOP</label><div class="iw"><input id="turbineFactorDisplay" disabled></div></div>
-                <div class="field"><label for="siteBaseRatePct">부지 총이용률 (기준 터빈)</label><div class="iw"><input id="siteBaseRatePct" type="number" value="40" step="0.1"><span class="unit">%</span></div></div>
+                <div class="field"><label for="siteBaseRatePct">부지 총이용률 (기준 터빈)</label><div class="iw"><input id="siteBaseRatePct" type="number" value="26" step="0.1"><span class="unit">%</span></div></div>
                 <div class="field"><label for="powerCurveWarrantyPct">출력곡선 보증 이행률<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="powerCurveWarrantyPct" type="number" value="100" step="0.5" min="0" max="120"><span class="unit">%</span></div></div>
                 <div class="field"><label for="bopAvailPct">BOP·계통 가동률 보증<span class="wg wg-e">EPC·O&amp;M</span></label><div class="iw"><input id="bopAvailPct" type="number" value="99" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
-                <div class="field"><label for="wakeLossPct">후류(웨이크) 손실<span class="wg wg-d">개발사</span></label><div class="iw"><input id="wakeLossPct" type="number" value="8" step="0.5" min="0" max="50"><span class="unit">%</span></div></div>
+                <div class="field"><label for="wakeLossPct">후류(웨이크) 손실<span class="wg wg-d">개발사</span></label><div class="iw"><input id="wakeLossPct" type="number" value="5" step="0.5" min="0" max="50"><span class="unit">%</span></div></div>
                 <div class="field"><label for="electricalLossPct">전기·송전 손실<span class="wg wg-e">EPC</span></label><div class="iw"><input id="electricalLossPct" type="number" value="3" step="0.5" min="0" max="30"><span class="unit">%</span></div></div>
                 <div class="field"><label for="curtailmentPct">출력제어·계통 제약</label><div class="iw"><input id="curtailmentPct" type="number" value="2" step="0.5" min="0" max="100"><span class="unit">발전량 %</span></div></div>
-                <div class="field"><label for="year1RatePct">1년차 순이용률 (터빈 반영)</label><div class="iw"><input id="year1RatePct" type="number" value="34.03" step="0.01"><span class="unit">%</span></div></div>
-                <div class="field"><label for="degradationPct">연간 성능저하</label><div class="iw"><input id="degradationPct" type="number" value="0.2" step="0.05"><span class="unit">%/년</span></div></div>
+                <div class="field"><label for="year1RatePct">1년차 순이용률 (터빈 반영)</label><div class="iw"><input id="year1RatePct" type="number" value="23.06" step="0.01"><span class="unit">%</span></div></div>
+                <div class="field"><label for="degradationPct">연간 성능저하</label><div class="iw"><input id="degradationPct" type="number" value="0.3" step="0.05"><span class="unit">%/년</span></div></div>
               </div>
               <div class="module-link">
                 <span class="module-state" id="turbineLinkState">—</span>
@@ -537,7 +537,7 @@
                 <span>발전량 구성 — 보증 주체별</span>
                 <button type="button" class="link-btn" data-goto-tab="tab-warranty">보증 미달·LD 분석 →</button>
               </div>
-              <p class="hint" style="margin:0 0 6px;">해상풍력은 보통 <strong>터빈 공급·유지보수 계약(TSA/LTSA)</strong>이 출력곡선과 기술적 가동률을, <strong>EPC(BOP) 계약</strong>이 전기·송전 손실과 BOP·계통 가동률(준공 후 O&amp;M 포함)을 보증합니다. 후류 손실과 풍황은 개발사(사업주)가 집니다.</p>
+              <p class="hint" style="margin:0 0 6px;">육상풍력은 보통 <strong>터빈 공급·유지보수 계약(TSA/LTSA)</strong>이 출력곡선과 기술적 가동률을, <strong>EPC(BOP) 계약</strong>이 전기·송전 손실과 BOP·계통 가동률(준공 후 O&amp;M 포함)을 보증합니다. 후류 손실과 풍황은 개발사(사업주)가 집니다.</p>
               <table class="kv"><tbody id="genBuildupBody"></tbody></table>
               <div class="subhead subhead-row">
                 <span>운영연차별 순이용률 (직접 수정 가능)</span>
@@ -554,14 +554,12 @@
                   <option value="ppa">기업PPA (직접전력거래)</option>
                 </select></div></div>
                 <div class="field" id="tenderTrackField"><label for="tenderTrack">입찰 트랙</label><div class="iw"><select id="tenderTrack">
-                  <option value="public" selected>공공주도형</option>
-                  <option value="general">일반형</option>
+                  <option value="general" selected>육상풍력 (일반)</option>
                 </select></div></div>
-                <div class="field" id="foundationField"><label for="foundationType">하부구조</label><div class="iw"><select id="foundationType">
-                  <option value="fixed" selected>고정식 (상한 171.229)</option>
-                  <option value="floating">부유식 (상한 175.100)</option>
+                <div class="field" id="foundationField" style="display:none;"><label for="foundationType">구분</label><div class="iw"><select id="foundationType">
+                  <option value="fixed" selected>육상</option>
                 </select></div></div>
-                <div class="field" id="priceCapField"><label for="priceCapPerKWh">입찰 상한가격 (SMP+1REC)</label><div class="iw"><input id="priceCapPerKWh" type="number" value="171.229" step="0.001"><span class="unit">원/kWh</span></div></div>
+                <div class="field" id="priceCapField"><label for="priceCapPerKWh">입찰 상한가격 (SMP+1REC)</label><div class="iw"><input id="priceCapPerKWh" type="number" value="163.846" step="0.001"><span class="unit">원/kWh</span></div></div>
                 <div class="field"><label for="contractYears" id="contractYearsLabel">고정가격 계약기간</label><div class="iw"><input id="contractYears" type="number" value="20" step="1" min="0" max="30"><span class="unit">년 (COD부터)</span></div></div>
                 <div class="field" id="ppaEscalationField" style="display:none;"><label for="ppaEscalationPct">PPA 단가 상승률</label><div class="iw"><input id="ppaEscalationPct" type="number" value="0" step="0.1"><span class="unit">%/년</span></div></div>
               </div>
@@ -569,26 +567,24 @@
               <p class="hint" id="salesTermHint"></p>
 
               <div id="recWeightWrap">
-                <div class="subhead">REC 가중치 · 우대가격 (계약단가 환산)</div>
+                <div class="subhead">REC 가중치 (계약단가 환산)</div>
                 <div class="field-grid" style="margin-top:0;">
                   <div class="field span-2"><label for="weightMode">가중치 산정</label><div class="iw"><select id="weightMode">
-                    <option value="calc" selected>연계거리 · 수심으로 산정</option>
-                    <option value="manual">직접 입력</option>
+                    <option value="manual" selected>육상풍력 가중치 (기본 1.2, 직접 수정 가능)</option>
                     <option value="none">RPS 개편 — 가중치 없음 (1.0)</option>
                   </select></div></div>
-                  <div class="field" id="connectDistanceField"><label for="connectDistanceKm">연계거리</label><div class="iw"><input id="connectDistanceKm" type="number" value="15" step="0.5" min="0"><span class="unit">km</span></div></div>
-                  <div class="field" id="waterDepthField"><label for="waterDepthM">평균 수심</label><div class="iw"><input id="waterDepthM" type="number" value="25" step="1" min="0"><span class="unit">m</span></div></div>
-                  <div class="field" id="weightManualField" style="display:none;"><label for="weightManual">가중치 (직접)</label><div class="iw"><input id="weightManual" type="number" value="2.9" step="0.1" min="0"></div></div>
+                  <div class="field" id="connectDistanceField" style="display:none;"><label for="connectDistanceKm">연계거리</label><div class="iw"><input id="connectDistanceKm" type="number" value="0" step="0.5" min="0"><span class="unit">km</span></div></div>
+                  <div class="field" id="waterDepthField" style="display:none;"><label for="waterDepthM">평균 수심</label><div class="iw"><input id="waterDepthM" type="number" value="0" step="1" min="0"><span class="unit">m</span></div></div>
+                  <div class="field" id="weightManualField"><label for="weightManual">REC 가중치</label><div class="iw"><input id="weightManual" type="number" value="1.2" step="0.1" min="0"></div></div>
                   <div class="field calc"><label for="recWeightDisplay">적용 REC 가중치</label><div class="iw"><input id="recWeightDisplay" disabled></div></div>
                   <div class="field"><label for="smpRefPrice">기준 SMP (공고)</label><div class="iw"><input id="smpRefPrice" type="number" value="86.35" step="0.01"><span class="unit">원/kWh</span></div></div>
-                  <div class="field span-2" id="prefModeField"><label for="prefMode">공공주도형 우대가격</label><div class="iw"><select id="prefMode">
-                    <option value="base" selected>기본 (공급망·안보 기여) 3.66원</option>
-                    <option value="rnd">기본 + 정부 R&amp;D 실증 터빈 +27.84원</option>
-                    <option value="none">없음</option>
+                  <div class="field span-2" id="prefModeField" style="display:none;"><label for="prefMode">우대가격</label><div class="iw"><select id="prefMode">
+                    <option value="none" selected>없음 (육상풍력)</option>
+                    <option value="base">3.66원 (공공주도형 — 해상 전용)</option>
                   </select></div></div>
                   <div class="field calc span-2"><label for="preferentialDisplay">적용 우대가격</label><div class="iw"><input id="preferentialDisplay" disabled><span class="unit">원/kWh</span></div></div>
                 </div>
-                <p class="hint">계약단가(수령단가) ≈ 기준 SMP + (입찰가격 − 기준 SMP) × REC 가중치 + 우대가격 — "SMP+1REC×가중치" 가격에 공공주도형 우대가격을 더하는 공고 방식의 근사입니다. 가중치: 연계거리·수심 각각 구간별(거리 ≤5 · ≤10 · ≤15 · 초과 km, 수심 ≤20 · ≤25 · ≤30 · 초과 m) 2.5 · 2.9 · 3.3 · 3.7을 받아 둘을 더하고 2.5를 뺍니다(2021년 가중치 고시 근사 — 경계·상한은 고시 확인). <strong>RPS 개편안이 시행되면 REC 가중치가 없어지고 정부 계약단가로 바뀌어</strong> 이 환산이 달라집니다. 공공주도형 요건: 공공기관·지방공기업 합동출자 50% 초과 또는 단독 34% 이상(정부 R&amp;D 실증 터빈 사용 시 20% · 10% 이상).</p>
+                <p class="hint">계약단가(수령단가) ≈ 기준 SMP + (입찰가격 − 기준 SMP) × REC 가중치 — "SMP+1REC×가중치" 공고 방식의 근사입니다. <strong>육상풍력 REC 가중치는 1.2</strong>이고(연계거리·수심 가중치는 해상 전용), 공공주도형 우대가격이 없습니다. <strong>RPS 개편안이 시행되면 REC 가중치가 없어지고 정부 계약단가로 바뀌어</strong> 이 환산이 달라집니다.</p>
               </div>
 
               <div class="subhead">계약 종료 후 (잔여 운영기간)</div>
@@ -633,14 +629,14 @@
               <div id="capexUnitPriceWrap">
                 <div class="field-grid">
                   <div class="field calc"><label for="turbinePriceDisplay">터빈 단가 (선택 터빈)</label><div class="iw"><input id="turbinePriceDisplay" disabled><span class="unit">억원/MW</span></div></div>
-                  <div class="field"><label for="bosUnitPrice">BOP·시공 단가 (터빈 제외)</label><div class="iw"><input id="bosUnitPrice" type="number" value="48" step="0.5"><span class="unit">억원/MW</span></div></div>
-                  <div class="field"><label for="epcUnitPrice">EPC 단가 (일괄계약)</label><div class="iw"><input id="epcUnitPrice" type="number" value="72" step="0.5"><span class="unit">억원/MW</span></div></div>
+                  <div class="field"><label for="bosUnitPrice">BOP·시공 단가 (터빈 제외)</label><div class="iw"><input id="bosUnitPrice" type="number" value="10" step="0.5"><span class="unit">억원/MW</span></div></div>
+                  <div class="field"><label for="epcUnitPrice">EPC 단가 (일괄계약)</label><div class="iw"><input id="epcUnitPrice" type="number" value="21.5" step="0.5"><span class="unit">억원/MW</span></div></div>
                   <div class="field calc"><label for="epcUnitPriceTotal">= ① 공사비</label><div class="iw"><input id="epcUnitPriceTotal" disabled><span class="unit">억원</span></div></div>
                 </div>
-                <p class="hint" style="margin:0;">EPC 단가 = 터빈 단가 + BOP·시공 단가(하부구조물 · 내부망/외부망 해저케이블 · 해상변전소 · 해상 설치 · 육상 계통연계). ① 공사비 = EPC 단가(억원/MW) × 설비용량(MW). 터빈을 바꾸면 EPC 단가가 따라가고, 직접 고치면 "사용자 조정"이 됩니다. 국내 보도 기준 총사업비는 MW당 약 70~90억(한림 약 70억 · 전남1 약 90억)이고, 터빈·BOP 단가는 <strong>예시값</strong>입니다.</p>
+                <p class="hint" style="margin:0;">EPC 단가 = 터빈 단가 + BOP·시공 단가(토목 — 진입로·기초·부지 조성 · 단지 내 전기·변전 · 송전선로 계통연계 · 운송·설치 · 설계·감리). ① 공사비 = EPC 단가(억원/MW) × 설비용량(MW). 터빈을 바꾸면 EPC 단가가 따라가고, 직접 고치면 "사용자 조정"이 됩니다. 에너지경제연구원 2024년 조사 기준 육상풍력 40MW 설비비는 <strong>2,910천원/kW(MW당 약 29.1억)</strong>이고 그중 주기기가 1,126천원/kW입니다 — 터빈·BOP 단가는 그 배분에 맞춘 <strong>예시값</strong>입니다.</p>
               </div>
               <div id="capexLumpSumWrap" class="field-grid one" style="display:none;">
-                <div class="field"><label for="capexLumpSum">EPC 총액 (수기 입력)</label><div class="iw"><input id="capexLumpSum" type="number" value="7200" step="10"><span class="unit">억원</span></div></div>
+                <div class="field"><label for="capexLumpSum">EPC 총액 (수기 입력)</label><div class="iw"><input id="capexLumpSum" type="number" value="860" step="10"><span class="unit">억원</span></div></div>
                 <p class="hint" style="margin:0;">① 공사비만 이 값으로 대체합니다 — ② 개발·간접비와 ③ 부대비용은 그대로 더해집니다.</p>
               </div>
 
@@ -669,10 +665,10 @@
                 <div class="field"><label for="variableOMPerMWh">변동 O&amp;M</label><div class="iw"><input id="variableOMPerMWh" type="number" value="0" step="10"><span class="unit">원/MWh</span></div></div>
                 <div class="field"><label for="powerTradingFeePerKWh">전력거래수수료</label><div class="iw"><input id="powerTradingFeePerKWh" type="number" value="0.1193" step="0.001"><span class="unit">원/kWh</span></div></div>
                 <div class="field"><label for="insurancePct">연간 운영보험료율</label><div class="iw"><input id="insurancePct" type="number" value="0.4" step="0.01"><span class="unit">총투자비%</span></div></div>
-                <div class="field"><label for="communityRevenuePct">어업인·지역 상생</label><div class="iw"><input id="communityRevenuePct" type="number" value="1.0" step="0.1"><span class="unit">매출%</span></div></div>
+                <div class="field"><label for="communityRevenuePct">주민·지역 상생 (바람소득)</label><div class="iw"><input id="communityRevenuePct" type="number" value="1.0" step="0.1"><span class="unit">매출%</span></div></div>
                 <div class="field span-2"><label for="opexEscalationPct">OPEX 물가상승률</label><div class="iw"><input id="opexEscalationPct" type="number" value="2" step="0.1"><span class="unit">%/년</span></div></div>
               </div>
-              <p class="hint">전력거래수수료는 실제 판매 발전량에 비례합니다. 해상풍력 O&amp;M은 터빈 장기유지보수(LTSA)·선박·하부구조물 점검이 대부분이라 고정비 항목으로 두었고, 변동 O&amp;M은 기본 0입니다. 어업인·지역 상생은 매출 비례 예시값입니다.</p>
+              <p class="hint">전력거래수수료는 실제 판매 발전량에 비례합니다. 육상풍력 O&amp;M은 터빈 유지보수(LTSA)·BOP 점검·토지 임대료가 대부분이라 고정비 항목으로 두었고, 변동 O&amp;M은 기본 0입니다. 고정비 합계는 에너지경제연구원 전제(운영유지비 50,846원/kW·년 + 토지임대 5,239원/kW·년, 40MW 기준 연 약 22.4억)에 맞췄습니다. 주민·지역 상생(바람소득)은 매출 비례 예시값입니다.</p>
               <div class="subhead">하자보수 보증 — 보증기간 중 SPC가 부담하지 않는 고정 O&amp;M</div>
               <div class="field-grid" style="margin-top:0;">
                 <div class="field"><label for="defectTurbineYears">터빈 보증기간<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="defectTurbineYears" type="number" value="5" step="1" min="0" max="30"><span class="unit">년</span></div></div>
@@ -817,14 +813,14 @@
         <div class="card scale"><div class="k">당사 누적 출자금</div><div class="v" id="kpiEquityInjected">—</div><div class="s">배당+최종회수 <span id="kpiEquityReturn">—</span></div></div>
       </div>
 
-      <aside class="notice" aria-label="해상풍력 모델링 한계">
-        <strong class="t">⚠ 해상풍력 초안 — 이 결과에 항상 적용되는 한계</strong>
+      <aside class="notice" aria-label="육상풍력 모델링 한계">
+        <strong class="t">⚠ 육상풍력 초안 — 이 결과에 항상 적용되는 한계</strong>
         <ul>
-          <li>ESS·태양광 프로토타입의 재무 엔진에 발전매출·터빈만 해상풍력으로 바꾼 <strong>1차 초안</strong> — 해상 시공·해저케이블 리스크, 해체 충당금 미반영</li>
-          <li>이용률은 부지 총이용률 × 출력곡선·가동률·손실 보정의 연 단위 근사 — 풍황 계측·후류 해석 <strong>미반영</strong></li>
-          <li>계약단가는 "SMP+1REC×가중치 + 우대가격" 근사 — <strong>RPS 개편 시 가중치 폐지</strong>로 달라짐</li>
-          <li>선정평가 비가격 세부 배점은 2025년 상반기 보도 기준 — 2026년 공고문 확인 필요</li>
-          <li>CAPEX·OPEX·터빈 단가는 100MW 고정식 <strong>예시값</strong></li>
+          <li>해상풍력 초안을 육상 조건(REC 1.2 · 육상 터빈 · 40MW CAPEX/OPEX · 육상 상한가)으로 바꾼 <strong>1차 초안</strong> — 산지 인허가·진입로·민원 리스크, 해체 충당금 미반영</li>
+          <li>이용률은 부지 총이용률 × 출력곡선·가동률·손실 보정의 연 단위 근사 — 산지 풍황 계측·후류 해석 <strong>미반영</strong></li>
+          <li>계약단가는 "SMP+1REC×1.2" 근사 — <strong>RPS 개편 시 가중치 폐지</strong>로 달라짐</li>
+          <li>상한가 163.846원은 2025년 하반기 공고 — <strong>2026년 하반기 육상 공고 확인 필요</strong></li>
+          <li>CAPEX·OPEX는 에너지경제연구원 2024년 40MW 조사값 기반 <strong>예시값</strong>, 터빈 단가·가동률도 예시</li>
         </ul>
         <p style="margin:6px 0 0;font-size:12.5px;"><button type="button" class="link-btn" data-goto-tab="tab-caveats">전체 18개 항목 상세 보기 →</button></p>
       </aside>
@@ -892,7 +888,7 @@
 
             <div class="subtotal strong"><span>출력곡선 보정 기준</span><span></span></div>
             <div class="calc-grid" style="margin-top:0;">
-              <div class="field"><label for="refSpecificPower">기준 비출력</label><div class="iw"><input id="refSpecificPower" type="number" value="320" step="5"><span class="unit">W/m²</span></div></div>
+              <div class="field"><label for="refSpecificPower">기준 비출력</label><div class="iw"><input id="refSpecificPower" type="number" value="240" step="5"><span class="unit">W/m²</span></div></div>
               <div class="field"><label for="powerCurveExp">보정 지수</label><div class="iw"><input id="powerCurveExp" type="number" value="0.25" step="0.05" min="0"></div></div>
             </div>
             <p class="hint">출력곡선 보정 = (기준 비출력 ÷ 터빈 비출력)<sup>지수</sup>, 비출력 = 정격출력 ÷ 로터 소풍면적. 기준 320W/m²(SG 14-236급) · 지수 0.25는 근사 가정이며, 실제로는 단지 풍황 자료와 터빈별 출력곡선·후류 해석으로 산정해야 합니다. 국내 실측 참고: 한림(두산 5.56MW) 이용률 27~29% vs 전남1(SGRE 9.6MW급) 30~38% — 단지·풍황 차이도 섞여 있습니다.</p>
@@ -1045,24 +1041,24 @@
       <!-- 선정평가 -->
       <div class="tabpanel" role="tabpanel" id="panel-price" aria-labelledby="tab-price" hidden>
         <section class="panel">
-          <h2>선정평가 — 해상풍력 고정가격계약 경쟁입찰</h2>
+          <h2>선정평가 — 육상풍력 고정가격계약 경쟁입찰</h2>
           <div class="panel-body">
             <p class="callout-sm" id="priceTabNote"></p>
 
             <div class="subtotal strong"><span>1단계 사업내역서 (비가격 50점) — 예상 점수</span><span></span></div>
             <div class="table-wrap">
               <table class="module-table carbon-rule">
-                <thead><tr><th class="mk-name">평가지표</th><th>배점 (<span id="trackLabel">공공주도형</span>)</th><th>예상 점수</th></tr></thead>
+                <thead><tr><th class="mk-name">평가지표</th><th>배점 (<span id="trackLabel">육상풍력</span>)</th><th>예상 점수</th></tr></thead>
                 <tbody>
-                  <tr><th class="mk-name">안보<span class="sub">국가자원안보 · 정보보안 · 사이버·물리보안</span></th><td id="maxSecurity">—</td><td><input id="scoreSecurity" type="number" value="7" step="0.5" min="0" aria-label="안보 예상 점수"></td></tr>
-                  <tr><th class="mk-name">산업·경제효과</th><td id="maxIndustry">—</td><td><input id="scoreIndustry" type="number" value="19" step="0.5" min="0" aria-label="산업·경제효과 예상 점수"></td></tr>
-                  <tr><th class="mk-name">사업진행도</th><td id="maxProgress">—</td><td><input id="scoreProgress" type="number" value="2" step="0.5" min="0" aria-label="사업진행도 예상 점수"></td></tr>
-                  <tr><th class="mk-name">기타<span class="sub">공급망 세부 · 주민수용성 · 계통 · 거점·유지보수 등</span></th><td id="maxOther">—</td><td><input id="scoreOther" type="number" value="13" step="0.5" min="0" aria-label="기타 비가격 예상 점수"></td></tr>
+                  <tr><th class="mk-name">안보<span class="sub">국가자원안보 · 정보보안 · 사이버·물리보안</span></th><td id="maxSecurity">—</td><td><input id="scoreSecurity" type="number" value="4" step="0.5" min="0" aria-label="안보 예상 점수"></td></tr>
+                  <tr><th class="mk-name">산업·경제효과</th><td id="maxIndustry">—</td><td><input id="scoreIndustry" type="number" value="14" step="0.5" min="0" aria-label="산업·경제효과 예상 점수"></td></tr>
+                  <tr><th class="mk-name">사업진행도</th><td id="maxProgress">—</td><td><input id="scoreProgress" type="number" value="3" step="0.5" min="0" aria-label="사업진행도 예상 점수"></td></tr>
+                  <tr><th class="mk-name">기타<span class="sub">공급망 세부 · 주민수용성 · 계통 · 거점·유지보수 등</span></th><td id="maxOther">—</td><td><input id="scoreOther" type="number" value="10" step="0.5" min="0" aria-label="기타 비가격 예상 점수"></td></tr>
                 </tbody>
               </table>
             </div>
             <div class="warn" role="status" id="nonPriceWarn"></div>
-            <p class="hint">배점은 2025년 상반기 풍력 공고 보도 기준입니다 — 안보 공공주도형 8 · 일반형 6(국가자원안보 5 · 3, 정보보안 2, 사이버·물리보안 1), 산업·경제효과 22 · 26, 사업진행도 2 · 4. 공개 보도에서 확인하지 못한 나머지(공급망 세부 · 주민수용성 · 계통 · 거점·유지보수 등)는 50점에 맞춰 "기타"로 묶었습니다. 2026년 상반기 공고(2026-03-30)는 1단계 사업내역서 50점과 2단계 입찰가격 50점을 합산해 최종 선정합니다(1차 선정용량 기준 삭제). 예상 점수는 조합 버튼이 채우는 <strong>가정값</strong>입니다.</p>
+            <p class="hint">배점 틀(비가격 50 · 가격 50, 2단계 평가)은 풍력 공고 보도 기준입니다 — 육상풍력은 <strong>2024년부터 비가격을 먼저 평가하고 산업·경제효과를 16 → 26점으로 확대</strong>했습니다(일렉트릭파워 2024-12-19). 안보 6 · 산업·경제 26 · 사업진행도 4 · 기타(주민수용성·계통 등) 14로 두었고, 2025년 하반기 선정 사업은 모두 주민참여형 바람소득 모델입니다. 세부 배점은 공고문 확인 필요.</p>
 
             <div class="subtotal strong"><span>2단계 입찰가격 (50점)</span><span></span></div>
             <div class="calc-grid" style="margin-top:0;">
@@ -1098,7 +1094,7 @@
                 <tr><th>입찰가격 1원/kWh 인하 <span class="sub">= 배점 ÷ 상한가격</span></th><td id="outPerWon">—</td></tr>
                 <tr><th>입찰가격 점수 1점 올리려면 <span class="sub">= 상한가격 ÷ 배점</span></th><td id="outPerPoint">—</td></tr>
                 <tr><th>수령단가 1원/kWh 절감 <span class="sub" id="outWeightSub">= 입찰가격 1 ÷ 가중치 원 인하</span></th><td id="outWeightValue">—</td></tr>
-                <tr class="strong"><th>정부 R&amp;D 실증 터빈 우대 27.84원 <span class="sub" id="outRndSub">= 입찰가격 인하폭 → 점수</span></th><td id="outRndValue">—</td></tr>
+                <tr class="strong" style="display:none;"><th>정부 R&amp;D 실증 터빈 우대 27.84원 <span class="sub" id="outRndSub">= 입찰가격 인하폭 → 점수</span></th><td id="outRndValue">—</td></tr>
               </tbody>
             </table>
 
@@ -1116,9 +1112,9 @@
             <!-- 입찰 사례 -->
       <div class="tabpanel" role="tabpanel" id="panel-cases" aria-labelledby="tab-cases" hidden>
         <section class="panel">
-          <h2>입찰 사례로 사업성 추정 — 해상풍력 경쟁입찰 선정 단지</h2>
+          <h2>입찰 사례로 사업성 추정 — 육상풍력 경쟁입찰 선정 단지</h2>
           <div class="panel-body">
-            <p class="callout-sm"><strong>사업별 낙찰가는 공개되지 않습니다.</strong> 그래서 공개된 사실(차수·트랙·단지·용량·터빈·그 차수 상한가·보도된 사업비·EPC 금액·발전량·이안거리·수심)에 <strong>"상한가 대비 인하율" 가정</strong>을 더해, 그 조건이면 사업성이 어느 정도였을지를 같은 재무 엔진으로 추정합니다. 낙찰자는 상한가 이하로 썼으므로 <strong>인하율 0%(상한가 입찰)가 그 사업이 받을 수 있었던 최대 사업성</strong>입니다. 금융·세무·공사 일정·손실률·성능저하는 현재 페이지 조건을 쓰고, 사업비 외 CAPEX·OPEX 항목은 사례 용량에 비례해 환산합니다. 사업자·터빈·EPC·공급사·현황은 아래 "사례 상세"에 정리했습니다.</p>
+            <p class="callout-sm"><strong>사업별 낙찰가는 공개되지 않습니다.</strong> 그래서 공개된 사실(회차·사업명·용량·그 회차 상한가)에 <strong>"상한가 대비 인하율" 가정</strong>을 더해 같은 재무 엔진으로 사업성을 추정합니다. 인하율 0%(상한가 입찰)가 그 사업이 받을 수 있었던 최대 사업성입니다. 육상풍력 회차 — <strong>2023</strong> 공고 400MW · 입찰 379.4MW(11개) · 선정 151.8MW(4개) · 상한 167.778원(비공개, 가격 60점) / <strong>2024</strong> 공고 300MW · 입찰·선정 199.4MW(6개 전원) · 상한 165.14원(공개, 비가격 먼저 · 산업·경제 26점) / <strong>2025 하반기</strong> 공고 230MW · 입찰 176.28MW(4개) · 선정 156.28MW(3개) · 상한 163.846원 · 주민참여형 바람소득 — <strong>3년 연속 공고 물량 미달</strong>(업계는 상한가가 낮다고 지적). 사업비·이용률·터빈은 대부분 공개되지 않아 비어 있는 칸은 현재 페이지 가정을 쓰고, 금융·일정·손실·성능저하도 현재 페이지 조건을 씁니다.</p>
             <div class="calc-grid" style="margin-top:0;">
               <div class="field"><label for="caseDiscountAll">모든 사례 인하율</label><div class="iw"><input id="caseDiscountAll" type="number" value="3" step="0.5" min="0"><span class="unit">% (상한가 대비)</span></div></div>
             </div>
@@ -1141,7 +1137,7 @@
                 <tbody id="caseResultBody"></tbody>
               </table>
             </div>
-            <p class="hint">총사업비: 보도된 MW당 사업비를 현재 페이지의 사업비 구성(① 공사비 비중)으로 나눠 넣고, 총사업비가 없고 EPC·도급 금액만 있으면 그 금액을 ① 공사비로 보고 역산합니다("총사업비(계산)" 열로 확인). 순이용률: 보도 이용률이 없으면 연간 발전량 ÷ (용량 × 8,760h)로 계산합니다(보도 발전량은 보통 손실 반영 순발전량이라, 페이지의 출력제어 2%가 이중으로 빠질 수 있음). REC 가중치: 이안거리·수심이 모두 보도된 사례만 구간 산정으로 추정(실제 연계거리와 다를 수 있음). 부유식은 고정식보다 사업비가 크게 높아, 사업비를 넣지 않으면 사업성이 과대평가됩니다. "목표 유지 최대 인하율"은 A. 산정 기준의 목표를 지키면서 상한가 대비 몇 %까지 깎을 수 있었는지(가격 경쟁 여력)입니다. 새 사례는 코드의 <code>CASE_LIST</code>에 항목을 더하면 됩니다.</p>
+            <p class="hint">총사업비: 보도된 MW당 사업비를 현재 페이지의 사업비 구성(① 공사비 비중)으로 나눠 넣고, 총사업비가 없고 EPC·도급 금액만 있으면 그 금액을 ① 공사비로 보고 역산합니다("총사업비(계산)" 열로 확인). 순이용률: 보도 이용률이 없으면 연간 발전량 ÷ (용량 × 8,760h)로 계산합니다(보도 발전량은 보통 손실 반영 순발전량이라, 페이지의 출력제어 2%가 이중으로 빠질 수 있음). REC 가중치: 육상풍력은 모두 1.2라 비워 두면 페이지 값을 씁니다. 사업비를 넣지 않으면 모든 사례가 현재 페이지 사업비(MW당)를 쓰므로, 산지 토목·진입로가 큰 단지는 사업성이 과대평가될 수 있습니다. "목표 유지 최대 인하율"은 A. 산정 기준의 목표를 지키면서 상한가 대비 몇 %까지 깎을 수 있었는지(가격 경쟁 여력)입니다. 새 사례는 코드의 <code>CASE_LIST</code>에 항목을 더하면 됩니다.</p>
             <div class="subtotal strong"><span>사례 상세 — 사업자 · 터빈 · EPC · 공급사 · 사업비 · 발전량 · 입지 · 현황 · 출처</span><span></span></div>
             <ul class="todo-list" id="caseSourceList"></ul>
           </div>
@@ -1154,7 +1150,7 @@
         <section class="panel">
           <h2>보증 미달 · 지체상금(LD) — 터빈사 / EPC사 구분</h2>
           <div class="panel-body">
-            <p class="callout-sm"><strong>해상풍력은 보증이 두 계약으로 나뉩니다. </strong><span class="wg wg-t">터빈사</span> TSA/LTSA — 출력곡선(파워커브) 보증과 기술적 가동률 보증, 미달 시 손실 발전량을 기준으로 LD를 물고 보통 <strong>연간 상한(계약금액의 %)</strong>이 붙습니다. <span class="wg wg-e">EPC·O&amp;M</span> BOP 계약 — 전기·송전 손실 보증과 BOP·계통 가동률(해상변전소·해저케이블) 보증, 준공지연·하자에 대한 LD가 별도입니다. 아래에서 실적이 보증에 못 미쳤을 때의 <strong>귀책별 손실과 LD 보전</strong>을 봅니다.</p>
+            <p class="callout-sm"><strong>육상풍력은 보증이 두 계약으로 나뉩니다. </strong><span class="wg wg-t">터빈사</span> TSA/LTSA — 출력곡선(파워커브) 보증과 기술적 가동률 보증, 미달 시 손실 발전량을 기준으로 LD를 물고 보통 <strong>연간 상한(계약금액의 %)</strong>이 붙습니다. <span class="wg wg-e">EPC·O&amp;M</span> BOP 계약 — 전기·송전 손실 보증과 BOP·계통 가동률(단지 변전설비·송전선로) 보증, 준공지연·하자에 대한 LD가 별도입니다. 아래에서 실적이 보증에 못 미쳤을 때의 <strong>귀책별 손실과 LD 보전</strong>을 봅니다.</p>
             <div class="subtotal strong"><span>실적 가정 (보증값과 비교)</span><span class="muted" id="warrantyBaseNote"></span></div>
             <div class="calc-grid" style="margin-top:0;">
               <div class="field"><label for="actTurbineAvailPct">기술적 가동률 실적<span class="wg wg-t">터빈사</span></label><div class="iw"><input id="actTurbineAvailPct" type="number" value="94" step="0.5" min="0" max="100"><span class="unit">%</span></div></div>
@@ -1203,7 +1199,7 @@
         <section class="panel">
           <h2>KCH 개발수수료 — 생애주기 누적 총 수취액</h2>
           <div class="panel-body">
-          <p class="hint-block">해상풍력 프로젝트 자체의 발전매출과는 별개로, KCH가 개발자(Developer)로서 SPC로부터 받는 4개 수수료(① 부지 임대료 ② 사전개발비 ③ 공동접속료 ④ 운영수익)를 억원 단위 총액으로 입력받아 생애주기 누적 총 수취액을 계산합니다.</p>
+          <p class="hint-block">육상풍력 프로젝트 자체의 발전매출과는 별개로, KCH가 개발자(Developer)로서 SPC로부터 받는 4개 수수료(① 부지 임대료 ② 사전개발비 ③ 공동접속료 ④ 운영수익)를 억원 단위 총액으로 입력받아 생애주기 누적 총 수취액을 계산합니다.</p>
           <details class="help">
             <summary>산정 방식 설명</summary>
             <div>기본은 <strong>"총액 직접 입력"</strong> 모드 — 4개 금액을 원하는 값 그대로 입력하면 운영기간·연간 상승률을 반영한 생애주기 누적 총 수취액이 계산되고, ① 버튼 한 번으로 이 총액을 A. 산정 기준의 "목표 당사 이익"에 반영해 적정 입찰단가를 다시 계산하거나, ② "선정평가" 탭의 입찰가격에 이 총액을 <strong>이 프로젝트의 생애주기 총 발전량 기준 원/kWh로 자동 환산해 실시간으로 더해서</strong> 반영합니다(②는 버튼 없이 즉시 갱신 — 단가산정 자체의 P-IRR·NPV·당사이익에는 영향 없음). 예전 방식("목표 IRR 역산" — 기준총액에 공통 가격배율을 곱해 목표 IRR을 만족하는 배율을 이분탐색으로 찾는 <code>ESS_단가산정모델.xlsx</code> 로직)은 레거시 옵션으로 남겨두었습니다. 설비용량은 C. 발전매출의 설비용량에 연동되고, 사업기간은 입찰가격 계산부와 별도로 여기서 입력합니다.</div>
@@ -1301,24 +1297,24 @@
           <div id="modelCaveatsFull">
             <p class="callout-sm"><strong>결과 수치에 영향을 주지만 아직 확정되지 않은 가정입니다. </strong>KCH 내부 기준이나 원문 대조로 확정되기 전까지 이 화면의 모든 결과는 사전검토용 지시값입니다.</p>
             <ul class="todo-list">
-              <li><strong>초안 범위</strong> — ESS·태양광 적정 입찰가격 프로토타입의 재무 엔진(총투자비 반복수렴·원리금균등·누진세+이월결손금·DSCR 게이트 배당·KCH 개발수수료)을 그대로 쓰고 <strong>발전매출·터빈·CAPEX·OPEX·선정평가만 해상풍력으로 바꾼 1차 초안</strong>. 해상 시공·기상 리스크, 해저케이블 고장, 대체계약, 해체·원상복구 충당금, 해역 점사용료 체계는 미반영</li>
-              <li>C. 발전매출 — <strong>계약단가</strong>: "SMP+1REC×가중치" 가격에 공공주도형 우대가격을 더하는 공고 방식을 기준 SMP + (입찰가격 − 기준 SMP) × 가중치 + 우대가격으로 근사. 수익고정형 계약의 실제 SMP·REC 정산 방식 확인 필요</li>
-              <li>C. 발전매출 — <strong>REC 가중치</strong>: 연계거리·수심 복합가중치(각 2.5 · 2.9 · 3.3 · 3.7, 합산 − 2.5)는 2021년 고시 근사로 경계·상한 확인 필요. RPS 개편안(2026-05 상임위 의결)이 시행되면 REC 가중치가 폐지되고 정부 계약시장으로 바뀌어 환산식이 달라짐 — "가중치 없음(1.0)"으로 민감도 확인 권장</li>
-              <li>입찰 기준 — 2026년 상반기 풍력 공고(2026-03-30): 고정식 상한 171.229 · 부유식 175.100원/kWh, 기준 SMP 86.35원/kWh, 물량 공공주도형 400 · 일반 고정식 1,000 · 부유식 400MW, 1단계 사업내역서 50점 + 2단계 입찰가격 50점 합산. <strong>비가격 세부 배점은 2025년 상반기 보도 기준이고 가격 점수 산식은 태양광 공고 산식 준용 가정</strong> — 2026년 공고문 원문 확인 필요</li>
-              <li>공공주도형 — 우대가격 기본(공급망·안보 기여) 3,660원/MWh, 정부 R&amp;D 실증 터빈 추가 27,840원/MWh(2025년 상반기 공고), 지분 요건 공공 합동 50% 초과 · 단독 34% 이상(R&amp;D 실증 터빈 20% · 10%). KCH 지분 구조로 요건을 충족하는지와 2026년 우대가격 확인 필요</li>
-              <li><strong>터빈 비교</strong> — 정격·로터는 제조사 사양·보도, 터빈 단가(억원/MW) · 가동률 · 외산 국산화율은 예시값, 출력곡선 보정((320 ÷ 비출력)<sup>0.25</sup>)은 근사. 풍황 계측·터빈별 출력곡선·후류 해석으로 교체 필요. 유니슨 U210은 형식인증 전(실증 중). 기본 목록 기준일 2026-09-14 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가하거나 코드의 TURBINE_CATALOG에 항목을 더하면 됨. <strong>터빈사·EPC사가 제시한 1년차 순이용률·EPC 단가</strong>는 터빈 비교 탭 스펙 표의 "터빈사 제공" 칸에 직접 넣으면 모델 계산값 대신 쓰이고(비우면 자동), 보증·LD 탭의 보증 기준 이용률도 같은 배율로 맞춰짐 — 제시값의 <strong>보증 기준(시간 기준 / 발전량 기준)·풍황 전제·P50/P90 여부가 모델 전제와 같은지 확인 필요</strong></li>
-              <li>이용률·손실 — 부지 총이용률 40% · 후류 손실 8% · 전기 손실 3% · 출력제어 2% · 성능저하 0.2%/년은 예시값. 국내 실측 참고: 한림(두산 5.56MW) 27~29%, 전남1(SGRE 9.6MW급) 30~38%</li>
-              <li>D·E. CAPEX·OPEX — 100MW 고정식 예시(EPC 72억원/MW = 터빈 24 + BOP 48, 항목별 합계 7,200억, 간접비 500억, 예비비 5%, O&amp;M 연 150억 · 보험 0.4% → 총사업비 MW당 약 93억). 보도 기준 총사업비 MW당 약 70~90억 — 실제 견적·해역 조건으로 교체 필요</li>
-              <li>F. 재무 프리셋 — DSCR 임계치·할인율·법인세 누진구간·감가상각 20년·선순위 15년은 ESS 참고자료 기준을 옮긴 초안. 해상풍력 PF(장기 선순위·공사기간 3년 이자·예비 한도) 조건으로 재확인 필요</li>
+              <li><strong>초안 범위</strong> — 해상풍력 프로토타입(태양광·ESS와 같은 재무 엔진)을 바탕으로 <strong>육상 조건(REC 1.2 · 육상 터빈 · 육상 CAPEX/OPEX · 육상 상한가 · 육상 입찰 사례)으로 바꾼 1차 초안</strong>. 산지 토목·진입로 인허가 지연, 해체·원상복구 충당금은 미반영</li>
+              <li>C. 발전매출 — <strong>계약단가</strong>: 수령단가 ≈ 기준 SMP + (입찰가격 − 기준 SMP) × REC 가중치(육상풍력 1.2)로 근사. 육상풍력은 공공주도형 우대가격이 없어 우대 0원 — 제도 변경 시 확인 필요</li>
+              <li>C. 발전매출 — <strong>REC 가중치 1.2</strong>는 육상풍력 현행 가중치(에너지경제연구원 LCOE 전제 표 5-1과 같은 값). 연계거리·수심 가중치는 해상 전용이라 쓰지 않음. <strong>RPS 개편으로 가중치가 폐지</strong>되면 "가중치 없음(1.0)"으로 바꿔 볼 것</li>
+              <li>입찰 기준 — 최근 육상풍력 공고는 <strong>2025년 하반기(상한 163.846원/kWh · 공고 230MW 내외)</strong>. 2026년 상반기 풍력 입찰은 해상 전용이었고 <strong>2026년 하반기 육상 공고는 이 초안 작성 시점(2026-09) 전</strong>이라 상한가·물량 확인 필요. 기준 SMP 86.35원/kWh는 해상풍력 페이지와 같은 가정</li>
+              <li><strong>터빈 비교</strong> — 유니슨 U136(4.2MW·136m) · U151(4.3MW·151m)은 제조사 제품 페이지, Vestas · Siemens Gamesa · Nordex는 제조사 사양. <strong>터빈 단가(억원/MW) · 가동률 · 국산화율은 예시값</strong>(에너지경제연구원 2024년 주기기 1,126천원/kW 부근). 출력곡선 보정 기준 240W/m²(V150-4.2급) · 지수 0.25는 근사 — 풍황 계측·출력곡선·후류 해석으로 교체 필요. 기본 목록 기준일 2026-09-18 — 새 터빈은 터빈 비교 탭 "새 터빈 등록"으로 추가. <strong>터빈사·EPC사가 제시한 1년차 순이용률·EPC 단가</strong>는 스펙 표의 "터빈사 제공" 칸에 직접 넣으면 모델 계산값 대신 쓰임(비우면 자동)</li>
+              <li>이용률·손실 — 부지 총이용률 26% · 후류 5% · 전기 3% · 출력제어 2% · 성능저하 0.3%/년. 기본 터빈(V150-4.2)의 1년차 순이용률이 에너지경제연구원 LCOE 전제(평균 설비이용률 23%)와 맞도록 잡은 값이며, 산지·복잡지형의 실제 풍황은 단지마다 크게 다름</li>
+              <li>D·E. CAPEX·OPEX — <strong>40MW 기준</strong>, 에너지경제연구원 기본연구 24-22 표 3-11·5-1(2024년 40MW 설비비 2,910천원/kW = MW당 약 29.1억 · 운영유지비 50,846원/kW·년 · 토지임대 5,239원/kW·년)을 항목별로 배분. EPC 21.5억원/MW(터빈 11.5 + BOP·시공 10.0), 간접비·부대비 약 228억, 금융비용(수수료·건설이자·DSRA)은 모델이 따로 계산. 실제 견적·지형 조건으로 교체 필요</li>
+              <li>F. 재무 프리셋 — DSCR 임계치·할인율·법인세 누진구간·감가상각 20년·선순위 15년은 ESS 참고자료 기준을 옮긴 초안. 육상풍력 PF(장기 선순위·공사기간 2년 이자·예비 한도) 조건으로 재확인 필요</li>
               <li>반영하지 않은 구조적 차이 — 목표 DSCR 기반 부채 사이징(사이즈컬핑)·원금불균등 상환 미반영. 선순위 금리 고정·변동(CD 91일물) 혼합은 연 단위 근사, CD금리는 직접 입력</li>
-              <li>KCH 개발수수료 — 4개 수수료 기준총액·할인율은 ESS 예시값 그대로(설비용량만 연동). 100MW 해상풍력 규모에 맞게 교체 필요</li>
-              <li>단가산정 목표 — 해상풍력 초안은 기본 산정 기준을 <strong>목표 P-IRR 6%</strong>로 둠(ESS의 "당사 이익 100억원"은 총사업비 9천억원대 사업에서 수익률이 지나치게 낮게 역산됨). 목표 수익률·당사 지분 20%는 KCH 내부 기준 확인 필요</li>
-              <li><strong>입찰 사례</strong> — 사업별 낙찰가는 비공개라 상한가 대비 인하율을 가정해 추정(0% = 상한가 입찰 = 최대 사업성). 사례 18건의 사업자·터빈·EPC·공급사·사업비·발전량·입지는 보도·사업자 발표·Renewable Korea 표로 정리하고, 환경영향평가정보지원시스템(EIASS) 사업 검색으로 14건의 사업코드·초안/본협의/변경 협의 완료일을 확인(고창·압해·다대포·한동·평대는 검색되지 않음). 13개 사업은 EIASS 사업 상세 표에서 협의 등록 규모·사업비·사업시행자·평가대행자까지 반영(평가 당시 값이라 입찰 용량·최신 사업비와 다를 수 있음 — 해송은 등록 사업비 4,575억원이 1,008MW에 비해 지나치게 작아 제외). 평가서 본문(발전량·수심·이격거리)은 문서 뷰어 방식이라 읽지 못해 보도 기준. 총사업비는 신안우이·낙월·완도 금일·태안·압해·다대포·한동·평대·서남해·한빛·굴업도, EIASS 협의 사업비(등록 사업비 ÷ 등록 규모)는 안마·반딧불이·금오도·해울이, EPC 역산은 고창·야월, 발전량은 신안우이·낙월·안마·다대포·한빛만 확인. <strong>사업비 발표 시점이 2019~2026년으로 섞여 있어 초기 발표액(압해 MW당 50억, 한동·평대 56억 등)은 인플레이션 이전 값일 수 있음</strong> — 해당 사례의 높은 추정 수익률은 과대 추정 가능성. 2023년 상한가 167.778원은 역산, 2026년 선정 단지는 보도 기준, 금융·일정은 현재 페이지 조건</li>
+              <li>KCH 개발수수료 — 4개 수수료 기준총액·할인율은 ESS 예시값 그대로(설비용량만 연동). 40MW 육상풍력 규모에 맞게 확정 필요</li>
+              <li>단가산정 목표 — 육상풍력 초안도 기본 산정 기준을 <strong>목표 P-IRR 6%</strong>로 둠. KCH 내부 허들레이트로 확정 필요</li>
+              <li><strong>입찰 사례</strong> — 사업별 낙찰가는 비공개라 상한가 대비 인하율을 가정해 추정. 선정 사업 13건(2023년 4 · 2024년 6 · 2025년 하반기 3)은 보도 기준 사업명·용량이며, <strong>사업비·이용률·터빈은 대부분 미공개</strong>라 현재 페이지 가정을 써서 사례 간 차이는 주로 그 회차 상한가에서 나온다. 사업비·발전량을 알면 사례 칸에 직접 입력. 2022년 이전 회차와 2025년 하반기 미선정 1건(대관령차항 20MW)은 제외</li>
               <li>C. 발전매출 — <strong>보증 구조(터빈사 / EPC사)</strong>: 출력곡선 보증 이행률 100% · BOP·계통 가동률 99%는 예시값이며, 기술적 가동률은 터빈 목록의 사별 값(94~97%)을 씁니다. 실제 계약은 보증 기준(시간 기준 가동률 / 발전량 기준 가동률), 측정·검증 방식(파워커브 시험), 보증 기간(하자보수 2~5년 · LTSA 5~15년), LD 산정식과 연간·총액 상한, 초과 성과 공유가 회사·계약마다 다릅니다. "보증·LD" 탭의 LD 보전율 100% · 연간 상한 10%도 예시입니다</li>
               <li>C·E — <strong>준공지연 LD · 하자보수 보증</strong>: 준공지연 8주 · LD 요율 0.2%/주 · 총액 상한 10%(도급액), 하자보수 보증 터빈 5년 15% · BOP 2년 5%(고정 O&amp;M 기준)는 예시값입니다. 지연 손실은 1년차 발전매출 일할로만 보고 <strong>실제 일정 변경(COD 이동)·고정가격계약의 준공기한 위반 효과(계약 해지·가격 조정)는 반영하지 않았습니다</strong>. 하자보수 보증금(이행보증)은 담보라 현금흐름에 넣지 않았고, 보증 범위를 고정 O&amp;M의 일정 비율로 단순화했습니다</li>
-              <li>엑셀(.xlsx) 회신 변환기(<code>ESS_엑셀변환.bat</code>)는 ESS 전용 — 해상풍력 시나리오 JSON은 변환할 수 없음(CSV로 확인)</li>
+              <li>엑셀(.xlsx) 회신 변환기(<code>ESS_엑셀변환.bat</code>)는 ESS 전용 — 육상풍력 시나리오 JSON은 변환할 수 없음(CSV로 확인)</li>
               <li><strong>풍황 확률수준(P50 · P75 · P90)</strong> — 세 칸은 <strong>수기 입력</strong>이며 기본값이 없다(비우면 모델 계산값 사용). 적용하면 선택 확률수준 ÷ P50 비율을 터빈별 순이용률에 곱하는 방식이라, <strong>보고서의 확률수준 정의(순이용률 기준인지 AEP 기준인지, 손실·가동률 포함 범위, 계측기간·불확실성 전제)</strong>가 이 모델의 1년차 순이용률 정의와 같은지 확인 필요. P50 대비 P90 비율은 사업마다 달라 기본 가정을 두지 않았고, 부채상환능력(DSCR)을 P90 기준으로 따로 사이징하는 금융조건은 미반영</li>
               <li><strong>목표 DSCR 부채 사이징</strong> — 기준 발전량(보통 P90) CFADS ÷ 목표 DSCR로 연간 원리금 한도를 잡고 원리금균등 기준으로 원금을 되돌려 선순위 한도를 정한다(거치기간은 이자만). DSCR 원리금 범위 기본값은 <strong>선순위 원리금만</strong>(실무의 senior DSCR) — "선순위 + 주민참여채권"을 고르면 <strong>주민참여채권 만기 일시상환이 있는 해 하나가 DSCR을 짓눌러 전체 부채 규모를 지배</strong>하므로(그 해만 1.30배, 나머지는 4~5배) 차환·후순위 처리 전제를 확인하고 쓸 것. <strong>단일 목표 DSCR · 원리금균등 상환 · 단일 트랜치</strong> 가정이라 실제 금융조건의 <strong>연차별 목표 DSCR(스컬프팅) · 원금불균등 상환 · 트랜치별 조건 · LLCR/PLCR · 부채상환 유보계정(cash sweep)</strong> 은 미반영. 목표 DSCR 기본 1.30배와 배당 게이트(연간 1.15 · 누적 1.30배)는 별개 값이며 모두 KCH·대주단 기준으로 확정 필요</li>
+              <li><strong>육상 특유 리스크</strong> — 산지전용·보전산지 규제, 주거지 이격거리 조례, 군 작전성(레이더) 협의, 소음·경관 민원, 진입로·대형 부품 운송 제약은 사업비·일정에 크게 영향을 주지만 이 모델은 예비비·간접비·준공지연 LD로만 간접 반영</li>
             </ul>
           </div>
           </div>
@@ -1328,9 +1324,9 @@
   </main>
 
   <footer>
-    <p>사업개요·발전매출·CAPEX·OPEX·금융세무 입력값으로 목표 당사 이익(또는 목표 IRR)을 만족하는 해상풍력 적정 수령단가를 역산하고, REC 가중치·우대가격으로 입찰가격(SMP+1REC)을 환산합니다.</p>
-    <p>ESS·태양광 적정 입찰가격 프로토타입과 같은 재무 엔진·화면 구성으로 만든 <strong>해상풍력 1차 초안</strong>입니다. 터빈 단가·이용률·CAPEX·OPEX는 예시값이며 확정이 필요합니다.</p>
-    <p>참고: <code>PRD_사업성분석_프로토타입.md</code> · 2026년 상반기 풍력 고정가격계약 경쟁입찰 공고(2026-03-30) · 작성 서신준(인프라사업2 본부)</p>
+    <p>사업개요·발전매출·CAPEX·OPEX·금융세무 입력값으로 목표 당사 이익(또는 목표 IRR)을 만족하는 육상풍력 적정 수령단가를 역산하고, REC 가중치(1.2)로 입찰가격(SMP+1REC)을 환산합니다.</p>
+    <p>해상풍력 프로토타입과 같은 재무 엔진·화면 구성을 육상 조건으로 바꾼 <strong>육상풍력 1차 초안</strong>입니다. 터빈 단가·이용률·CAPEX·OPEX는 예시값이며 확정이 필요합니다.</p>
+    <p>참고: <code>PRD_사업성분석_프로토타입.md</code> · 에너지경제연구원 기본연구 24-22(재생에너지 발전단가 전망, 표 3-11 · 5-1) · 육상풍력 경쟁입찰 결과 보도(2023~2026) · 작성 서신준(인프라사업2 본부)</p>
   </footer>
 </div>
 
@@ -1383,91 +1379,91 @@
   // 필드: id(영문·숫자·_ 고유값) · origin('domestic' | 'foreign') · maker · model · mw(정격 MW) · rotor(로터 직경 m)
   //       price(터빈 단가 억원/MW, 예시) · avail(가동률 %) · degA(연간 성능저하 %/년) · local(국산화율 %, 참고)
   //       specLabel(확인 수준, 짧게) · source(근거 문장). 화면의 "새 터빈 등록"으로 추가한 터빈도 같은 모양으로 저장·내보낸다.
-  const TURBINE_CATALOG_UPDATED = '2026-09-14';
+  const TURBINE_CATALOG_UPDATED = '2026-09-18';
   const TURBINE_CATALOG = [
     {
-      "id": "doosan10",
-      "origin": "domestic",
-      "maker": "두산에너빌리티",
-      "model": "DS205-10MW",
-      "mw": 10,
-      "rotor": 205,
-      "avail": 95,
-      "degA": "0.2",
-      "price": 24,
-      "local": 70,
-      "specLabel": "형식인증(보도)",
-      "source": "두산에너빌리티 DS205-10MW — 로터 205m, 부품 국산화율 약 70%, UL 형식인증 취득(보도). 2025년 상반기 공공주도형 입찰에서 압해(80MW)·다대포(99MW)·한동·평대(100MW) 3개 단지가 채택. 국내 운영 실적 참고: 한림해상풍력(두산 5.56MW, 100MW) 예상 이용률 30.14% · 실제 27~29%, MW당 사업비 약 70억(2019년 전후 계약)."
-    },
-    {
-      "id": "unison10",
+      "id": "unison151",
       "origin": "domestic",
       "maker": "유니슨",
-      "model": "U210-10MW",
-      "mw": 10,
-      "rotor": 210,
+      "model": "U151-4.3MW",
+      "mw": 4.3,
+      "rotor": 151,
       "avail": 94,
-      "degA": "0.2",
-      "price": 23,
-      "local": 60,
-      "specLabel": "설계인증·실증 중",
-      "source": "유니슨 U210-10MW — 로터 210m, 기어박스 없는 직접구동, 설계 수명 30년. 에너지기술평가원 설계인증 완료, 2026년 상반기 형식인증 목표(실증 중). 상업 운전 실적이 없어 가동률을 보수적으로 가정."
+      "degA": "0.3",
+      "price": 11.2,
+      "local": 65,
+      "specLabel": "제조사 사양",
+      "source": "유니슨 U151 — 정격 4.3MW, 로터 151m. 국제형식인증을 받은 U136(4.2MW)의 로터를 151m로 키운 저풍속용 모델(유니슨 제품 페이지 · 보도). 운영 실적이 짧아 가동률을 보수적으로 두었음."
     },
     {
-      "id": "vestas15",
+      "id": "unison136",
+      "origin": "domestic",
+      "maker": "유니슨",
+      "model": "U136-4.2MW",
+      "mw": 4.2,
+      "rotor": 136,
+      "avail": 95,
+      "degA": "0.3",
+      "price": 10.8,
+      "local": 65,
+      "specLabel": "국제형식인증",
+      "source": "유니슨 U136 — 정격 4.2MW, 로터 136m, 국제형식인증 취득(유니슨 제품 페이지 · 보도). 국산 육상풍력 4MW 플랫폼."
+    },
+    {
+      "id": "vestas150",
       "origin": "foreign",
       "maker": "Vestas",
-      "model": "V236-15.0MW",
-      "mw": 15,
-      "rotor": 236,
+      "model": "V150-4.2MW",
+      "mw": 4.2,
+      "rotor": 150,
       "avail": 97,
-      "degA": "0.2",
-      "price": 29,
+      "degA": "0.3",
+      "price": 11.5,
       "local": 20,
       "specLabel": "제조사 사양",
-      "source": "Vestas V236-15.0MW — 정격 15MW, 로터 236m(블레이드 115.5m), 소풍면적 43,743m². 2025년 상반기 일반형 입찰에서 해송3이 제시했으나 미선정."
+      "source": "Vestas V150-4.2MW — 정격 4.2MW, 로터 150m(제조사 사양). 이 페이지의 출력곡선 보정 기준(240W/m²)으로 삼은 모델 — 기본 조건에서 1년차 순이용률이 에너지경제연구원 LCOE 전제(23%)와 맞게 잡았음."
     },
     {
-      "id": "sgre14",
+      "id": "vestas162",
+      "origin": "foreign",
+      "maker": "Vestas",
+      "model": "V162-6.2MW",
+      "mw": 6.2,
+      "rotor": 162,
+      "avail": 96,
+      "degA": "0.3",
+      "price": 12,
+      "local": 20,
+      "specLabel": "제조사 사양",
+      "source": "Vestas V162-6.2MW(EnVentus) — 정격 6.2MW, 로터 162m(제조사 사양). 대형 기종이라 산지 진입로·운송 제약 확인 필요."
+    },
+    {
+      "id": "sgre145",
       "origin": "foreign",
       "maker": "Siemens Gamesa",
-      "model": "SG 14-236 DD",
-      "mw": 14,
-      "rotor": 236,
+      "model": "SG 5.0-145",
+      "mw": 5,
+      "rotor": 145,
       "avail": 97,
-      "degA": "0.2",
-      "price": 28,
-      "local": 20,
-      "specLabel": "제조사 사양",
-      "source": "Siemens Gamesa SG 14-236 DD — 정격 14MW(Power Boost 15MW), 로터 236m, 직접구동. 국내 운영 실적 참고: 전남해상풍력1(SGRE 9.6MW급, 96MW) 예상 이용률 35.67% · 실제 30~38%, MW당 사업비 약 90억."
-    },
-    {
-      "id": "ge147",
-      "origin": "foreign",
-      "maker": "GE Vernova",
-      "model": "Haliade-X 14.7MW",
-      "mw": 14.7,
-      "rotor": 220,
-      "avail": 96,
-      "degA": "0.2",
-      "price": 27,
+      "degA": "0.3",
+      "price": 11.6,
       "local": 15,
       "specLabel": "제조사 사양",
-      "source": "GE Vernova Haliade-X — 정격 14.7MW, 로터 220m. 국내 상업 운전 실적 없음."
+      "source": "Siemens Gamesa SG 5.0-145 — 정격 5.0MW, 로터 145m(제조사 사양)."
     },
     {
-      "id": "mingyang16",
+      "id": "nordex163",
       "origin": "foreign",
-      "maker": "Mingyang",
-      "model": "MySE 16.0-242",
-      "mw": 16,
-      "rotor": 242,
-      "avail": 95,
-      "degA": "0.2",
-      "price": 18,
-      "local": 10,
+      "maker": "Nordex",
+      "model": "N163/5.X",
+      "mw": 5.7,
+      "rotor": 163,
+      "avail": 96,
+      "degA": "0.3",
+      "price": 11.8,
+      "local": 15,
       "specLabel": "제조사 사양",
-      "source": "Mingyang MySE 16.0-242 — 정격 16MW, 로터 242m(중국). 국내 실적 없음. 안보 지표(국가자원안보·정보보안)와 공급망 평가에서 불리할 수 있음."
+      "source": "Nordex N163/5.X — 정격 5.7MW급, 로터 163m(제조사 사양). 저·중풍속용 대형 로터."
     }
   ];
   // 입찰 사례 — 공개 사실만 담는다. 새 사례는 항목 하나를 더하면 "입찰 사례" 탭에 자동 반영된다.
@@ -1477,509 +1473,117 @@
   //       siteText · distanceKm · depthM(둘 다 있을 때만 REC 가중치 추정) · status · note · sources
   const CASE_LIST = [
     {
-      "id": "c23_sinanui",
-      "round": "2023",
-      "track": "general",
-      "name": "신안우이",
-      "mw": 390,
-      "cap": 167.778,
-      "smp": 86.35,
-      "turbine": "Vestas V236-15MW",
-      "developer": "한화오션(개발·EPC 주간사) · 한국중부발전 참여 · 국민성장펀드 1호 투자",
-      "turbineDetail": "Vestas V236-15.0MW × 26기",
-      "epc": "한화오션 · 현대건설 (도급 약 2조6천억원)",
-      "suppliers": "하부구조물 현대스틸산업(6,115억원) · 해저케이블 LS전선 · 후육강관 세아제강 · 설치선·해상변전소 한화오션",
-      "capexPerMW": 87.2,
-      "capexText": "약 3조4천억원 (MW당 약 87.2억)",
-      "epcAmount": null,
-      "genGWh": 1052,
-      "cf": 29.6,
-      "siteText": "신안 우이도 남동 약 4km 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2026-07 착공 · 2029-01 상업운전 목표",
-      "note": "이용률은 국회 지적 보도(예상 평균 출력 29.6%)를 기본값으로 두었고, 사업자 발표 연 1,052GWh로 계산하면 약 30.8%",
-      "sources": "한국경제·아주경제·뉴스핌(2026-07), 한화 뉴스룸(도급계약), 스마트투데이(하부구조물), 여성종합뉴스(이용률 29.6%)",
-      "eiass": "신안 우이 해상풍력 발전사업 · ME2021C012 · 초안 완료 2021-12-28 · 본협의 완료 2023-08-22 · 변경1차 완료 2024-07-26",
-      "eiassCapexPerMW": 61.5,
-      "eiassReg": "등록 규모 390MW · 협의 사업비 24,000억원(MW당 61.5억원) · 사업시행자 한화건설(주) · 한국남동발전(주) · SK D&D(주) · 평가대행 (주)세광종합기술단 · 본문 표기 400MW · 우이도 남측 약 4km · 해상·육상 154kV 송전선로"
+      "id": "c23_dogye", "round": "2023", "track": "general", "name": "도계", "mw": 50, "cap": 167.778, "smp": 86.35,
+      "turbine": "미공개", "developer": "비에스에너지", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "강원 삼척시 도계 일대", "distanceKm": null, "depthM": null,
+      "status": "2023년 육상풍력 경쟁입찰 선정(20년 고정가격계약)", "note": "",
+      "sources": "일렉트릭파워(2023-12-20) · 사업자 정보는 관련 보도", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c23_nakwol",
-      "round": "2023",
-      "track": "general",
-      "name": "낙월",
-      "mw": 364.8,
-      "cap": 167.778,
-      "smp": 86.35,
-      "turbine": "Vensys 5.8MW급",
-      "developer": "낙월블루하트(명운산업개발 51% · 비그림파워 49%)",
-      "turbineDetail": "Vensys(골드윈드 계열) 5.8MW급 × 64기 (보도상 5.7MW)",
-      "epc": "시공 호반블루에너지 참여(보도)",
-      "suppliers": "모노파일 하부구조 64기 시공 완료(에너지데일리)",
-      "capexPerMW": 63,
-      "capexText": "약 2조3천억원 (MW당 약 63억)",
-      "epcAmount": null,
-      "genGWh": 900,
-      "cf": null,
-      "siteText": "영광 계마항에서 약 20km 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2025-12 첫 호기 상업운전 · 2026-06 공정률 83.6%",
-      "note": "",
-      "sources": "일렉트릭파워·스마트투데이(상업발전), 에너지경제(2025-12), 헤럴드경제(공정률), Renewable Korea 표(Vensys 170/5800 × 64)",
-      "eiass": "영광 낙월 해상풍력발전단지 건설사업 · ME2019C003 · 초안 완료 2019-08-14 · 본협의 완료 2020-12-30 · 사후환경조사 2024·2025년 승인",
-      "eiassCapexPerMW": 48.2,
-      "eiassReg": "등록 규모 352.8MW · 협의 사업비 17,000억원(MW당 48.2억원) · 사업시행자 명운산업개발(주) · 평가대행 (주)한국종합기술 · 협의 등록 규모(352.8MW)가 입찰 용량과 다름"
+      "id": "c23_yeomsan", "round": "2023", "track": "general", "name": "염산", "mw": 49.6, "cap": 167.778, "smp": 86.35,
+      "turbine": "미공개", "developer": "영백풍력태양광발전", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "전남 영광군 염산면 일대", "distanceKm": null, "depthM": null,
+      "status": "2023년 육상풍력 경쟁입찰 선정", "note": "",
+      "sources": "일렉트릭파워(2023-12-20) · 사업자 정보는 관련 보도", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c23_geumil1",
-      "round": "2023",
-      "track": "general",
-      "name": "완도 금일 1단계",
-      "mw": 210,
-      "cap": 167.778,
-      "smp": 86.35,
-      "turbine": "Vestas 15MW급(우선협상)",
-      "developer": "한국남동발전 · 영림산업 · 하나증권 컨소시엄",
-      "turbineDetail": "Vestas 15MW급 (1·2단계 합계 40기, 우선협상)",
-      "epc": "한국전력기술 참여 EPC 컨소시엄",
-      "suppliers": "",
-      "capexPerMW": 65,
-      "capexText": "1·2단계 합계 약 3조9천억원(600MW → MW당 약 65억), 2026-06 보도 4조원 초과",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "완도 금일읍 평일도 남측 해상 · 완도변전소 연계",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2027년 착공 예정(국민성장펀드 1조원 조달 보도)",
-      "note": "선정 결과 용량 210MW(보도상 1단계 195~200MW)",
-      "sources": "일렉트릭파워·에너지신문(남동발전), 아시아투데이(2026-06 사업비 4조 초과 · 2026-08 착공 계획), 전기신문(터빈 입찰)",
-      "eiass": "완도 금일 해상풍력 발전사업 · ME2022C019 · 초안 완료 2022-11-15 · 본협의 완료 2023-09-20",
-      "eiassCapexPerMW": 54.5,
-      "eiassReg": "등록 규모 600MW · 협의 사업비 32,710억원(MW당 54.5억원) · 사업시행자 한국남동발전(주) · 평가대행 (주)한국종합기술 · 금일 1·2 합산 등록 · 완도변전소 연계"
+      "id": "c23_gogyeong", "round": "2023", "track": "general", "name": "고경", "mw": 37.2, "cap": 167.778, "smp": 86.35,
+      "turbine": "6.2MW급 추정", "developer": "—", "turbineDetail": "미공개 — 용량(37.2MW)으로 보아 6.2MW급 6기로 추정(미확인)", "epc": "한화 건설부문(주관)", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "경북 영천시 고경면 일대", "distanceKm": null, "depthM": null,
+      "status": "2023년 선정 · 2024년 착공 예정(보도)", "note": "한화 건설부문은 같은 회차에 해상(신안우이)과 육상(고경)을 함께 선정받았다고 발표",
+      "sources": "이데일리(2023-12-27) · 일렉트릭파워(2023-12-20)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c23_geumil2",
-      "round": "2023",
-      "track": "general",
-      "name": "완도 금일 2단계",
-      "mw": 390,
-      "cap": 167.778,
-      "smp": 86.35,
-      "turbine": "Vestas 15MW급(우선협상)",
-      "developer": "한국남동발전 · 영림산업 · 하나증권 컨소시엄",
-      "turbineDetail": "Vestas 15MW급 (1·2단계 합계 40기, 우선협상)",
-      "epc": "한국전력기술 참여 EPC 컨소시엄",
-      "suppliers": "",
-      "capexPerMW": 65,
-      "capexText": "1·2단계 합계 약 3조9천억원(MW당 약 65억), 2026-06 보도 4조원 초과",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "완도 금일읍 평일도 남측 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2027년 착공 예정",
-      "note": "선정 결과 용량 390MW(보도상 2단계 400~405MW)",
-      "sources": "1단계와 같음",
-      "eiass": "완도 금일 해상풍력 발전사업 · ME2022C019 · 초안 완료 2022-11-15 · 본협의 완료 2023-09-20",
-      "eiassCapexPerMW": 54.5,
-      "eiassReg": "등록 규모 600MW · 협의 사업비 32,710억원(MW당 54.5억원) · 사업시행자 한국남동발전(주) · 평가대행 (주)한국종합기술 · 금일 1·2 합산 등록 · 완도변전소 연계"
+      "id": "c23_hajang5", "round": "2023", "track": "general", "name": "하장5", "mw": 15, "cap": 167.778, "smp": 86.35,
+      "turbine": "미공개", "developer": "하장5풍력발전", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "강원 삼척시 하장면 일대", "distanceKm": null, "depthM": null,
+      "status": "2023년 육상풍력 경쟁입찰 선정", "note": "산업통상자원부 발전사업 양수인가 공고(654호)가 있음",
+      "sources": "일렉트릭파워(2023-12-20) · 산업통상자원부 공고", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c23_gochang",
-      "round": "2023",
-      "track": "general",
-      "name": "고창",
-      "mw": 76.2,
-      "cap": 167.778,
-      "smp": 86.35,
-      "turbine": "유니슨 6.35MW",
-      "developer": "동촌풍력발전(발주) · 한국중부발전 협력",
-      "turbineDetail": "유니슨 6.35MW × 12기",
-      "epc": "유니슨 · 포스코이앤씨 공동수급 (EPC 2,973.8억원, 유니슨 몫 993억원)",
-      "suppliers": "",
-      "capexPerMW": null,
-      "capexText": "총사업비 미공개 — EPC 2,973.8억원으로 역산",
-      "epcAmount": 2973.8,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2026-07 중부발전·유니슨 협약, 2026-08 EPC 수주",
-      "note": "",
-      "sources": "블로터·시대(2026-08 수주), 에너지데일리(터빈 공급), 메트로서울·ZDNet(2026-07 협약)",
-      "eiass": "EIASS 사업 검색에서 확인되지 않음(100MW 안팎 규모 · 다른 사업명 등록 가능성)"
+      "id": "c24_gokseonggreen", "round": "2024", "track": "general", "name": "곡성그린", "mw": 42, "cap": 165.14, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "전남 곡성군(사업명 기준)", "distanceKm": null, "depthM": null,
+      "status": "2024년 육상풍력 경쟁입찰 선정(입찰 6개 전원 선정)", "note": "",
+      "sources": "이투데이(2024-12-19) · 일렉트릭파워(2024-12-19)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c24_anma",
-      "round": "2024",
-      "track": "general",
-      "name": "안마 1·2",
-      "mw": 532,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "Siemens Gamesa 14MW",
-      "developer": "안마해상풍력(에퀴스 · IBK자산운용 · 대명에너지 · CS윈드)",
-      "turbineDetail": "Siemens Gamesa 14MW × 38기 (두산에너빌리티 공동생산)",
-      "epc": "운송·설치(T&I) SK에코플랜트 우선협상",
-      "suppliers": "하부구조물 SK오션플랜트(4,169억원) · 타워 CS윈드(367억원) — 2026-04 계약 중단 공시 · 해저케이블 LS전선·대한전선",
-      "capexPerMW": null,
-      "capexText": "보도 3조원 ~ 4조9천억원으로 엇갈려 미반영",
-      "epcAmount": null,
-      "genGWh": 1400,
-      "cf": null,
-      "siteText": "영광 안마도 인근 약 40km 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "국방과학연구소 시험 해역 중첩으로 공유수면 허가 난항 · 착공 지연",
-      "note": "",
-      "sources": "딜사이트·에너지신문(개요), 전기신문(에퀴스 인터뷰), 서울경제(2026-04 계약 중단), SK에코플랜트 뉴스룸",
-      "eiass": "영광 안마 해상풍력 발전사업 · ME2022C008 · 변경1차 완료 2024-09-26 · 변경2차 완료 2025-04-16",
-      "eiassCapexPerMW": 62.2,
-      "eiassReg": "등록 규모 546MW · 협의 사업비 33,967억원(MW당 62.2억원) · 사업시행자 안마해상풍력(주) · 평가대행 (주)한솔이엔씨"
+      "id": "c24_jeopsan", "round": "2024", "track": "general", "name": "접산", "mw": 37.8, "cap": 165.14, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "위치 미확인(보도에 사업명·용량만 공개)", "distanceKm": null, "depthM": null,
+      "status": "2024년 육상풍력 경쟁입찰 선정", "note": "",
+      "sources": "이투데이(2024-12-19) · 일렉트릭파워(2024-12-19)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c24_taean",
-      "round": "2024",
-      "track": "general",
-      "name": "태안",
-      "mw": 504,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "Siemens Gamesa 14MW",
-      "developer": "태안풍력발전(뷔나에너지) · 한국서부발전 · CIP 공동개발",
-      "turbineDetail": "Siemens Gamesa 14MW급 (두산에너빌리티 기술이전·국내 생산)",
-      "epc": "미공개",
-      "suppliers": "해저케이블 LS전선(우선협상) · LS마린솔루션",
-      "capexPerMW": 99.2,
-      "capexText": "약 5조원 (MW당 약 99억, 한국경제 2026-08)",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "태안 서쪽 약 30km 해상 · 수심 20~40m · 재킷식 기초",
-      "distanceKm": 30,
-      "depthM": 30,
-      "status": "2026년 하반기 착공 · 2029년 하반기~2030년 상업운전 목표",
-      "note": "REC 가중치는 이안거리 30km · 평균 수심 30m로 추정(연계거리와 다를 수 있음)",
-      "sources": "전기신문(케이블), 한국경제·비즈니스코리아(2026-08, 5조원), 헤럴드경제·에너지데일리(서부발전), 미디어i(수심·재킷)",
-      "eiass": "태안 해상풍력 발전사업 · ME2021C010 · 본협의 완료 2023-08-18",
-      "eiassCapexPerMW": null,
-      "eiassReg": "협의 사업비 26,000억원 · 사업시행자 ㈜태안풍력발전 · 평가대행 (주)도화엔지니어링 · 규모란이 용량 대신 39.3km(연장)로 등록"
+      "id": "c24_sinrim", "round": "2024", "track": "general", "name": "신림", "mw": 37.2, "cap": 165.14, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "위치 미확인(보도에 사업명·용량만 공개)", "distanceKm": null, "depthM": null,
+      "status": "2024년 육상풍력 경쟁입찰 선정", "note": "",
+      "sources": "이투데이(2024-12-19) · 일렉트릭파워(2024-12-19)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c24_yawol",
-      "round": "2024",
-      "track": "general",
-      "name": "야월",
-      "mw": 104,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "두산 DS205-8MW",
-      "developer": "야월해상풍력(주)",
-      "turbineDetail": "두산에너빌리티 DS205-8MW × 13기 (국산 8MW 첫 공급)",
-      "epc": "두산에너빌리티 (EPC 약 5,750억원)",
-      "suppliers": "",
-      "capexPerMW": null,
-      "capexText": "총사업비 미공개 — EPC 5,750억원으로 역산",
-      "epcAmount": 5750,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "영광 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2029-03 준공 목표 · 2054년까지 25년 운영",
-      "note": "",
-      "sources": "이투뉴스·이넷뉴스·해사경제신문(2025-12 EPC 계약), 중앙이코노미뉴스",
-      "eiass": "영광 야월 해상풍력 발전사업 · ME2022C005 · 초안 완료 2022-06-03 · 본협의 완료 2024-04-01 · 변경1차 완료 2025-08-07",
-      "eiassCapexPerMW": 43.3,
-      "eiassReg": "등록 규모 104MW · 협의 사업비 4,500억원(MW당 43.3억원) · 사업시행자 (주)재원에너지 · 평가대행 (주)세광종합기술단 · 사업규모 104MW(8MW×13기) · 협의 사업비는 EPC 계약(5,750억원) 이전 값"
+      "id": "c24_soksa", "round": "2024", "track": "general", "name": "속사", "mw": 37.2, "cap": 165.14, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "위치 미확인(보도에 사업명·용량만 공개)", "distanceKm": null, "depthM": null,
+      "status": "2024년 육상풍력 경쟁입찰 선정", "note": "",
+      "sources": "이투데이(2024-12-19) · 일렉트릭파워(2024-12-19)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c24_bandi",
-      "round": "2024",
-      "track": "floating",
-      "name": "반딧불이 (부유식)",
-      "mw": 750,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "SG 14-236 DD",
-      "developer": "에퀴노르 · 반딧불이에너지",
-      "turbineDetail": "Siemens Gamesa SG 14-236 DD × 50기(Renewable Korea 표)",
-      "epc": "미정",
-      "suppliers": "삼성중공업 · 포스코이앤씨(독점공급 합의) · 두산에너빌리티 협력",
-      "capexPerMW": null,
-      "capexText": "미공개",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "울산 동쪽 약 60~70km · 수심 150~300m",
-      "distanceKm": 70,
-      "depthM": 200,
-      "status": "2026-01 REC 매매계약 불발 → 에퀴노르 입찰 참여 제한(5년 → 2년 단축)",
-      "note": "계약에 이르지 못한 사례 — 부유식 사업비를 넣어 사업성 부족 폭을 확인해 볼 수 있음",
-      "sources": "전기신문(2026-01~04 계약 불발·입찰 제한), 국토일보·에너지경제(개요), 포스코 뉴스룸",
-      "eiass": "반딧불 부유식 해상풍력 발전사업 · ME2022C023 · 초안 완료 2022-12-13 · 본협의 완료 2024-07-09",
-      "eiassCapexPerMW": 70.4,
-      "eiassReg": "등록 규모 810MW · 협의 사업비 57,000억원(MW당 70.4억원) · 사업시행자 반딧불이에너지(주)(당초 파이어플라이플로팅오프쇼어윈드(주)) · 평가대행 (주)세광종합기술단"
+      "id": "c24_hanbaek", "round": "2024", "track": "general", "name": "한백", "mw": 37.2, "cap": 165.14, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "위치 미확인(보도에 사업명·용량만 공개)", "distanceKm": null, "depthM": null,
+      "status": "2024년 육상풍력 경쟁입찰 선정", "note": "",
+      "sources": "이투데이(2024-12-19) · 일렉트릭파워(2024-12-19)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c25_aphae",
-      "round": "2025 상반기",
-      "track": "public",
-      "name": "압해",
-      "mw": 80,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "두산 8MW급",
-      "developer": "한국전력기술 컨소시엄 (우리기술 등)",
-      "turbineDetail": "두산에너빌리티 8MW × 10기(보도) — Renewable Korea 표는 DS205-9.77MW × 9기(87.93MW)",
-      "epc": "미공개",
-      "suppliers": "",
-      "capexPerMW": 50,
-      "capexText": "약 4,000억원 (MW당 약 50억)",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "신안 압해읍 공유수면",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2025-09 공공주도형 선정",
-      "note": "보도 사업비(MW당 약 50억)가 최근 사례(65~99억)보다 크게 낮아 사업성이 과대 추정될 수 있음 — 발표 시점·범위 확인 필요. 용량·터빈 구성도 자료마다 다름",
-      "sources": "이투데이·더벨(우리기술 선정 공시), 그린포스트코리아(두산 채택), Renewable Korea 표",
-      "eiass": "EIASS 사업 검색에서 확인되지 않음(100MW 안팎 규모 · 다른 사업명 등록 가능성)"
+      "id": "c24_bongjin", "round": "2024", "track": "general", "name": "봉진", "mw": 8, "cap": 165.14, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "위치 미확인(보도에 사업명·용량만 공개)", "distanceKm": null, "depthM": null,
+      "status": "2024년 육상풍력 경쟁입찰 선정", "note": "8MW 소규모 — 규모의 경제가 없어 같은 가정에서는 사업성이 가장 불리할 수 있음(이 모델은 비용을 용량에 비례시켜 반영하지 못함)",
+      "sources": "이투데이(2024-12-19) · 일렉트릭파워(2024-12-19)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c25_dadaepo",
-      "round": "2025 상반기",
-      "track": "public",
-      "name": "다대포",
-      "mw": 99,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "두산 9.9MW(R&D 국산)",
-      "developer": "코리오 · 한국남부발전",
-      "turbineDetail": "두산에너빌리티 9.9MW × 10기 (정부 R&D 10MW급, 96MW·12기에서 변경)",
-      "epc": "시공 대우건설",
-      "suppliers": "",
-      "capexPerMW": 60.6,
-      "capexText": "약 6,000억원 (Renewable Korea 표 기준)",
-      "epcAmount": null,
-      "genGWh": 260,
-      "cf": null,
-      "siteText": "부산 사하구 다대포항 인근 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2025 공공주도형 선정 · 2026-06 사업 착수 보도",
-      "note": "정부 R&D 실증 터빈이라 공공주도형 추가 우대가격(27.84원/kWh) 대상일 수 있음 — 기본은 기본 우대만 반영",
-      "sources": "부산일보(2025-07), 에너지데일리·전력산업신문(남부발전), 네이트뉴스(2026-06), Renewable Korea 표",
-      "eiass": "EIASS 사업 검색에서 확인되지 않음(100MW 안팎 규모 · 다른 사업명 등록 가능성)"
+      "id": "c25_yeongyang", "round": "2025 하반기", "track": "general", "name": "AWP영양", "mw": 72.28, "cap": 163.846, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "경북 영양군(사업명 기준)", "distanceKm": null, "depthM": null,
+      "status": "2025년 하반기 선정(2026-02 발표) · 주민참여형 바람소득 모델", "note": "영양은 GS풍력 등 기존 육상풍력 단지가 모인 지역",
+      "sources": "기후에너지환경부 보도자료(2026-02-02) · 일렉트릭파워(2026-01-05)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c25_handong",
-      "round": "2025 상반기",
-      "track": "public",
-      "name": "한동·평대",
-      "mw": 105,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "두산 8MW급",
-      "developer": "한국동서발전 컨소시엄 · 제주에너지공사",
-      "turbineDetail": "두산에너빌리티 8MW급(최신 보도 · 과거 계획 5.5MW × 19기)",
-      "epc": "미공개",
-      "suppliers": "",
-      "capexPerMW": 56.2,
-      "capexText": "약 5,900억원 (105MW → MW당 약 56억)",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "제주 구좌읍 한동·평대리 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2025 공공주도형 선정(이투뉴스) · 2026-06 사업 시동",
-      "note": "공모 용량 105MW(선정 보도상 100MW)",
-      "sources": "일렉트릭파워(우협 선정·본격화), 이투뉴스(입찰 선정), 에너지신문, 제주에너지공사 보도자료",
-      "eiass": "EIASS 사업 검색에서 확인되지 않음(100MW 안팎 규모 · 다른 사업명 등록 가능성)"
+      "id": "c25_gokseongcj", "round": "2025 하반기", "track": "general", "name": "곡성천지에너지", "mw": 48, "cap": 163.846, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "전남 곡성군(사업명 기준)", "distanceKm": null, "depthM": null,
+      "status": "2025년 하반기 선정 · 주민참여형 바람소득 모델", "note": "",
+      "sources": "기후에너지환경부 보도자료(2026-02-02) · 일렉트릭파워(2026-01-05)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     },
     {
-      "id": "c25_seonamhae",
-      "round": "2025 상반기",
-      "track": "public",
-      "name": "서남해 시범단지",
-      "mw": 400,
-      "cap": 176.565,
-      "smp": 86.35,
-      "turbine": "국산(두산·유니슨 경합)",
-      "developer": "한국해상풍력(한전 계열) · 한전 기술지원",
-      "turbineDetail": "국산 터빈 — 2026년 약 8천억원 터빈 입찰에서 두산에너빌리티·유니슨 경합 보도",
-      "epc": "과거 두산중공업·현대건설 EPC 계약",
-      "suppliers": "",
-      "capexPerMW": 65,
-      "capexText": "공사비 약 2조6천억원 (MW당 약 65억)",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "전북 부안·고창 해상(서남해)",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2025 공공주도형 선정 보도(그린포스트코리아) — 공단 선정 결과로 확인 필요",
-      "note": "선정 여부가 보도마다 달라 확인 필요",
-      "sources": "그린포스트코리아(2025-09), 전기신문(한전 협약·터빈 경합), 한국해상풍력 사업소개",
-      "eiass": "전북 서남권 해상풍력 시범단지 건설사업 · ME2021C006 · 초안 완료 2021-12-23 · 본협의 완료 2024-03-15",
-      "eiassCapexPerMW": 52.2,
-      "eiassReg": "등록 규모 460MW · 협의 사업비 24,000억원(MW당 52.2억원) · 사업시행자 한국해상풍력(주) · 평가대행 (주)세광종합기술단 · (주)유신 · (주)마린 · 부안 위도 대리 남측 해상 및 고창 전면 해역"
-    },
-    {
-      "id": "c26_geumo",
-      "round": "2026 상반기",
-      "track": "public",
-      "name": "금오도",
-      "mw": 160,
-      "cap": 171.229,
-      "smp": 86.35,
-      "turbine": "국산 터빈",
-      "developer": "한국중부발전 · DL에너지",
-      "turbineDetail": "국산 풍력터빈 (모델 미공개)",
-      "epc": "EPC 업체 협의 중",
-      "suppliers": "",
-      "capexPerMW": null,
-      "capexText": "미공개",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "여수 금오도 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2026 상반기 공공주도형 선정(2개 사업 560MW 경쟁) · 2027-12 투자결정 · 2030 상업운전 목표",
-      "note": "우대가격은 2025년 값(3.66원)으로 가정",
-      "sources": "디지털데일리·에너지데일리·브릿지경제(2026-07)",
-      "eiass": "여수 금오도 해상풍력사업 · ME2024C013 · 초안 완료 2024-12-17 · 본협의 완료 2025-11-25",
-      "eiassCapexPerMW": 53.8,
-      "eiassReg": "등록 규모 160MW · 협의 사업비 8,601억원(MW당 53.8억원) · 사업시행자 금오도해상풍력(주)(DL에너지 → 2025-03-31 사업 양수인가) · 평가대행 (주)한국종합기술 · 본문 표기 166.8MW(5.56MW×30기) · 송전선로 57.7km(해저 51.6km · 육상 지중 6.1km) · 해상변전소 1개소"
-    },
-    {
-      "id": "c26_hanbit",
-      "round": "2026 상반기",
-      "track": "general",
-      "name": "한빛",
-      "mw": 340,
-      "cap": 171.229,
-      "smp": 86.35,
-      "turbine": "유니슨 13.6MW",
-      "developer": "명운산업개발",
-      "turbineDetail": "유니슨 13.6MW × 25기",
-      "epc": "미공개",
-      "suppliers": "",
-      "capexPerMW": 64.7,
-      "capexText": "약 2조2천억원 (MW당 약 65억)",
-      "epcAmount": null,
-      "genGWh": 834,
-      "cf": null,
-      "siteText": "영광 낙월면 안마도·송이도 인근 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "환경영향평가·계통연계 계약 완료 · 2027-07 착공 · 2029-12 준공 목표",
-      "note": "",
-      "sources": "더구루(인허가 완료), 이데일리·뉴스핌·전자신문(2026-07 터빈 공급), 파이낸스스코프",
-      "eiass": "영광 한빛해상풍력발전단지 조성사업 · ME2024C001 · 초안 완료 2024-03-29 · 본협의 완료 2024-11-14",
-      "eiassCapexPerMW": 65,
-      "eiassReg": "등록 규모 340MW · 협의 사업비 22,100억원(MW당 65억원) · 사업시행자 한빛해상풍력(주) · 평가대행 한국종합기술"
-    },
-    {
-      "id": "c26_gulup",
-      "round": "2026 상반기",
-      "track": "general",
-      "name": "굴업도",
-      "mw": 250,
-      "cap": 171.229,
-      "smp": 86.35,
-      "turbine": "두산 10MW",
-      "developer": "씨앤아이레저산업 · SK이터닉스 · 대우건설",
-      "turbineDetail": "두산에너빌리티 10MW급",
-      "epc": "대우건설 참여",
-      "suppliers": "",
-      "capexPerMW": 70.3,
-      "capexText": "약 1조8천억원 (Renewable Korea 표 · 원문 미확인)",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "인천 옹진 굴업도 인근 해상",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2026 상반기 일반 고정식 선정",
-      "note": "사업비는 원문 확인 필요",
-      "sources": "아시아경제·다음(2026-06 선정), Renewable Korea 표",
-      "eiass": "굴업도 해상풍력 발전사업 · ME2023C026 · 초안 완료 2024-02-01 · 본협의 완료 2025-09-22",
-      "eiassCapexPerMW": 72,
-      "eiassReg": "등록 규모 250MW · 협의 사업비 18,000억원(MW당 72억원) · 사업시행자 굴업풍력개발(주) · 평가대행 (주)세광종합기술단"
-    },
-    {
-      "id": "c26_haesong3",
-      "round": "2026 상반기",
-      "track": "general",
-      "name": "해송3",
-      "mw": 504,
-      "cap": 171.229,
-      "smp": 86.35,
-      "turbine": "Siemens Gamesa 14MW",
-      "developer": "CIP (개발 COP)",
-      "turbineDetail": "Siemens Gamesa 14MW (두산에너빌리티 창원공장 조립)",
-      "epc": "미공개",
-      "suppliers": "해저케이블·시공 LS전선·LS마린솔루션(우선협상)",
-      "capexPerMW": null,
-      "capexText": "미공개",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "신안 흑산도 인근 해상(해송 1·3 각 504MW)",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2026 상반기 일반 고정식 선정",
-      "note": "",
-      "sources": "아시아경제·국민일보(2026-06 선정), LS전선 뉴스룸, 인사이트코리아",
-      "eiass": "신안 해송 해상풍력1,3 발전사업 · 발전단지~육상변전소 구간 ME2024C009 본협의 완료 2025-06-19 · 육상 345kV 송전선로 구간 YS2024C002(영산강유역환경청) 본협의 완료 2025-06-25",
-      "eiassCapexPerMW": null,
-      "eiassReg": "등록 규모 1,008MW · 협의 사업비 4,575억원 · 사업시행자 (주)해송해상풍력발전1 · (주)해송해상풍력발전3 · 평가대행 (주)도화엔지니어링 · HS1 504MW + HS3 504MW · 신안 서남측 약 84~92km 공유수면 · 육상변전소 해남 문내면 · 등록 사업비가 1,008MW에 비해 지나치게 작아(일부 구간 값으로 추정) 기본값에 쓰지 않음"
-    },
-    {
-      "id": "c26_haeuli2",
-      "round": "2026 상반기",
-      "track": "floating",
-      "name": "해울이2 (부유식)",
-      "mw": 532,
-      "cap": 175.1,
-      "smp": 86.35,
-      "turbine": "Siemens Gamesa 14MW",
-      "developer": "CIP",
-      "turbineDetail": "Siemens Gamesa 14MW급 (국내 생산)",
-      "epc": "미공개",
-      "suppliers": "",
-      "capexPerMW": null,
-      "capexText": "미공개 — 부유식은 입력 권장",
-      "epcAmount": null,
-      "genGWh": null,
-      "cf": null,
-      "siteText": "울산 동해 해상(해울이 1~3 각 약 0.5GW)",
-      "distanceKm": null,
-      "depthM": null,
-      "status": "2026 상반기 부유식 선정(3개 사업 1.47GW 경쟁)",
-      "note": "",
-      "sources": "울산저널·에너지경제(2026-06 선정), 시사저널e",
-      "eiass": "울산 해울이(1,2,3) 해상풍력발전사업 · ME2023C007 · 초안 완료 2023-05-23 · 본협의 완료 2024-07-09",
-      "eiassCapexPerMW": 70.5,
-      "eiassReg": "등록 규모 1,500MW · 협의 사업비 105,768억원(MW당 70.5억원) · 사업시행자 (주)해울이해상풍력발전1 · 2 · 3 · 평가대행 (주)한국종합기술 · 해울이 1~3 합산 등록"
+      "id": "c25_yeongamsamho", "round": "2025 하반기", "track": "general", "name": "영암삼호", "mw": 36, "cap": 163.846, "smp": 86.35,
+      "turbine": "미공개", "developer": "—", "turbineDetail": "", "epc": "", "suppliers": "",
+      "capexPerMW": null, "capexText": "미공개", "epcAmount": null, "genGWh": null, "cf": null,
+      "siteText": "전남 영암군 삼호읍 일대(사업명 기준)", "distanceKm": null, "depthM": null,
+      "status": "2025년 하반기 선정 · 주민참여형 바람소득 모델", "note": "같은 회차에 입찰한 대관령차항풍력(20MW)은 선정되지 않음",
+      "sources": "기후에너지환경부 보도자료(2026-02-02) · 일렉트릭파워(2026-01-05)", "eiass": "", "eiassCapexPerMW": null, "eiassReg": ""
     }
   ];
-  const CASE_TRACK_LABEL = { general: '일반 · 고정식', public: '공공주도형', floating: '일반 · 부유식' };
+  const CASE_TRACK_LABEL = { general: '육상풍력', public: '육상풍력', floating: '육상풍력' };
   // 사례 기본값 — 보도 이용률이 없으면 발전량으로, 가중치는 이안거리·수심이 모두 있을 때만 구간 산정
   const caseCfDefault = (c) => (c.cf != null ? c.cf : c.genGWh ? Math.round(c.genGWh / (c.mw * 8.76) * 1000) / 10 : null);
   const caseWeightDefault = (c) => (c.distanceKm != null && c.depthM != null ? bandWeight(c.distanceKm, 5, 5) + bandWeight(c.depthM, 20, 5) - 2.5 : null);
 
   // 사용자 추가 터빈 — 이 브라우저(localStorage)에 저장하고, 시나리오 저장·내보내기에도 담는다.
-  const CUSTOM_TURBINE_KEY = 'windCustomTurbines.v1';
+  const CUSTOM_TURBINE_KEY = 'onshoreWindCustomTurbines.v1';
   let customTurbines = loadCustomTurbines();
   function validTurbine(t) { return !!(t && t.maker && t.model && +t.mw > 0 && +t.rotor > 0); }
   function loadCustomTurbines() {
@@ -1995,20 +1599,21 @@
   const newTurbineId = () => 'u' + Date.now().toString(36) + Math.floor(Math.random() * 46656).toString(36);
   const allTurbines = () => [...TURBINE_CATALOG, ...customTurbines.map((t) => ({ ...t, custom: true }))];
   const turbineById = (id) => allTurbines().find((t) => t.id === id);
-  // 입찰 트랙별 비가격 배점 — 2025년 상반기 공고 보도(안보·산업경제·사업진행도), 확인하지 못한 나머지는 50점에 맞춘 "기타".
+  // 육상풍력은 공공주도형 트랙·우대가격이 없다. 코드 호환을 위해 public 항목은 남기되 화면에서는 고를 수 없다.
+  // 배점 틀은 2024년 이후 풍력 공고 보도(비가격 먼저 평가 · 산업·경제효과 26점) 기준, 나머지는 50점에 맞춘 "기타"(주민수용성·계통 등).
   const TRACKS = {
-    public: { label: '공공주도형', max: { scoreSecurity: 8, scoreIndustry: 22, scoreProgress: 2, scoreOther: 18 } },
-    general: { label: '일반형', max: { scoreSecurity: 6, scoreIndustry: 26, scoreProgress: 4, scoreOther: 14 } },
+    public: { label: '공공주도형(해상 전용)', max: { scoreSecurity: 8, scoreIndustry: 22, scoreProgress: 2, scoreOther: 18 } },
+    general: { label: '육상풍력', max: { scoreSecurity: 6, scoreIndustry: 26, scoreProgress: 4, scoreOther: 14 } },
   };
-  // 공공주도형 우대가격(원/kWh) — 기본 3,660원/MWh, 정부 R&D 실증 터빈 추가 27,840원/MWh(2025년 상반기 공고)
+  // 우대가격 — 육상풍력은 해당 없음(0). 공공주도형 값은 코드 호환용으로만 남긴다.
   const PREF_PRICES = { base: 3.66, rnd: 3.66 + 27.84, none: 0 };
-  // 2026년 상반기 공고 상한가격(SMP+1REC, 원/kWh)
-  const PRICE_CAPS = { fixed: 171.229, floating: 175.1 };
-  // 조합 = 입찰 트랙 + 터빈 원산지. 버튼을 누르면 그 원산지의 기본 터빈 값과 비가격 예상 점수(가정)까지 주입한다.
+  // 2025년 하반기 육상풍력 경쟁입찰 상한가격(SMP+1REC, 원/kWh) — 2026년 상반기 풍력 입찰은 해상 전용이었다.
+  const PRICE_CAPS = { fixed: 163.846, floating: 163.846 };
+  // 조합 = 터빈 원산지. 버튼을 누르면 그 원산지의 기본 터빈 값과 비가격 예상 점수(가정)까지 주입한다.
   const COMBOS = {
-    public: { label: '① 공공주도형 + 국산 터빈', origin: 'domestic', defaultTurbine: 'doosan10',
-      fields: { salesStructure: 'fixed', tenderTrack: 'public', prefMode: 'base', contractYears: '20', scoreSecurity: '7', scoreIndustry: '19', scoreProgress: '2', scoreOther: '13' } },
-    general: { label: '② 일반형 + 외산 터빈', origin: 'foreign', defaultTurbine: 'vestas15',
+    domestic: { label: '① 국산 터빈', origin: 'domestic', defaultTurbine: 'unison151',
+      fields: { salesStructure: 'fixed', tenderTrack: 'general', prefMode: 'none', contractYears: '20', scoreSecurity: '5', scoreIndustry: '20', scoreProgress: '3', scoreOther: '11' } },
+    foreign: { label: '② 외산 터빈', origin: 'foreign', defaultTurbine: 'vestas150',
       fields: { salesStructure: 'fixed', tenderTrack: 'general', prefMode: 'none', contractYears: '20', scoreSecurity: '4', scoreIndustry: '14', scoreProgress: '3', scoreOther: '10' } },
   };
   // REC 가중치 — 연계거리·수심 각각 구간별 2.5 · 2.9 · 3.3 · 3.7을 받아 합산하고 2.5를 뺀다(2021년 고시 근사). RPS 개편 시 1.0.
@@ -2022,31 +1627,32 @@
   // 수령단가 R ↔ 입찰가격 P(SMP+1REC): R = SMP + (P − SMP) × 가중치 + 우대가격  ⇒  P = SMP + (R − 우대가격 − SMP) ÷ 가중치
   function bidFromReceived(R, rv) { return rv.smpRefPerKWh + (R - rv.preferentialPerKWh - rv.smpRefPerKWh) / rv.recWeightApplied; }
 
-  // ---------- CAPEX / OPEX item definitions (해상풍력 100MW 고정식 예시, 프로젝트 총액, 억원) ----------
-  // group: construction = ① 공사비(EPC) · soft = ② 개발·간접비 · ancillary = ③ 부대비용(보험·기타). 해상풍력 100MW 고정식 예시(초안).
-  // 배열 순서 = data-capex-index = 시나리오 JSON의 capexItems 순서.
+  // ---------- CAPEX / OPEX item definitions (육상풍력 40MW 예시, 프로젝트 총액, 억원) ----------
+  // 에너지경제연구원 기본연구 24-22 표 3-11(2024년 40MW 설비비 2,910천원/kW)을 항목별로 배분했다 — 1천원/kW × 40MW = 0.4억원.
+  // 금융비용(118천원/kW)은 모델이 금융수수료·건설이자·DSRA로 따로 계산하므로 항목에 넣지 않는다.
+  // group: construction = ① 공사비(EPC) · soft = ② 개발·간접비 · ancillary = ③ 부대비용(보험·기타). 배열 순서 = data-capex-index.
   const CAPEX_ITEMS = [
-    { id: "turbine", label: "풍력터빈 (나셀·블레이드·타워)", value: 2400, category: "기자재", group: "construction" },
-    { id: "foundation", label: "하부구조물 (모노파일·자켓)", value: 1650, category: "시공-토목", group: "construction" },
-    { id: "arrayCable", label: "내부망 해저케이블", value: 350, category: "시공-전기", group: "construction" },
-    { id: "exportSubstation", label: "외부망 케이블·해상변전소", value: 950, category: "시공-선로·계통", group: "construction" },
-    { id: "installation", label: "해상 운송·설치", value: 1600, category: "시공-토목", group: "construction" },
-    { id: "onshoreGrid", label: "육상 계통연계", value: 250, category: "시공-선로·계통", group: "construction" },
-    { id: "development", label: "개발·인허가 (풍황 계측 포함)", value: 150, category: "간접비", group: "soft" },
-    { id: "design", label: "해양조사·설계", value: 100, category: "간접비", group: "soft" },
-    { id: "supervision", label: "감리·PM", value: 80, category: "간접비", group: "soft" },
-    { id: "community", label: "어업인 상생·주민수용성", value: 170, category: "간접비", group: "soft" },
-    { id: "insurance", label: "건설보험·보증", value: 150, category: "부대비용", group: "ancillary" },
-    { id: "land", label: "항만·배후부지 임차", value: 0, category: "토지", group: "soft" },
-    { id: "otherAncillary", label: "기타 부대비용 (취득세·법인설립 등)", value: 0, category: "부대비용", group: "ancillary" },
+    { id: "turbine", label: "풍력터빈 (나셀·블레이드·타워)", value: 460, category: "기자재", group: "construction" },
+    { id: "civil", label: "토목 (진입로·기초·부지 조성)", value: 73, category: "시공-토목", group: "construction" },
+    { id: "electrical", label: "단지 내 전기·변전 설비", value: 46, category: "시공-전기", group: "construction" },
+    { id: "grid", label: "계통연계 (송전선로)", value: 16, category: "시공-선로·계통", group: "construction" },
+    { id: "installation", label: "운송·설치 (직접노무 포함)", value: 250, category: "시공-운송·설치", group: "construction" },
+    { id: "design", label: "설계·감리·검사", value: 15, category: "시공-설계", group: "construction" },
+    { id: "development", label: "개발·인허가 (풍황 계측 포함)", value: 20, category: "간접비", group: "soft" },
+    { id: "management", label: "일반관리·PM", value: 42, category: "간접비", group: "soft" },
+    { id: "expenses", label: "현장 경비", value: 68, category: "간접비", group: "soft" },
+    { id: "community", label: "주민수용성·상생 (바람소득)", value: 40, category: "간접비", group: "soft" },
+    { id: "land", label: "부지·산지전용", value: 25, category: "토지", group: "soft" },
+    { id: "insurance", label: "건설보험·보증", value: 3, category: "부대비용", group: "ancillary" },
+    { id: "otherAncillary", label: "기타 부대비용 (취득세·법인설립 등)", value: 30, category: "부대비용", group: "ancillary" },
   ];
+  // 고정비 합계 22.4억/년 ≈ 운영유지비 50,846원/kW·년 × 40MW(20.3억) + 토지임대 5,239원/kW·년 × 40MW(2.1억)
   const OPEX_ITEMS = [
-    { id: "om", label: "터빈 장기유지보수 (LTSA)", value: 75 },
-    { id: "bop", label: "BOP·하부구조물·케이블 점검", value: 30 },
-    { id: "marine", label: "해상 운영 (선박·헬기)", value: 20 },
-    { id: "staff", label: "인건비·관제", value: 10 },
-    { id: "lease", label: "해역 점사용료", value: 8 },
-    { id: "admin", label: "일반관리·수수료", value: 7 },
+    { id: "om", label: "터빈 유지보수 (LTSA)", value: 12 },
+    { id: "bop", label: "BOP·전기설비 점검", value: 3 },
+    { id: "staff", label: "인건비·관제", value: 3 },
+    { id: "lease", label: "토지 임대료 (산지·사유지)", value: 2.1 },
+    { id: "admin", label: "일반관리·수수료", value: 2.3 },
   ];
   // 4단계 누진세 구간(법인세+지방소득세 합산): 2억 이하 9.9% / 2~200억 20.9% / 200~3,000억 23.1% / 3,000억 초과 26.4%
   const TAX_BRACKETS = [{ upTo: 2, ratePct: 9.9 }, { upTo: 200, ratePct: 20.9 }, { upTo: 3000, ratePct: 23.1 }, { upTo: null, ratePct: 26.4 }];
@@ -2280,7 +1886,7 @@
   }
   function salesForRow(model, capacityMW, row) {
     if (row.operatingDays === 0) return { generationMWh: 0, chargedMWh: 0, revenue: 0 };
-    // 해상풍력 발전량(MWh) = 설비용량(MW) × 8,760h × 그해 순이용률 × (1 − 출력제어), 부분연도는 operationFraction으로 안분
+    // 육상풍력 발전량(MWh) = 설비용량(MW) × 8,760h × 그해 순이용률 × (1 − 출력제어), 부분연도는 operationFraction으로 안분
     // 판매단가 = 계약기간 비율 × 입찰가격(SMP+REC 합산 고정가) + 나머지 × 시장가(SMP + REC ÷ 1,000 × 가중치)
     const ratePct = operatingRatePctForSequence(model, row.operationSequence);
     const generationMWh = capacityMW * 24 * 365 * rate(ratePct) * row.operationFraction * (1 - rate(model.revenue.curtailmentPct || 0));
@@ -2432,7 +2038,7 @@
     const cal = buildCalendar(model.project);
     const investment = solveInvestment(model, cal);
     if (!investment.converged) return { errors: ["총투자비 반복계산이 수렴하지 않았습니다."] };
-    const capacityMW = model.revenue.contractCapacityMW; // 매출·발전량은 해상풍력 설비용량 기준
+    const capacityMW = model.revenue.contractCapacityMW; // 매출·발전량은 육상풍력 설비용량 기준
     const depTranche = { amount: investment.nominalDirectCapex + investment.contingency, start: cal.codDate, end: utcDate(cal.codDate.getUTCFullYear() + model.assumptions.depreciationYears, cal.codDate.getUTCMonth(), cal.codDate.getUTCDate()) };
     const seniorRate = seniorRateForYear(model, 1); // 첫 운영연도 적용금리 — 원금 상환 일정(원리금균등)은 이 금리로 고정
     const seniorPayment = levelDebtService(investment.seniorPrincipal, seniorRate, model.finance.seniorTermYears - model.finance.seniorGraceYears);
@@ -2623,7 +2229,7 @@
       opexNegWarnEl.textContent = `OPEX 항목 중 음수 값이 있습니다(${negativeOpexItems.map((i) => i.label).join(', ')}) — 비용 항목은 0 이상이어야 합니다.`;
     } else opexNegWarnEl.className = "warn";
 
-    // 해상풍력 설비용량 — 발전량·매출은 이 값 기준
+    // 육상풍력 설비용량 — 발전량·매출은 이 값 기준
     const contractCapacityMW = Math.max(0, +$('contractCapacityMW').value || 0);
 
     const operatingRatesPct = Array.from(document.querySelectorAll('#opRateGrid [data-oprate-index]')).map((el) => +el.value);
@@ -2659,7 +2265,7 @@
     const priceCapPerKWh = isFixedSale ? (+$('priceCapPerKWh').value || 0) : 0;
     // 계약 종료 후 시장가(원/kWh) = SMP + REC 단가(원/REC) ÷ 1,000 × 가중치 (1 REC = 1MWh)
     const marketPricePerKWh = (+$('smpPrice').value || 0) + (+$('recPrice').value || 0) / 1000 * (+$('recWeight').value || 0);
-    // ESS의 준공지연·이행률 페널티는 해상풍력 초안에서 쓰지 않는다(엔진 호환을 위해 중립값)
+    // ESS의 준공지연·이행률 페널티는 육상풍력 초안에서 쓰지 않는다(엔진 호환을 위해 중립값)
     const delayDays = 0, delayStage = 0, priceAdjustmentFactor = 1, avgNonCompliancePct = 0;
 
     // 자기자본 비율 + 주민참여채권 비율 합계가 100%를 초과하면 solveInvestment()의
@@ -2785,7 +2391,7 @@
     $('capexAccTotal').textContent = `총 ${fmt(c.total, 0)}억`;
   }
 
-  // 적정 단가 역산의 상한 — 해상풍력 수령단가는 400원/kWh 안팎이라 예전 상한(500원)에서는 목표 IRR을 조금만 올려도
+  // 적정 단가 역산의 상한 — 육상풍력 수령단가는 400원/kWh 안팎이라 예전 상한(500원)에서는 목표 IRR을 조금만 올려도
   // "도달 불가"로 끊겼다. 이분탐색이라 상한을 올려도 비용은 그대로다(60회 반복).
   const PRICE_SOLVE_MAX = 3000;
   const IRR_KIND_LABEL = { projectIrr: 'P-IRR', equityIrr: 'E-IRR(배당세전)', equityIrrAfterInvestorTax: 'E-IRR(배당세후)' };
@@ -3022,7 +2628,7 @@
 
   // ---------- 터빈 비교 탭 — 6개 터빈을 같은 조건에서 각각 역산(탭이 보일 때만) ----------
   // ---------- 발전량 구성 — 보증 주체별 단계 표 ----------
-  // 해상풍력 계약 구조: 터빈사(TSA/LTSA)가 출력곡선·기술적 가동률을, EPC(BOP)가 전기·송전 손실과
+  // 육상풍력 계약 구조: 터빈사(TSA/LTSA)가 출력곡선·기술적 가동률을, EPC(BOP)가 전기·송전 손실과
   // BOP·계통 가동률을 보증한다. 후류 손실·풍황은 개발사 몫이라 보증 대상이 아니다.
   function renderGenerationBuildup() {
     const d = turbineDerived($('turbineMaker').value), tb = turbineById($('turbineMaker').value) || {};
@@ -3789,7 +3395,7 @@
     } else npWarn.className = 'warn';
     $('priceCapDisplay').value = fmt(capPrice, 3);
     $('priceTabNote').innerHTML = isFixed
-      ? `<strong>2026년 상반기 풍력 공고 — 1단계 사업내역서(비가격) 50점 + 2단계 입찰가격 50점 합산(${track.label}). </strong>입찰가격은 SMP+1REC 기준이라 REC 가중치가 클수록 같은 수령단가를 더 낮은 입찰가격으로 받을 수 있고, 공공주도형 우대가격도 입찰가격을 낮춥니다. 비가격 배점은 2025년 상반기 보도 기준, 예상 점수는 가정입니다.`
+      ? `<strong>육상풍력 경쟁입찰 — 1단계 사업내역서(비가격) 50점 + 2단계 입찰가격 50점 합산(${track.label}). </strong>입찰가격은 SMP+1REC 기준이라 REC 가중치가 클수록 같은 수령단가를 더 낮은 입찰가격으로 받을 수 있습니다(육상풍력 1.2). 비가격 배점 틀은 2024년 이후 공고 보도 기준, 예상 점수는 가정입니다.`
       : '<strong>지금 판매 구조는 기업PPA라 경쟁입찰 선정평가가 적용되지 않습니다. </strong>아래는 같은 사업을 고정가격계약으로 응찰한다고 가정한 참고 계산입니다.';
     // 상한가격 경고 — 연동 상태면 입찰가격에 KCH 수수료 환산분(수령단가 기준 ÷ 가중치)이 얹혀 있어, SPC 자체와 구분해 알려준다.
     const warnEl = $('priceCapWarn');
@@ -3836,8 +3442,8 @@
 
   // ---------- KCH 개발수수료 단가산정 모델 (ESS_단가산정모델.xlsx 로직 이식, ESS 입찰단가 계산과는 독립적인 별도 시나리오) ----------
   function kchReadModel() {
-    // 설비용량은 C. 발전매출의 해상풍력 설비용량에 연동 — 두 곳에 따로 입력하지 않게 한다.
-    const capacityMW = Math.max(0, +$('contractCapacityMW').value || 0), storageMWh = 0; // 해상풍력: 설비용량만 연동(저장용량 없음)
+    // 설비용량은 C. 발전매출의 육상풍력 설비용량에 연동 — 두 곳에 따로 입력하지 않게 한다.
+    const capacityMW = Math.max(0, +$('contractCapacityMW').value || 0), storageMWh = 0; // 육상풍력: 설비용량만 연동(저장용량 없음)
     $('kchCapacityMW').value = String(Number(capacityMW.toFixed(2)));
     const startYear = +$('kchStartYear').value, devYears = +$('kchDevYears').value, conYears = +$('kchConYears').value, opYears = +$('kchOpYears').value;
     const codYear = startYear + devYears + conYears - 1;
@@ -3896,8 +3502,8 @@
 
   function kchRenderSensitivity(m, detail) {
     const multipliers = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6];
-    // 설비용량 축 — 60~200MW 눈금에 현재 용량(해상풍력 설비용량, 기본 100MW)을 끼워 넣어 기준 칸이 항상 표에 있게 한다
-    const capacities = [...new Set([60, 80, 100, 120, 150, 200, ...(m.capacityMW > 0 ? [m.capacityMW] : [])])].sort((a, b) => a - b);
+    // 설비용량 축 — 20~100MW 눈금에 현재 용량(육상풍력 설비용량, 기본 40MW)을 끼워 넣어 기준 칸이 항상 표에 있게 한다
+    const capacities = [...new Set([20, 30, 40, 50, 60, 80, 100, ...(m.capacityMW > 0 ? [m.capacityMW] : [])])].sort((a, b) => a - b);
     // 4개 수익원은 이제 "현재 설비용량 기준 총액"으로 입력받으므로, 다른 설비용량을 가정할 때는
     // 총액을 (가정 설비용량 ÷ 현재 설비용량) 비율로 스케일링해 비교한다(용지비 등 KCH 비용은 스케일링하지 않음 — 원래도 설비용량과 무관한 고정비였음).
     // 히트맵 기준 = 목표 IRR(초록 이상 / 빨강 미만, 목표의 8% 이상 벗어나면 진하게). 기준 칸(배율 1.0 · 현재 설비용량)은 outline.
@@ -4012,7 +3618,7 @@
   });
 
   // ---------- 시나리오 저장·비교 (이터레이션 3, localStorage 기반 — 이 브라우저에만 저장, 다른 뷰어와 공유되지 않음) ----------
-  const SCENARIO_STORAGE_KEY = 'windBidPriceScenarios.v1';
+  const SCENARIO_STORAGE_KEY = 'onshoreWindBidPriceScenarios.v1';
   function loadScenarios() {
     try { return JSON.parse(localStorage.getItem(SCENARIO_STORAGE_KEY) || '[]'); } catch (e) { return []; }
   }
@@ -4328,7 +3934,7 @@
   function buildScenarioModelJson(scenario) {
     return JSON.stringify({
       exportedAt: new Date().toISOString(),
-      tool: '해상풍력 적정 입찰가격 프로토타입 (초안)',
+      tool: '육상풍력 적정 입찰가격 프로토타입 (초안)',
       scenarioName: scenario.name,
       savedAt: scenario.savedAt,
       inputs: scenario.state,
@@ -4349,7 +3955,7 @@
     }
     try {
       const json = buildScenarioModelJson(scenario);
-      const filename = `해상풍력_시나리오_${safeFileNamePart(scenario.name)}_${new Date(scenario.savedAt).toISOString().slice(0, 10)}.json`;
+      const filename = `육상풍력_시나리오_${safeFileNamePart(scenario.name)}_${new Date(scenario.savedAt).toISOString().slice(0, 10)}.json`;
       await downloadsApi.save({ filename, data: json });
       warnEl.className = 'warn';
     } catch (e) {
@@ -4434,7 +4040,7 @@
     const blank = () => table.push([]);
     const section = (title) => { blank(); table.push([title]); };
 
-    table.push(['해상풍력 적정 입찰가격 프로토타입(초안) — 시나리오 검증용 데이터 내보내기']);
+    table.push(['육상풍력 적정 입찰가격 프로토타입(초안) — 시나리오 검증용 데이터 내보내기']);
     table.push(['내보낸 시각', new Date().toLocaleString('ko-KR')]);
     table.push(['비고', '이 CSV 한 파일 안에 Assumption(입력값) · Summary(핵심 결과지표) · Appendix(시나리오별: 조달내역·손익계산서 재구성·감가상각(PP&E)스케줄·부채상환스케줄·연도별 현금흐름 상세) 세 절이 순서대로 들어 있습니다. Excel에서 열면 그대로 표로 보입니다. 이 뷰어는 파일 저장을 특정 확장자로만 허용해 네이티브 .xlsx(다중 시트) 생성이 불가능하여 — 대신 절 구분선을 넣은 단일 CSV로 제공하며, 검증에 필요한 중간값(EBIT·EBT·과세표준·DSCR 게이트·조달-총투자비 검증·감가상각 롤포워드·부채 상환 롤포워드 등)을 숨김 없이 모두 열로 노출했습니다. 이 모델은 분기가 아닌 연간(annual) 단위로 계산합니다 — 원본 xlsm(분기 단위, IS/CF/BS 3표 별도)과 완전히 같은 정밀도는 아니며, 분기 단위가 꼭 필요하면 별도로 요청해 주세요.']);
     table.push(['시나리오 저장 시점 적정 입찰단가(상세 재계산 성공 시)', ...cols.map((s) => s.detailSnapshot && s.detailSnapshot.ok ? fmt(s.detailSnapshot.price, 2) + '원/kWh' : (s.detailSnapshot ? s.detailSnapshot.reason : '')) ]);
@@ -4550,7 +4156,7 @@
     }
     try {
       const csv = buildScenarioCsv();
-      const filename = `해상풍력_시나리오_비교_${new Date().toISOString().slice(0, 10)}.csv`;
+      const filename = `육상풍력_시나리오_비교_${new Date().toISOString().slice(0, 10)}.csv`;
       await downloadsApi.save({ filename, data: csv });
       warnEl.className = 'warn';
     } catch (e) {
@@ -4613,8 +4219,8 @@
   // 판매 구조·입찰 트랙·가중치 산정 방식에 따라 라벨·보이는 입력·안내 문구를 바꾼다.
   function syncSalesStructure() {
     const isFixed = $('salesStructure').value === 'fixed', isPublic = $('tenderTrack').value === 'public';
-    $('salesFlag').textContent = isFixed ? (isPublic ? '공공주도형' : '일반형') : '기업PPA';
-    ['tenderTrackField', 'foundationField', 'priceCapField', 'recWeightWrap'].forEach((id) => { $(id).style.display = isFixed ? '' : 'none'; });
+    $('salesFlag').textContent = isFixed ? '고정가격계약' : '기업PPA';
+    ['tenderTrackField', 'priceCapField', 'recWeightWrap'].forEach((id) => { $(id).style.display = isFixed ? '' : 'none'; });
     $('prefModeField').style.display = isFixed && isPublic ? '' : 'none';
     $('ppaEscalationField').style.display = isFixed ? 'none' : '';
     const wm = $('weightMode').value;
@@ -4628,7 +4234,7 @@
     $('heroLabel').firstChild.textContent = isFixed ? '적정 수령단가 ' : '적정 PPA 단가 ';
     $('heroLabelSub').textContent = isFixed ? '(받는 값)' : '(전력+REC 합산)';
     $('salesHint').innerHTML = isFixed
-      ? `해상풍력 <strong>고정가격계약 경쟁입찰(${isPublic ? '공공주도형' : '일반형'})</strong>을 가정합니다 — 입찰가격은 SMP+1REC 기준이고, SPC가 실제로 받는 <strong>수령단가</strong>는 REC 몫에 가중치를 곱하고 우대가격을 더한 값입니다. 이 페이지는 수령단가를 역산한 뒤 입찰가격으로 환산합니다. 발전량 = 설비용량 × 8,760h × 연차별 순이용률 × (1 − 출력제어).`
+      ? `육상풍력 <strong>고정가격계약 경쟁입찰</strong>을 가정합니다 — 입찰가격은 SMP+1REC 기준이고, SPC가 실제로 받는 <strong>수령단가</strong>는 REC 몫에 가중치를 곱하고 우대가격을 더한 값입니다. 이 페이지는 수령단가를 역산한 뒤 입찰가격으로 환산합니다. 발전량 = 설비용량 × 8,760h × 연차별 순이용률 × (1 − 출력제어).`
       : '<strong>기업PPA(직접전력거래)</strong>를 가정합니다 — 단가는 전력+REC를 합친 값이고 계약기간은 당사자가 정합니다(경쟁입찰 상한가·REC 가중치·우대가격 미적용). 발전량 = 설비용량 × 8,760h × 연차별 순이용률 × (1 − 출력제어).';
     $('salesTermHint').innerHTML = isFixed
       ? '풍력 고정가격계약은 <strong>계약기간 20년</strong>입니다 — 30년까지 입력할 수 있게 열어 둔 것은 제도 개편·장기계약 검토용입니다.'
@@ -4648,10 +4254,10 @@
     const keep = {};
     document.querySelectorAll('#turbineSpecBody input[id^="tb-"]').forEach((el) => { keep[el.id] = el.value; });
     const sel = $('turbineMaker'), prevSel = sel.value, h = escapeHtml;
-    const opt = (t) => `<option value="${h(t.id)}"${t.id === 'doosan10' ? ' selected' : ''}>${h(t.maker)} · ${h(t.model)}${t.custom ? ' (사용자 추가)' : ''}</option>`;
+    const opt = (t) => `<option value="${h(t.id)}"${t.id === 'vestas150' ? ' selected' : ''}>${h(t.maker)} · ${h(t.model)}${t.custom ? ' (사용자 추가)' : ''}</option>`;
     sel.innerHTML = `<optgroup label="국산">${list.filter((t) => t.origin === 'domestic').map(opt).join('')}</optgroup>`
       + `<optgroup label="외산">${list.filter((t) => t.origin !== 'domestic').map(opt).join('')}</optgroup>`;
-    sel.value = list.some((t) => t.id === prevSel) ? prevSel : 'doosan10';
+    sel.value = list.some((t) => t.id === prevSel) ? prevSel : 'vestas150';
     const nameCell = (t) => `<th class="mk-name"><span class="mk-origin ${t.origin === 'domestic' ? 'domestic' : 'china'}">${t.origin === 'domestic' ? '국산' : '외산'}</span>${h(t.maker)}<span class="sub">${h(t.model)} · ${h(t.custom ? '사용자 추가' : t.specLabel || '')}</span></th>`;
     $('turbineTableBody').innerHTML = list.map((t) => `
       <tr data-tb-row="${h(t.id)}">${nameCell(t)}
@@ -4951,7 +4557,7 @@
     renderTurbineUI();
     if (wasSelected) applyTurbineDerived();
     recalcAll();
-    turbineMsg(`${t.maker} ${t.model}을(를) 목록에서 뺐습니다${wasSelected ? ' — 선택 터빈은 두산 DS205-10MW로 바뀌었습니다' : ''}. 내보낸 파일이 있으면 불러오기로 되살릴 수 있습니다.`, false);
+    turbineMsg(`${t.maker} ${t.model}을(를) 목록에서 뺐습니다${wasSelected ? ' — 선택 터빈은 Vestas V150-4.2MW로 바뀌었습니다' : ''}. 내보낸 파일이 있으면 불러오기로 되살릴 수 있습니다.`, false);
   }
   // 같은 id(또는 같은 제조사+모델)의 사용자 추가 터빈은 갱신, 새 것은 추가. 기본 목록과 같은 제조사+모델은 건너뛴다.
   function mergeTurbines(incoming) {
@@ -4972,9 +4578,9 @@
     if (!customTurbines.length) return turbineMsg('내보낼 사용자 추가 터빈이 없습니다.', true);
     if (!downloadsApi) return turbineMsg('이 화면에서는 다운로드 기능을 사용할 수 없습니다(Claude 앱/웹의 아티팩트 화면에서 다시 시도해 주세요).', true);
     try {
-      const data = JSON.stringify({ tool: '해상풍력 적정 입찰가격 프로토타입 (초안)', kind: 'turbineCatalog', exportedAt: new Date().toISOString(),
+      const data = JSON.stringify({ tool: '육상풍력 적정 입찰가격 프로토타입 (초안)', kind: 'turbineCatalog', exportedAt: new Date().toISOString(),
         turbines: customTurbines.map(({ custom, ...t }) => t) }, null, 2);
-      await downloadsApi.save({ filename: `해상풍력_터빈목록_${new Date().toISOString().slice(0, 10)}.json`, data });
+      await downloadsApi.save({ filename: `육상풍력_터빈목록_${new Date().toISOString().slice(0, 10)}.json`, data });
       turbineMsg(`사용자 추가 터빈 ${customTurbines.length}종을 내보냈습니다.`, false);
     } catch (e) {
       turbineMsg(e && e.code === 'declined' ? '다운로드를 취소했습니다.' : '다운로드에 실패했습니다: ' + (e && e.message ? e.message : e), true);
@@ -5013,7 +4619,7 @@
 
   // ---------- 탭 — 초기 상태를 HTML 속성에 기대지 않고 JS가 정한다(web-app-blueprint.md 5.5) ----------
   const TABS = Array.from(document.querySelectorAll('.tab[data-panel]'));
-  const TAB_STORAGE_KEY = 'windBidPriceActiveTab.v1'; // v2 — 요약 탭이 생겨 기본 탭이 바뀌었으므로 v1 저장값은 쓰지 않는다
+  const TAB_STORAGE_KEY = 'onshoreWindBidPriceActiveTab.v1'; // v2 — 요약 탭이 생겨 기본 탭이 바뀌었으므로 v1 저장값은 쓰지 않는다
   function selectTab(tabId, { focus = false } = {}) {
     const target = TABS.find((t) => t.id === tabId) || TABS[0];
     TABS.forEach((t) => {
@@ -5087,7 +4693,7 @@
 <script>
   (function () {
     if (window.parent === window) return;
-    var ID = "offshore-wind";
+    var ID = "onshore-wind";
     function text(key) {
       var el = document.getElementById(key);
       if (!el) return "";
