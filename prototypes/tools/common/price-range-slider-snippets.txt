@@ -1,0 +1,161 @@
+//@@ CSS
+  .price-range .bar { height: 6px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .price-range .bar .fill { height: 100%; background: var(--accent); border-radius: 4px; }
+  /* 단가 범위 슬라이더 — 최저·현재 산정·상한가를 눈금으로 찍고, 손잡이를 끌어 그 단가의 결과를 본다 */
+  .range-graph { position: relative; padding: 20px 0 4px; }
+  .range-graph .track { position: absolute; left: 0; right: 0; top: 26px; height: 8px; background: var(--line); border-radius: 5px; }
+  .range-graph .track .fill { position: absolute; top: 0; bottom: 0; left: 0; background: var(--accent); opacity: .4; border-radius: 5px; }
+  .range-graph .marks { position: absolute; left: 0; right: 0; top: 0; bottom: 0; pointer-events: none; }
+  .range-graph .mark { position: absolute; top: 18px; height: 24px; border-left: 2px solid var(--line-strong); }
+  .range-graph .mark span { position: absolute; top: -18px; left: 0; transform: translateX(-50%); white-space: nowrap;
+    font-size: 10.5px; font-weight: 700; color: var(--ink-2); background: var(--panel-alt); padding: 0 3px; border-radius: 3px; }
+  .range-graph .mark.is-solved { border-left-color: var(--accent); }
+  .range-graph .mark.is-solved span { color: var(--accent); }
+  .range-graph .mark.is-cap { border-left-style: dashed; border-left-color: var(--danger); }
+  .range-graph .mark.is-cap span { color: var(--danger); }
+  .range-graph .mark.at-start span { transform: translateX(0); }
+  .range-graph .mark.at-end span { transform: translateX(-100%); }
+  .range-graph input[type="range"] { position: relative; display: block; width: 100%; height: 44px; margin: 0; background: transparent; -webkit-appearance: none; appearance: none; cursor: grab; }
+  .range-graph input[type="range"]:active { cursor: grabbing; }
+  .range-graph input[type="range"]::-webkit-slider-runnable-track { height: 44px; background: transparent; }
+  .range-graph input[type="range"]::-moz-range-track { height: 44px; background: transparent; }
+  .range-graph input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; margin-top: 12px;
+    border-radius: 50%; background: var(--panel); border: 3px solid var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+  .range-graph input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--panel); border: 3px solid var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+  .range-graph input[type="range"]:focus-visible { outline: none; }
+  .range-graph input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px var(--accent-soft); }
+  .range-graph input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px var(--accent-soft); }
+  .range-live { display: grid; gap: 4px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 12.5px; color: var(--ink-2); }
+  .range-live .now { font-size: 15px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .range-live .now .at { margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+  .range-live .kv { display: flex; flex-wrap: wrap; gap: 2px 12px; font-variant-numeric: tabular-nums; }
+  .range-live .kv b { color: var(--ink); font-weight: 700; }
+  .range-live .hit { color: var(--pos); font-weight: 700; }
+  .range-live .miss { color: var(--danger); font-weight: 700; }
+  .range-live .over { color: var(--danger); font-weight: 700; }
+
+//@@ HTML
+          <div class="range-graph" id="priceRangeGraph">
+            <div class="track"><div class="fill" id="priceRangeFill"></div></div>
+            <div class="marks" id="priceRangeMarks"></div>
+            <input id="priceRangeSlider" type="range" min="0" max="100" step="0.01" value="0" aria-label="@@UNIT@@를 옮겨 그 값에서의 결과 보기">
+          </div>
+
+//@@ LIVE
+          <div class="range-live" id="priceRangeLive" role="status"></div>
+
+//@@ JS
+  // ---------- @@UNIT@@ 범위 슬라이더 — 손잡이를 끌어 그 단가에서의 결과를 바로 본다 ----------
+  // 모델 입력이 아니라 "보기"만 바꾸는 장치다(재계산·시나리오 저장에 들어가지 않는다).
+  // 눈금: 최저단가(하한) · 현재 산정 결과 · 상한가를 @@UNIT@@로 환산한 값.
+  let priceRangeState = null;
+  const rangePos = (v) => {
+    const st = priceRangeState;
+    return st && st.max > st.min ? Math.min(100, Math.max(0, ((v - st.min) / (st.max - st.min)) * 100)) : 0;
+  };
+  // 지금 A. 산정 기준의 목표 대비 여유 — IRR 기준이면 소수(0.01 = 1%p), 이익 기준이면 억원
+  function rangeTargetGap(r) {
+    if (!r || (r.errors && r.errors.length)) return NaN;
+    if ($('solveMode').value === 'companyProfit') return (r[$('companyProfitKind').value] ?? NaN) - (+$('targetCompanyProfit').value || 0);
+    return (r[$('irrKind').value] ?? NaN) - rate(+$('targetIrrPct').value || 0);
+  }
+  function clearPriceRange() {
+    priceRangeState = null;
+    $('priceRangeMarks').innerHTML = '';
+    $('priceRangeFill').style.width = '0%';
+    $('priceRangeLive').innerHTML = '<span class="muted">산정 결과가 있어야 범위를 볼 수 있습니다.</span>';
+    $('priceRangeSlider').disabled = true;
+  }
+  function setupPriceRange(model, solvedPrice, floor) {
+@@CAP@@
+    const floorPrice = floor && floor.ok ? floor.price : NaN;
+    const points = [solvedPrice, floorPrice, capReceived].filter((v) => Number.isFinite(v) && v > 0);
+    if (!points.length) { clearPriceRange(); return; }
+    const lo = Math.min(...points), hi = Math.max(...points);
+    const pad = Math.max((hi - lo) * 0.4, hi * 0.1, 0.5); // 눈금이 양 끝에 붙지 않도록 여유를 둔다
+    priceRangeState = { min: Math.max(0, lo - pad), max: hi + pad, solved: solvedPrice, floor: floorPrice, cap: capReceived, model: cloneModel(model) };
+    const slider = $('priceRangeSlider');
+    slider.disabled = false;
+    slider.min = priceRangeState.min.toFixed(2);
+    slider.max = priceRangeState.max.toFixed(2);
+    slider.step = '0.01'; // 격자에 스냅되어 산정값을 정확히 가리키지 못하는 일이 없게(끌기는 픽셀 단위라 충분히 부드럽다)
+    slider.value = solvedPrice.toFixed(2);
+    // 값이 거의 같은 눈금은 라벨이 겹치므로 하나로 합친다(예: 하한이 곧 현재 산정 결과일 때)
+    const near = (a, b) => Math.abs(a - b) < (priceRangeState.max - priceRangeState.min) * 0.02;
+    const marks = [];
+    const sameFloor = Number.isFinite(floorPrice) && near(floorPrice, solvedPrice);
+    if (Number.isFinite(floorPrice) && !sameFloor) marks.push({ v: floorPrice, cls: '', label: `최저 ${fmt(floorPrice, 1)}` });
+    marks.push({ v: solvedPrice, cls: 'is-solved', label: `${sameFloor ? '최저=산정' : '산정'} ${fmt(solvedPrice, 1)}` });
+    if (Number.isFinite(capReceived) && !near(capReceived, solvedPrice)) marks.push({ v: capReceived, cls: 'is-cap', label: `상한 ${fmt(capReceived, 1)}` });
+    else if (Number.isFinite(capReceived)) marks.push({ v: capReceived, cls: 'is-cap', label: '상한' });
+    $('priceRangeMarks').innerHTML = marks.map((m) => {
+      const p = rangePos(m.v);
+      const edge = p < 12 ? ' at-start' : p > 88 ? ' at-end' : '';
+      return `<i class="mark ${m.cls}${edge}" style="left:${p.toFixed(2)}%"><span>${escapeHtml(m.label)}</span></i>`;
+    }).join('');
+    previewPriceAt(solvedPrice);
+  }
+  function previewPriceAt(v) {
+    const st = priceRangeState;
+    if (!st) return;
+    $('priceRangeFill').style.width = rangePos(v).toFixed(2) + '%';
+    const m = cloneModel(st.model);
+    m.revenue.bidPricePerKWh = v;
+    const r = analyzeEss(m);
+    const live = $('priceRangeLive');
+    if (r.errors && r.errors.length) { live.innerHTML = `<span class="now">${fmt(v, 2)} 원/kWh</span><span class="miss">이 단가에서는 계산되지 않습니다.</span>`; return; }
+    const gap = rangeTargetGap(r), profitTarget = $('solveMode').value === 'companyProfit';
+    const hit = Number.isFinite(gap) && gap >= -1e-9;
+    const gapText = !Number.isFinite(gap) ? '' : profitTarget
+      ? `${gap >= 0 ? '+' : ''}${fmt(gap, 1)}억`
+      : `${gap >= 0 ? '+' : ''}${fmt(gap * 100, 2)}%p`;
+    const diff = v - st.solved;
+    const rows = [
+      `<span class="now">${fmt(v, 2)} 원/kWh<span class="at">현재 산정 대비 ${diff >= 0 ? '+' : ''}${fmt(diff, 2)}원</span></span>`,
+      `<span class="kv"><span>P-IRR <b>${pct(r.projectIrr)}</b></span><span>E-IRR <b>${pct(r.equityIrr)}</b></span>`
+        + `<span>당사 배당+회수 <b>${fmt(r.companyDividendPlusRecovery, 1)}억</b></span>`
+        + `<span>당사 순이익(세전) <b>${fmt(r.companyProfitPreTax, 1)}억</b></span>`
+        + `<span class="${hit ? 'hit' : 'miss'}">${hit ? '목표 달성' : '목표 미달'}${gapText ? ` ${gapText}` : ''}</span></span>`,
+@@BIDROW@@
+    ];
+    live.innerHTML = rows.join('');
+  }
+  $('priceRangeSlider').addEventListener('input', (e) => previewPriceAt(+e.target.value));
+
+//@@ BIDROW_WIND
+      (() => {
+        const rv = st.model.revenue;
+        if (rv.salesStructure !== 'fixed') return '<span class="kv"><span>기업PPA — 경쟁입찰 상한가·가중치가 적용되지 않습니다.</span></span>';
+        const bid = bidFromReceived(v, rv), cap = rv.priceCapPerKWh || 0, over = cap > 0 && bid > cap;
+        return `<span class="kv"><span>입찰가격(SMP+1REC) <b>${fmt(bid, 2)}원</b></span>`
+          + (cap > 0 ? `<span class="${over ? 'over' : 'hit'}">상한가 ${fmt(cap, 3)} 대비 ${over ? `${fmt(bid - cap, 2)}원 초과 · 응찰 불가` : `${fmt(cap - bid, 2)}원 여유`}</span>` : '')
+          + '</span>';
+      })(),
+
+//@@ BIDROW_SOLAR
+      (() => {
+        const rv = st.model.revenue;
+        if (rv.salesStructure !== 'fixed') return '<span class="kv"><span>기업PPA — 경쟁입찰 상한가·탄소 우대가격이 적용되지 않습니다.</span></span>';
+        const bid = v - (rv.carbonPremiumPerKWh || 0), cap = rv.priceCapPerKWh || 0, over = cap > 0 && bid > cap;
+        return `<span class="kv"><span>입찰가격(SPC 기준) <b>${fmt(bid, 2)}원</b></span>`
+          + (cap > 0 ? `<span class="${over ? 'over' : 'hit'}">상한가 ${fmt(cap, 3)} 대비 ${over ? `${fmt(bid - cap, 2)}원 초과 · 응찰 불가` : `${fmt(cap - bid, 2)}원 여유`}</span>` : '')
+          + '</span>';
+      })(),
+
+//@@ BIDROW_BESS
+      `<span class="kv"><span>이 값이 곧 써내는 <b>입찰단가</b>입니다 — 연간 매출 <b>${fmt(r.annualRevenue, 1)}억</b></span></span>`,
+
+//@@ CAP_WIND
+    const rv = model.revenue;
+    // 상한가(SMP+1REC)를 같은 축에서 볼 수 있게 수령단가로 환산한다
+    const capReceived = rv.salesStructure === 'fixed' && rv.priceCapPerKWh > 0
+      ? rv.smpRefPerKWh + (rv.priceCapPerKWh - rv.smpRefPerKWh) * rv.recWeightApplied + rv.preferentialPerKWh : NaN;
+
+//@@ CAP_SOLAR
+    const rv = model.revenue;
+    // 상한가(입찰가격 기준)를 같은 축에서 볼 수 있게 수령단가로 환산한다(= 상한가 + 탄소 우대가격)
+    const capReceived = rv.salesStructure === 'fixed' && rv.priceCapPerKWh > 0
+      ? rv.priceCapPerKWh + (rv.carbonPremiumPerKWh || 0) : NaN;
+
+//@@ CAP_BESS
+    const capReceived = NaN; // ESS 중앙계약시장 공고에는 상한가격이 없다
