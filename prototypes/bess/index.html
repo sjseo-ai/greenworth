@@ -385,7 +385,7 @@
                 <div class="field" id="companyProfitKindField"><label for="companyProfitKind">당사 이익 구성 기준</label><div class="iw"><select id="companyProfitKind">
                   <option value="companyProfitPreTax">누적 순이익 (세전)</option>
                   <option value="companyProfitAfterTax">누적 순이익 (세후)</option>
-                  <option value="companyDividendPlusRecovery">누적 배당+최종회수</option>
+                  <option value="companyDividendPlusRecovery" selected>누적 배당+최종회수 (세전 배당 · 기본)</option>
                 </select></div></div>
               </div>
               <div class="field-grid one" id="companyProfitTargetRow">
@@ -620,10 +620,10 @@
           <div class="status-pill" id="solveStatus">계산 중</div>
         </div>
         <div class="price-range" id="priceRangeBox">
-          <p class="cap">입찰단가 범위 — 최저단가는 P-IRR 6%·당사 이익 100억(15년 누적) 동시충족 최소 입찰단가(Q1/Q2 로직), 최고단가는 A. 산정 기준으로 구한 현재 적정 입찰단가</p>
+          <p class="cap">입찰단가 범위 — 최저단가는 P-IRR 6%·당사 배당+최종회수 100억(세전 배당 기준 · 운영기간 누적) 동시충족 최소 입찰단가(Q1/Q2 로직), 최고단가는 A. 산정 기준으로 구한 현재 적정 입찰단가</p>
           <div class="bar"><div class="fill"></div></div>
           <div class="pts">
-            <div class="pt"><span class="l">최저단가 · P-IRR6%·이익100억</span><span class="v" id="priceRangeLow">–</span></div>
+            <div class="pt"><span class="l">최저단가 · P-IRR6%·배당+회수100억</span><span class="v" id="priceRangeLow">–</span></div>
             <div class="pt hi"><span class="l">최고단가 · 현재 산정 결과</span><span class="v" id="priceRangeHigh">–</span></div>
           </div>
           <div class="warn" role="status" id="priceFloorWarn"></div>
@@ -983,7 +983,7 @@
               <li>KCH 개발수수료 단가산정 — 할인율(7.5%)·4개 수수료 기준총액(억원)은 <code>ESS_단가산정모델.xlsx</code>의 초안 예시값(원/kW 단가 × 예시 설비용량 50MW)을 억원 총액으로 환산해 그대로 옮긴 것 — 실제 KCH 내부 기준으로 교체 필요. 4개 수익원은 원/kW 단가가 아니라 <strong>"현재 설비용량 기준" 총액(억원)</strong>으로 입력받으며, 민감도표에서 다른 설비용량을 비교할 때만 총액을 비례로 스케일링함. 이 탭의 설비용량·저장용량은 C. 발전매출의 계약용량에 연동됨(저장용량 = 계약용량 × 6h — 용량은 거의 바뀌지 않아 한 곳에서만 입력). 사업기간(1. 사업 기본정보)은 여전히 별도 입력이라 같은 프로젝트면 맞춰 입력해야 함 — 다만 <strong>수취액 총액 → 가격환산 입찰가격 원/kWh 환산 자동연결은 반영 완료</strong>(C. 발전매출의 계약용량·가동률·운영기간 기준으로 환산)</li>
               <li>KCH 개발수수료 "총액 직접 입력" 모드 — ① 부지 임대료·④ 운영수익은 "억원/년"(연간, 상승률 적용) 필드이고 ② 사전개발비·③ 공동접속료(기본 "연간" 방식, "일시금"으로 바꾸면 COD 1회)는 "억원" 필드라, 4개 입력값을 단순히 더한 숫자가 아니라 <strong>"생애주기 누적 총 수취액"</strong>(연간 항목 × 운영기간, 상승률 반영)이 "목표 당사 이익"과 정합성 있게 연결되도록 계산함 — 예: 임대료 30억을 만들려면 상승률을 0%로 두고 연간 2억×15년으로 입력해야 함. "▶ 반영" 버튼은 클릭 시에만 동작하는 명시적 연결이며 자동 동기화는 하지 않음. 레거시 "목표 IRR 역산" 모드로 전환하면 민감도표의 "목표 IRR 이상" 강조 기준은 숨겨진 "목표 IRR" 입력값을 계속 참조함</li>
               <li>내부 재무모델 참고자료 기준으로 조정한 값 — <strong>DSCR 임계치(1.15/1.30배), 할인율(4.5%), 법인세 4단계 구간(3,000억 초과 26.4% 추가), 가동률 규칙(1년차 95%·2년차 96%·3년차~ 97%), 전력거래수수료(0.1193원/kWh), 당사(KCH) 지분율(20%)</strong> — 모두 실제 프로젝트 파이낸싱 조건을 참고한 값이므로, 본 사업에도 그대로 적용 가능한지 재확인 필요</li>
-              <li>단가산정 — <strong>"당사 이익 목표" 기본값(100억원, 기준 지표=누적 순이익 세전)</strong>은 초안 설정값이며, 당사(KCH) 지분율(기본 20%)만큼만 배분된 금액을 목표로 함. 목표 금액·기준 지표·지분율이 실제 KCH 내부 기준과 맞는지 확인 필요</li>
+              <li>단가산정 — <strong>"당사 이익 목표" 기본값(100억원, 기준 지표=누적 배당+최종회수 — 배당소득세 차감 전 총 수취액)</strong>은 초안 설정값이며, 당사(KCH) 지분율(기본 20%)만큼만 배분된 금액을 목표로 함. 목표 금액·기준 지표·지분율이 실제 KCH 내부 기준과 맞는지 확인 필요</li>
               <li>반영하지 않은 구조적 차이 — 참고자료의 선순위차입금은 <strong>목표 DSCR 기반 부채 사이징(사이즈컬핑, 원금불균등 상환)</strong> 방식인데 본 프로토타입은 자기자본·주민채권을 비율(%) 또는 금액(억원)으로 넣고 선순위를 나머지로 두는 방식만 지원함. 선순위 금리는 고정·변동(CD 91일물 연동, 3/6개월 조정) 혼합을 연 단위로 근사 반영하나 트랜치별 별도 상환조건은 미반영, CD금리는 고시값 자동 연동이 아니라 직접 입력(기본 2.80%는 예시). 또 등록세·신주발행비 등 지분조달비용 세부 항목은 미반영 — 필요 시 다음 이터레이션에서 검토</li>
               <li>C. 발전매출 — <strong>준공지연 페널티 1단계 계약가격 감액식</strong>: 공고 25p 원문 표가 PDF 추출 과정에서 병합 셀이 뒤섞여, "거래기간 유지 + 계약가격 × (15년×365−지연일수)/(15년×365)"로 초안 해석함. 원문 표(엑셀/한글 원본) 대조 확인 필요</li>
               <li>C. 발전매출 — <strong>이행률 패널티</strong>: 원문은 일간·충방전별 급전지시량 대비 계량값으로 계산하나, 시간대별 지시 데이터가 없어 "연평균 미이행률(%)" 단일값으로 근사함. 실제 운영 데이터 확보 시 일단위 산식으로 정교화 필요</li>
@@ -1755,7 +1755,7 @@
   }
 
   // 결과 카드의 "최저단가" — 좌측 산정 기준(solveMode)이 무엇이든 상관없이, 항상 고정된 두 하한선
-  // (P-IRR 6% AND 당사 이익 100억 15년 누적, ESS_비가격점수_가격환산_계산기.xlsx의 Q1/Q2 로직과 동일 개념)을
+  // (P-IRR 6% AND 당사 배당+최종회수 100억 누적 — 세전 배당 기준 총액, ESS_비가격점수_가격환산_계산기.xlsx의 Q1/Q2 로직과 동일 개념)을
   // "동시에" 만족하는 최소 입찰단가다. 가격이 오르면 P-IRR과 당사 이익 모두 단조증가하므로, 두 하한을 각각
   // 이분탐색으로 구해 더 높은 쪽(더 빡빡한 제약)을 취하면 둘 다 만족하는 최소값이 된다. readModel()을 새로
   // 호출해 산정 기준으로 사용한 model 객체(반복 이분탐색으로 bidPricePerKWh가 이미 변경돼 있음)를 건드리지 않는다.
@@ -1763,13 +1763,13 @@
     const irrModel = readModel();
     const irrResult = solveBidPriceForTarget(irrModel, 0.06, 'projectIrr');
     const profitModel = readModel();
-    const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyProfitPreTax');
-    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: 'P-IRR 6%·당사 이익 100억 모두 500원/kWh까지도 도달하지 못합니다.' };
-    if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '당사이익 100억' };
+    const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyDividendPlusRecovery');
+    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: 'P-IRR 6%·당사 배당+최종회수 100억 모두 500원/kWh까지도 도달하지 못합니다.' };
+    if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '배당+회수 100억' };
     if (!profitResult.ok) return { ok: true, price: irrResult.price, binding: 'P-IRR 6%' };
     return irrResult.price >= profitResult.price
       ? { ok: true, price: irrResult.price, binding: 'P-IRR 6%' }
-      : { ok: true, price: profitResult.price, binding: '당사이익 100억' };
+      : { ok: true, price: profitResult.price, binding: '배당+회수 100억' };
   }
 
   // 6.4(KCH 개발수수료) → 6.5(가격환산계산기) 직접 자동연결용 — 이 ESS 프로젝트 자체의 계약용량·가동률·운영기간
@@ -1846,7 +1846,7 @@
     $('priceRangeLow').textContent = floor.ok ? fmt(floor.price, 2) + ' 원/kWh (' + floor.binding + ' 기준)' : '—';
     if (floor.ok && floor.price > solved.price + 1e-9) {
       $('priceFloorWarn').className = 'warn show';
-      $('priceFloorWarn').textContent = `⚠ 현재 산정 결과(${fmt(solved.price, 2)}원/kWh)가 최저 하한(${fmt(floor.price, 2)}원/kWh, ${floor.binding} 기준)에 못 미칩니다 — 좌측 "산정 기준"의 목표가 P-IRR 6%·당사 이익 100억보다 낮게 설정되어 있는지 확인해 주세요.`;
+      $('priceFloorWarn').textContent = `⚠ 현재 산정 결과(${fmt(solved.price, 2)}원/kWh)가 최저 하한(${fmt(floor.price, 2)}원/kWh, ${floor.binding} 기준)에 못 미칩니다 — 좌측 "산정 기준"의 목표가 P-IRR 6%·당사 배당+최종회수 100억(세전 배당 기준)보다 낮게 설정되어 있는지 확인해 주세요.`;
     } else {
       $('priceFloorWarn').className = 'warn';
     }
@@ -1873,7 +1873,7 @@
     if ($('solveMode').value === 'companyProfit') {
       $('crossRefIrr').textContent = `↔ 이 조건의 환산 P-IRR: ${pct(r.projectIrr)} (참고 — 산정 기준은 그대로 "당사 이익 목표")`;
     } else {
-      $('crossRefProfit').textContent = `↔ 이 조건의 환산 당사 이익(누적 순이익 세전): ${fmt(r.companyProfitPreTax, 1)} 억원 (참고 — 산정 기준은 그대로 "목표 IRR")`;
+      $('crossRefProfit').textContent = `↔ 이 조건의 환산 당사 이익(누적 배당+최종회수): ${fmt(r.companyDividendPlusRecovery, 1)} 억원 (참고 — 산정 기준은 그대로 "목표 IRR")`;
     }
 
     // 6.4→6.5 직접 자동연결: KCH 생애주기 누적 총 수취액(억원)을 "이 프로젝트" 생애주기 총 발전량(kWh)으로 나눠

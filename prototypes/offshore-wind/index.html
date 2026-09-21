@@ -457,7 +457,7 @@
                 <div class="field" id="companyProfitKindField"><label for="companyProfitKind">당사 이익 구성 기준</label><div class="iw"><select id="companyProfitKind">
                   <option value="companyProfitPreTax">누적 순이익 (세전)</option>
                   <option value="companyProfitAfterTax">누적 순이익 (세후)</option>
-                  <option value="companyDividendPlusRecovery">누적 배당+최종회수</option>
+                  <option value="companyDividendPlusRecovery" selected>누적 배당+최종회수 (세전 배당 · 기본)</option>
                 </select></div></div>
               </div>
               <div class="field-grid one" id="companyProfitTargetRow">
@@ -794,10 +794,10 @@
           <div class="hero-note" id="heroBidNote"></div>
         </div>
         <div class="price-range" id="priceRangeBox">
-          <p class="cap">수령단가 범위 — 최저는 P-IRR 6%·당사 이익 100억(운영기간 누적) 동시충족 최소 단가, 최고는 A. 산정 기준으로 구한 현재 적정 수령단가</p>
+          <p class="cap">수령단가 범위 — 최저는 P-IRR 6%·당사 배당+최종회수 100억(세전 배당 기준 · 운영기간 누적) 동시충족 최소 단가, 최고는 A. 산정 기준으로 구한 현재 적정 수령단가</p>
           <div class="bar"><div class="fill"></div></div>
           <div class="pts">
-            <div class="pt"><span class="l">최저단가 · P-IRR6%·이익100억</span><span class="v" id="priceRangeLow">–</span></div>
+            <div class="pt"><span class="l">최저단가 · P-IRR6%·배당+회수100억</span><span class="v" id="priceRangeLow">–</span></div>
             <div class="pt hi"><span class="l">최고단가 · 현재 산정 결과</span><span class="v" id="priceRangeHigh">–</span></div>
           </div>
           <div class="warn" role="status" id="priceFloorWarn"></div>
@@ -1312,7 +1312,7 @@
               <li>F. 재무 프리셋 — DSCR 임계치·할인율·법인세 누진구간·감가상각 20년·선순위 15년은 ESS 참고자료 기준을 옮긴 초안. 해상풍력 PF(장기 선순위·공사기간 3년 이자·예비 한도) 조건으로 재확인 필요</li>
               <li>반영하지 않은 구조적 차이 — 목표 DSCR 기반 부채 사이징(사이즈컬핑)·원금불균등 상환 미반영. 선순위 금리 고정·변동(CD 91일물) 혼합은 연 단위 근사, CD금리는 직접 입력</li>
               <li>KCH 개발수수료 — 4개 수수료 기준총액·할인율은 ESS 예시값 그대로(설비용량만 연동). 100MW 해상풍력 규모에 맞게 교체 필요</li>
-              <li>단가산정 목표 — 해상풍력 초안은 기본 산정 기준을 <strong>목표 P-IRR 6%</strong>로 둠(ESS의 "당사 이익 100억원"은 총사업비 9천억원대 사업에서 수익률이 지나치게 낮게 역산됨). 목표 수익률·당사 지분 20%는 KCH 내부 기준 확인 필요</li>
+              <li>단가산정 목표 — 해상풍력 초안은 기본 산정 기준을 <strong>목표 P-IRR 6%</strong>로 둠(ESS의 "당사 배당+최종회수 100억원"은 총사업비 9천억원대 사업에서 수익률이 지나치게 낮게 역산됨). 목표 수익률·당사 지분 20%는 KCH 내부 기준 확인 필요</li>
               <li><strong>입찰 사례</strong> — 사업별 낙찰가는 비공개라 상한가 대비 인하율을 가정해 추정(0% = 상한가 입찰 = 최대 사업성). 사례 18건의 사업자·터빈·EPC·공급사·사업비·발전량·입지는 보도·사업자 발표·Renewable Korea 표로 정리하고, 환경영향평가정보지원시스템(EIASS) 사업 검색으로 14건의 사업코드·초안/본협의/변경 협의 완료일을 확인(고창·압해·다대포·한동·평대는 검색되지 않음). 13개 사업은 EIASS 사업 상세 표에서 협의 등록 규모·사업비·사업시행자·평가대행자까지 반영(평가 당시 값이라 입찰 용량·최신 사업비와 다를 수 있음 — 해송은 등록 사업비 4,575억원이 1,008MW에 비해 지나치게 작아 제외). 평가서 본문(발전량·수심·이격거리)은 문서 뷰어 방식이라 읽지 못해 보도 기준. 총사업비는 신안우이·낙월·완도 금일·태안·압해·다대포·한동·평대·서남해·한빛·굴업도, EIASS 협의 사업비(등록 사업비 ÷ 등록 규모)는 안마·반딧불이·금오도·해울이, EPC 역산은 고창·야월, 발전량은 신안우이·낙월·안마·다대포·한빛만 확인. <strong>사업비 발표 시점이 2019~2026년으로 섞여 있어 초기 발표액(압해 MW당 50억, 한동·평대 56억 등)은 인플레이션 이전 값일 수 있음</strong> — 해당 사례의 높은 추정 수익률은 과대 추정 가능성. 2023년 상한가 167.778원은 역산, 2026년 선정 단지는 보도 기준, 금융·일정은 현재 페이지 조건</li>
               <li>C. 발전매출 — <strong>보증 구조(터빈사 / EPC사)</strong>: 출력곡선 보증 이행률 100% · BOP·계통 가동률 99%는 예시값이며, 기술적 가동률은 터빈 목록의 사별 값(94~97%)을 씁니다. 실제 계약은 보증 기준(시간 기준 가동률 / 발전량 기준 가동률), 측정·검증 방식(파워커브 시험), 보증 기간(하자보수 2~5년 · LTSA 5~15년), LD 산정식과 연간·총액 상한, 초과 성과 공유가 회사·계약마다 다릅니다. "보증·LD" 탭의 LD 보전율 100% · 연간 상한 10%도 예시입니다</li>
               <li>C·E — <strong>준공지연 LD · 하자보수 보증</strong>: 준공지연 8주 · LD 요율 0.2%/주 · 총액 상한 10%(도급액), 하자보수 보증 터빈 5년 15% · BOP 2년 5%(고정 O&amp;M 기준)는 예시값입니다. 지연 손실은 1년차 발전매출 일할로만 보고 <strong>실제 일정 변경(COD 이동)·고정가격계약의 준공기한 위반 효과(계약 해지·가격 조정)는 반영하지 않았습니다</strong>. 하자보수 보증금(이행보증)은 담보라 현금흐름에 넣지 않았고, 보증 범위를 고정 O&amp;M의 일정 비율로 단순화했습니다</li>
@@ -2846,7 +2846,7 @@
   }
 
   // 결과 카드의 "최저단가" — 좌측 산정 기준(solveMode)이 무엇이든 상관없이, 항상 고정된 두 하한선
-  // (P-IRR 6% AND 당사 이익 100억 15년 누적, ESS_비가격점수_가격환산_계산기.xlsx의 Q1/Q2 로직과 동일 개념)을
+  // (P-IRR 6% AND 당사 배당+최종회수 100억 누적 — 세전 배당 기준 총액, ESS_비가격점수_가격환산_계산기.xlsx의 Q1/Q2 로직과 동일 개념)을
   // "동시에" 만족하는 최소 입찰단가다. 가격이 오르면 P-IRR과 당사 이익 모두 단조증가하므로, 두 하한을 각각
   // 이분탐색으로 구해 더 높은 쪽(더 빡빡한 제약)을 취하면 둘 다 만족하는 최소값이 된다. readModel()을 새로
   // 호출해 산정 기준으로 사용한 model 객체(반복 이분탐색으로 bidPricePerKWh가 이미 변경돼 있음)를 건드리지 않는다.
@@ -2854,13 +2854,13 @@
     const irrModel = readModel();
     const irrResult = solveBidPriceForTarget(irrModel, 0.06, 'projectIrr');
     const profitModel = readModel();
-    const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyProfitPreTax');
-    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: `P-IRR 6%·당사 이익 100억 모두 역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh까지도 도달하지 못합니다.` };
-    if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '당사이익 100억' };
+    const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyDividendPlusRecovery');
+    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: `P-IRR 6%·당사 배당+최종회수 100억 모두 역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh까지도 도달하지 못합니다.` };
+    if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '배당+회수 100억' };
     if (!profitResult.ok) return { ok: true, price: irrResult.price, binding: 'P-IRR 6%' };
     return irrResult.price >= profitResult.price
       ? { ok: true, price: irrResult.price, binding: 'P-IRR 6%' }
-      : { ok: true, price: profitResult.price, binding: '당사이익 100억' };
+      : { ok: true, price: profitResult.price, binding: '배당+회수 100억' };
   }
 
   // KCH 수수료 → 가격환산 입찰가격 원/kWh 환산용 생애주기 총 발전량(kWh, 출력제어·손실 반영) — 이 프로젝트의 실제 판매량 기준
@@ -2956,7 +2956,7 @@
     $('priceRangeLow').textContent = floor.ok ? fmt(floor.price, 2) + ' 원/kWh (' + floor.binding + ' 기준)' : '—';
     if (floor.ok && floor.price > solved.price + 1e-9) {
       $('priceFloorWarn').className = 'warn show';
-      $('priceFloorWarn').textContent = `⚠ 현재 산정 결과(${fmt(solved.price, 2)}원/kWh)가 최저 하한(${fmt(floor.price, 2)}원/kWh, ${floor.binding} 기준)에 못 미칩니다 — 좌측 "산정 기준"의 목표가 P-IRR 6%·당사 이익 100억보다 낮게 설정되어 있는지 확인해 주세요.`;
+      $('priceFloorWarn').textContent = `⚠ 현재 산정 결과(${fmt(solved.price, 2)}원/kWh)가 최저 하한(${fmt(floor.price, 2)}원/kWh, ${floor.binding} 기준)에 못 미칩니다 — 좌측 "산정 기준"의 목표가 P-IRR 6%·당사 배당+최종회수 100억(세전 배당 기준)보다 낮게 설정되어 있는지 확인해 주세요.`;
     } else {
       $('priceFloorWarn').className = 'warn';
     }
@@ -2983,7 +2983,7 @@
     if ($('solveMode').value === 'companyProfit') {
       $('crossRefIrr').textContent = `↔ 이 조건의 환산 P-IRR: ${pct(r.projectIrr)} (참고 — 산정 기준은 그대로 "당사 이익 목표")`;
     } else {
-      $('crossRefProfit').textContent = `↔ 이 조건의 환산 당사 이익(누적 순이익 세전): ${fmt(r.companyProfitPreTax, 1)} 억원 (참고 — 산정 기준은 그대로 "목표 IRR")`;
+      $('crossRefProfit').textContent = `↔ 이 조건의 환산 당사 이익(누적 배당+최종회수): ${fmt(r.companyDividendPlusRecovery, 1)} 억원 (참고 — 산정 기준은 그대로 "목표 IRR")`;
     }
 
     // 6.4→6.5 직접 자동연결: KCH 생애주기 누적 총 수취액(억원)을 "이 프로젝트" 생애주기 총 발전량(kWh)으로 나눠
