@@ -457,7 +457,7 @@
                 <div class="field" id="companyProfitKindField"><label for="companyProfitKind">당사 이익 구성 기준</label><div class="iw"><select id="companyProfitKind">
                   <option value="companyProfitPreTax">누적 순이익 (세전)</option>
                   <option value="companyProfitAfterTax">누적 순이익 (세후)</option>
-                  <option value="companyDividendPlusRecovery">누적 배당+최종회수</option>
+                  <option value="companyDividendPlusRecovery" selected>누적 배당+최종회수 (세전 배당 · 기본)</option>
                 </select></div></div>
               </div>
               <div class="field-grid one" id="companyProfitTargetRow">
@@ -790,10 +790,10 @@
           <div class="hero-note" id="heroBidNote"></div>
         </div>
         <div class="price-range" id="priceRangeBox">
-          <p class="cap">수령단가 범위 — 최저는 P-IRR 6%·당사 이익 100억(운영기간 누적) 동시충족 최소 단가, 최고는 A. 산정 기준으로 구한 현재 적정 수령단가</p>
+          <p class="cap">수령단가 범위 — 최저는 P-IRR 6%·당사 배당+최종회수 100억(세전 배당 기준 · 운영기간 누적) 동시충족 최소 단가, 최고는 A. 산정 기준으로 구한 현재 적정 수령단가</p>
           <div class="bar"><div class="fill"></div></div>
           <div class="pts">
-            <div class="pt"><span class="l">최저단가 · P-IRR6%·이익100억</span><span class="v" id="priceRangeLow">–</span></div>
+            <div class="pt"><span class="l">최저단가 · P-IRR6%·배당+회수100억</span><span class="v" id="priceRangeLow">–</span></div>
             <div class="pt hi"><span class="l">최고단가 · 현재 산정 결과</span><span class="v" id="priceRangeHigh">–</span></div>
           </div>
           <div class="warn" role="status" id="priceFloorWarn"></div>
@@ -2452,7 +2452,7 @@
   }
 
   // 결과 카드의 "최저단가" — 좌측 산정 기준(solveMode)이 무엇이든 상관없이, 항상 고정된 두 하한선
-  // (P-IRR 6% AND 당사 이익 100억 15년 누적, ESS_비가격점수_가격환산_계산기.xlsx의 Q1/Q2 로직과 동일 개념)을
+  // (P-IRR 6% AND 당사 배당+최종회수 100억 누적 — 세전 배당 기준 총액, ESS_비가격점수_가격환산_계산기.xlsx의 Q1/Q2 로직과 동일 개념)을
   // "동시에" 만족하는 최소 입찰단가다. 가격이 오르면 P-IRR과 당사 이익 모두 단조증가하므로, 두 하한을 각각
   // 이분탐색으로 구해 더 높은 쪽(더 빡빡한 제약)을 취하면 둘 다 만족하는 최소값이 된다. readModel()을 새로
   // 호출해 산정 기준으로 사용한 model 객체(반복 이분탐색으로 bidPricePerKWh가 이미 변경돼 있음)를 건드리지 않는다.
@@ -2460,13 +2460,13 @@
     const irrModel = readModel();
     const irrResult = solveBidPriceForTarget(irrModel, 0.06, 'projectIrr');
     const profitModel = readModel();
-    const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyProfitPreTax');
-    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: `P-IRR 6%·당사 이익 100억 모두 역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh까지도 도달하지 못합니다.` };
-    if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '당사이익 100억' };
+    const profitResult = solveBidPriceForCompanyProfitTarget(profitModel, 100, 'companyDividendPlusRecovery');
+    if (!irrResult.ok && !profitResult.ok) return { ok: false, reason: `P-IRR 6%·당사 배당+최종회수 100억 모두 역산 상한 ${fmt(PRICE_SOLVE_MAX, 0)}원/kWh까지도 도달하지 못합니다.` };
+    if (!irrResult.ok) return { ok: true, price: profitResult.price, binding: '배당+회수 100억' };
     if (!profitResult.ok) return { ok: true, price: irrResult.price, binding: 'P-IRR 6%' };
     return irrResult.price >= profitResult.price
       ? { ok: true, price: irrResult.price, binding: 'P-IRR 6%' }
-      : { ok: true, price: profitResult.price, binding: '당사이익 100억' };
+      : { ok: true, price: profitResult.price, binding: '배당+회수 100억' };
   }
 
   // KCH 수수료 → 가격환산 입찰가격 원/kWh 환산용 생애주기 총 발전량(kWh, 출력제어·손실 반영) — 이 프로젝트의 실제 판매량 기준
@@ -2562,7 +2562,7 @@
     $('priceRangeLow').textContent = floor.ok ? fmt(floor.price, 2) + ' 원/kWh (' + floor.binding + ' 기준)' : '—';
     if (floor.ok && floor.price > solved.price + 1e-9) {
       $('priceFloorWarn').className = 'warn show';
-      $('priceFloorWarn').textContent = `⚠ 현재 산정 결과(${fmt(solved.price, 2)}원/kWh)가 최저 하한(${fmt(floor.price, 2)}원/kWh, ${floor.binding} 기준)에 못 미칩니다 — 좌측 "산정 기준"의 목표가 P-IRR 6%·당사 이익 100억보다 낮게 설정되어 있는지 확인해 주세요.`;
+      $('priceFloorWarn').textContent = `⚠ 현재 산정 결과(${fmt(solved.price, 2)}원/kWh)가 최저 하한(${fmt(floor.price, 2)}원/kWh, ${floor.binding} 기준)에 못 미칩니다 — 좌측 "산정 기준"의 목표가 P-IRR 6%·당사 배당+최종회수 100억(세전 배당 기준)보다 낮게 설정되어 있는지 확인해 주세요.`;
     } else {
       $('priceFloorWarn').className = 'warn';
     }
@@ -2589,7 +2589,7 @@
     if ($('solveMode').value === 'companyProfit') {
       $('crossRefIrr').textContent = `↔ 이 조건의 환산 P-IRR: ${pct(r.projectIrr)} (참고 — 산정 기준은 그대로 "당사 이익 목표")`;
     } else {
-      $('crossRefProfit').textContent = `↔ 이 조건의 환산 당사 이익(누적 순이익 세전): ${fmt(r.companyProfitPreTax, 1)} 억원 (참고 — 산정 기준은 그대로 "목표 IRR")`;
+      $('crossRefProfit').textContent = `↔ 이 조건의 환산 당사 이익(누적 배당+최종회수): ${fmt(r.companyDividendPlusRecovery, 1)} 억원 (참고 — 산정 기준은 그대로 "목표 IRR")`;
     }
 
     // 6.4→6.5 직접 자동연결: KCH 생애주기 누적 총 수취액(억원)을 "이 프로젝트" 생애주기 총 발전량(kWh)으로 나눠
